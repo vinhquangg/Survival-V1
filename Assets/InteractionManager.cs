@@ -23,7 +23,6 @@ public class InteractionManager : MonoBehaviour
         if (SelectionManager != null && Input.GetKeyDown(KeyCode.E))
         {
             SelectionManager.CurrentInteractable?.Interact(transform.root.gameObject);
-
         }
     }
 }

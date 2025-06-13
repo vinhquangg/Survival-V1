@@ -56,37 +56,5 @@ public class InteractUI : MonoBehaviour
         interaction_Info.SetActive(false);
 
     }
-
-
-
-    //public GameObject interact;
-    //// Start is called before the first frame update
-    //void Start()
-    //{
-    //    interact.SetActive(false);
-    //}
-
-    //// Update is called once per frame
-    //void Update()
-    //{
-
-    //}
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if(other.CompareTag("Player"))
-    //    {
-    //        //gameObject.SetActive(true);
-    //        interact.SetActive(true);
-    //    }
-    //}
-    //private void OnTriggerExit(Collider other)
-    //{
-    //    if (other.CompareTag("Player"))
-    //    {
-    //        //gameObject.SetActive(false);
-    //        interact.SetActive(false);
-    //    }
-    //}
 }
 

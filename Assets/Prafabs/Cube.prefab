@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 6634338457911606736}
   - component: {fileID: 5646176874111277479}
   - component: {fileID: -2215349656860451296}
-  - component: {fileID: -1046914146314794447}
-  m_Layer: 9
+  - component: {fileID: 9213349032705088751}
+  m_Layer: 14
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 332e623d8449f12499cfe84be9cb7353, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-1046914146314794447
+--- !u!114 &9213349032705088751
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,9 +143,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1028921820866644714}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92be3b160220d4d4aae3f9e668388216, type: 3}
+  m_Script: {fileID: 11500000, guid: 3e60abddd1303a3479fb114e4fcf7317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 57091acb70b6524449cc5d87920eff9a, type: 2}
-  quantity: 3
+  quantity: 2
   durability: 0

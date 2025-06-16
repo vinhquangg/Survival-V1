@@ -3,13 +3,14 @@ using UnityEngine;
 
 public class ObjectScatterer : MonoBehaviour
 {
-    [Header("Danh sách prefab có trọng số spawn")]
-    public List<SpawnablePrefab> spawnablePrefabs;
-
-    public int spawnCount = 50;
-    public float scatterRadius = 20f;
-    public float spawnHeight = 10f;
+    public BiomeManager biomeManager;
+    public int baseSpawnCount = 100;
+    public float scatterRadius = 50f;
+    public float spawnHeight = 20f;
     public LayerMask groundLayer;
+
+    [Tooltip("Tự động offset prefab theo chiều cao Renderer")]
+    public bool useRendererYOffset = true;
 
     private void Start()
     {
@@ -18,55 +19,53 @@ public class ObjectScatterer : MonoBehaviour
 
     void ScatterObjects()
     {
-        for (int i = 0; i < spawnCount; i++)
+        int spawnSuccessCount = 0;
+
+        for (int i = 0; i < baseSpawnCount; i++)
         {
             Vector3 randomPos = GetRandomPosition();
 
             if (Physics.Raycast(randomPos, Vector3.down, out RaycastHit hit, 100f, groundLayer))
             {
-                GameObject selectedPrefab = GetRandomPrefabByWeight();
-                if (selectedPrefab == null) continue;
+                Vector3 groundPos = hit.point;
 
-                float offset = selectedPrefab.GetComponent<Renderer>()?.bounds.extents.y ?? 0.5f;
-                Vector3 spawnPos = hit.point + Vector3.up * offset;
+                BiomeData biome = biomeManager.GetBiomeAtPosition(groundPos);
+                if (biome == null || biome.spawnableObjects == null || biome.spawnableObjects.Length == 0)
+                {
+                    Debug.LogWarning($"⚠️ Biome lỗi hoặc không có prefab tại {groundPos}");
+                    continue;
+                }
 
-                Instantiate(selectedPrefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
+                GameObject prefab = biome.spawnableObjects[Random.Range(0, biome.spawnableObjects.Length)];
+                if (prefab == null)
+                {
+                    Debug.LogWarning("⚠️ Prefab null!");
+                    continue;
+                }
+                Vector3 spawnPos = groundPos;
+
+                GameObject instance = Instantiate(prefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
+
+                if (useRendererYOffset)
+                {
+                    Renderer renderer = instance.GetComponentInChildren<Renderer>();
+                    if (renderer != null)
+                    {
+                        float yOffset = renderer.bounds.extents.y;
+                        instance.transform.position = groundPos + Vector3.up * yOffset;
+                    }
+                }
+
+                spawnSuccessCount++;
             }
         }
-    }
 
-    GameObject GetRandomPrefabByWeight()
-    {
-        int totalWeight = 0;
-        foreach (var prefab in spawnablePrefabs)
-            totalWeight += prefab.weight;
-
-        int randomValue = Random.Range(0, totalWeight);
-        int currentSum = 0;
-
-        foreach (var prefab in spawnablePrefabs)
-        {
-            currentSum += prefab.weight;
-            if (randomValue < currentSum)
-                return prefab.prefab;
-        }
-
-        return null;
+        Debug.Log($"✅ Tổng số object đã spawn: {spawnSuccessCount}");
     }
 
     Vector3 GetRandomPosition()
     {
-        Vector2 randomCircle = Random.insideUnitCircle * scatterRadius;
-        Vector3 basePosition = transform.position;
-        return new Vector3(basePosition.x + randomCircle.x, basePosition.y + spawnHeight, basePosition.z + randomCircle.y);
+        Vector2 offset = Random.insideUnitCircle * scatterRadius;
+        return new Vector3(transform.position.x + offset.x, transform.position.y + spawnHeight, transform.position.z + offset.y);
     }
-}
-
-
-[System.Serializable]
-public class SpawnablePrefab
-{
-    public GameObject prefab;
-    [Range(1, 100)]
-    public int weight = 1;
 }

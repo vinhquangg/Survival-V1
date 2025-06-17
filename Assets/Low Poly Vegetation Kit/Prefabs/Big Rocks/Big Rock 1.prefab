@@ -329,9 +329,10 @@ GameObject:
   - component: {fileID: 136885576521925473}
   - component: {fileID: 690684765702772133}
   - component: {fileID: 1324944307354701078}
+  - component: {fileID: 6193587637295946800}
   m_Layer: 0
   m_Name: Big Rock 1
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -412,6 +413,25 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 7.381958, y: 8.300304, z: 6.199768}
   m_Center: {x: -0.07824707, y: 3.6501522, z: 0.10470581}
+--- !u!114 &6193587637295946800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4016376802361487730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &6612024846674503805
 GameObject:
   m_ObjectHideFlags: 0

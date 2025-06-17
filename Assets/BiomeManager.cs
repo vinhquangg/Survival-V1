@@ -4,9 +4,13 @@ public class BiomeManager : MonoBehaviour
 {
     public BiomeRegion[] allBiomes;
 
+    [Tooltip("Bật để in ra log khi không tìm thấy biome tại vị trí spawn")]
+    public bool showMissingBiomeWarning = false;
+
     private void Start()
     {
         allBiomes = FindObjectsOfType<BiomeRegion>();
+        Debug.Log($"🌿 Đã tìm thấy {allBiomes.Length} vùng biome.");
     }
 
     public BiomeData GetBiomeAtPosition(Vector3 worldPosition)
@@ -20,7 +24,11 @@ public class BiomeManager : MonoBehaviour
             }
         }
 
-        Debug.LogWarning("Không tìm thấy biome tại vị trí: " + worldPosition);
+        if (showMissingBiomeWarning)
+        {
+            Debug.LogWarning($"⚠️ Không tìm thấy biome tại vị trí: {worldPosition}");
+        }
+
         return null;
     }
 
@@ -37,6 +45,11 @@ public class BiomeManager : MonoBehaviour
                 if (col != null)
                 {
                     Gizmos.DrawWireCube(col.bounds.center, col.bounds.size);
+                    GUIStyle style = new GUIStyle();
+                    style.normal.textColor = biome.biomeData.fogColor;
+#if UNITY_EDITOR
+                    UnityEditor.Handles.Label(col.bounds.center + Vector3.up * 2, biome.biomeData.name, style);
+#endif
                 }
             }
         }

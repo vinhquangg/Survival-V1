@@ -4,68 +4,86 @@ using UnityEngine;
 public class ObjectScatterer : MonoBehaviour
 {
     public BiomeManager biomeManager;
-    public int baseSpawnCount = 100;
-    public float scatterRadius = 50f;
-    public float spawnHeight = 20f;
+    public int baseSpawnCount = 1000;
     public LayerMask groundLayer;
 
-    [Tooltip("Tự động offset prefab theo chiều cao Renderer")]
-    public bool useRendererYOffset = true;
+    [Tooltip("Số lần thử spawn tối đa cho mỗi vùng nếu bị raycast fail")]
+    public int maxAttemptsPerBiome = 500;
 
     private void Start()
     {
-        ScatterObjects();
+        ScatterObjectsPerBiome();
     }
 
-    void ScatterObjects()
+    void ScatterObjectsPerBiome()
     {
-        int spawnSuccessCount = 0;
+        int totalSpawned = 0;
+        int totalRaycastFail = 0;
+        int totalPrefabFail = 0;
 
-        for (int i = 0; i < baseSpawnCount; i++)
+        BiomeRegion[] regions = biomeManager.allBiomes;
+        if (regions == null || regions.Length == 0)
         {
-            Vector3 randomPos = GetRandomPosition();
-
-            if (Physics.Raycast(randomPos, Vector3.down, out RaycastHit hit, 100f, groundLayer))
-            {
-                Vector3 groundPos = hit.point;
-
-                BiomeData biome = biomeManager.GetBiomeAtPosition(groundPos);
-                if (biome == null || biome.spawnableObjects == null || biome.spawnableObjects.Length == 0)
-                {
-                    Debug.LogWarning($"⚠️ Biome lỗi hoặc không có prefab tại {groundPos}");
-                    continue;
-                }
-
-                GameObject prefab = biome.spawnableObjects[Random.Range(0, biome.spawnableObjects.Length)];
-                if (prefab == null)
-                {
-                    Debug.LogWarning("⚠️ Prefab null!");
-                    continue;
-                }
-                Vector3 spawnPos = groundPos;
-
-                GameObject instance = Instantiate(prefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
-
-                if (useRendererYOffset)
-                {
-                    Renderer renderer = instance.GetComponentInChildren<Renderer>();
-                    if (renderer != null)
-                    {
-                        float yOffset = renderer.bounds.extents.y;
-                        instance.transform.position = groundPos + Vector3.up * yOffset;
-                    }
-                }
-
-                spawnSuccessCount++;
-            }
+            Debug.LogWarning("❌ Không có vùng biome nào được tìm thấy.");
+            return;
         }
 
-        Debug.Log($"✅ Tổng số object đã spawn: {spawnSuccessCount}");
+        int spawnPerRegion = Mathf.CeilToInt((float)baseSpawnCount / regions.Length);
+
+        foreach (BiomeRegion region in regions)
+        {
+            Collider col = region.GetComponent<Collider>();
+            BiomeData biomeData = region.biomeData;
+
+            if (col == null || biomeData == null || biomeData.spawnableObjects == null || biomeData.spawnableObjects.Length == 0)
+            {
+                Debug.LogWarning($"⚠️ BiomeRegion {region.name} bị thiếu dữ liệu hoặc collider.");
+                continue;
+            }
+
+            Bounds bounds = col.bounds;
+            int spawnedInThisRegion = 0;
+            int attempts = 0;
+
+            while (spawnedInThisRegion < spawnPerRegion && attempts < maxAttemptsPerBiome)
+            {
+                Vector3 randomPos = GetRandomPointInBounds(bounds);
+
+                // Raycast từ trên cao xuống mặt đất
+                if (Physics.Raycast(randomPos + Vector3.up * 50f, Vector3.down, out RaycastHit hit, 100f, groundLayer))
+                {
+                    GameObject prefab = biomeData.spawnableObjects[Random.Range(0, biomeData.spawnableObjects.Length)];
+                    if (prefab == null)
+                    {
+                        totalPrefabFail++;
+                        continue;
+                    }
+
+                    Vector3 spawnPos = hit.point;
+                    Instantiate(prefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
+                    spawnedInThisRegion++;
+                    totalSpawned++;
+                }
+                else
+                {
+                    totalRaycastFail++;
+                }
+
+                attempts++;
+            }
+
+            Debug.Log($"🌱 Biome '{region.name}': Spawned {spawnedInThisRegion}/{spawnPerRegion} (Attempts: {attempts})");
+        }
+
+        Debug.Log($"✅ Tổng object đã spawn: {totalSpawned} / {baseSpawnCount} | ❌ Raycast fail: {totalRaycastFail}, Prefab null: {totalPrefabFail}");
     }
 
-    Vector3 GetRandomPosition()
+    Vector3 GetRandomPointInBounds(Bounds bounds)
     {
-        Vector2 offset = Random.insideUnitCircle * scatterRadius;
-        return new Vector3(transform.position.x + offset.x, transform.position.y + spawnHeight, transform.position.z + offset.y);
+        return new Vector3(
+            Random.Range(bounds.min.x, bounds.max.x),
+            bounds.center.y,
+            Random.Range(bounds.min.z, bounds.max.z)
+        );
     }
 }

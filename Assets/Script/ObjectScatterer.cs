@@ -37,6 +37,12 @@ public class ObjectScatterer : MonoBehaviour
             return;
         }
 
+        Transform forestParent = GameObject.FindWithTag("Forest")?.transform;
+        if (forestParent == null)
+        {
+            Debug.LogWarning("❌ Không tìm thấy GameObject có tag 'Forest' để gán object làm con.");
+        }
+
         int spawnPerRegion = Mathf.CeilToInt((float)baseSpawnCount / regions.Length);
 
         foreach (BiomeRegion region in regions)
@@ -60,7 +66,6 @@ public class ObjectScatterer : MonoBehaviour
 
                 if (Physics.Raycast(randomPos + Vector3.up * 50f, Vector3.down, out RaycastHit hit, 100f, groundLayer))
                 {
-                    // Kiểm tra Terrain + Grass Texture
                     Terrain terrain = hit.collider.GetComponent<Terrain>();
                     if (terrain != null && !IsGrassTexture(hit.point, terrain))
                     {
@@ -79,6 +84,9 @@ public class ObjectScatterer : MonoBehaviour
 
                     Vector3 spawnPos = hit.point;
                     GameObject obj = Instantiate(prefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
+
+                    if (forestParent != null)
+                        obj.transform.SetParent(forestParent);
 
                     if (IsBlockingObject(prefab))
                     {
@@ -101,6 +109,7 @@ public class ObjectScatterer : MonoBehaviour
 
         Debug.Log($"✅ Tổng object đã spawn: {totalSpawned} / {baseSpawnCount} | ❌ Raycast fail: {totalRaycastFail}, Prefab null: {totalPrefabFail}, Not Grass: {totalNotGrass}");
     }
+
 
     Vector3 GetRandomPointInBounds(Bounds bounds)
     {
@@ -127,9 +136,8 @@ public class ObjectScatterer : MonoBehaviour
 
     bool IsBlockingObject(GameObject prefab)
     {
-        // Bạn có thể gắn tag hoặc script vào prefab để xác định vật chắn đường
-        // Ví dụ: tag = "Obstacle" hoặc có component BlockingTag
-        return prefab.CompareTag("Obstacle"); // Hoặc prefab.GetComponent<BlockingTag>() != null
+
+        return prefab.CompareTag("Obstacle"); 
     }
     void AddNavMeshObstacle(GameObject obj)
     {
@@ -141,12 +149,12 @@ public class ObjectScatterer : MonoBehaviour
             LOD[] lods = lodGroup.GetLODs();
             if (lods.Length > 0 && lods[0].renderers.Length > 0)
             {
-                rend = lods[0].renderers[0]; // Lấy renderer đầu tiên của LOD0
+                rend = lods[0].renderers[0]; 
             }
         }
         else
         {
-            rend = obj.GetComponentInChildren<Renderer>(); // Fallback nếu không có LODGroup
+            rend = obj.GetComponentInChildren<Renderer>(); 
         }
 
         if (rend == null)
@@ -162,7 +170,11 @@ public class ObjectScatterer : MonoBehaviour
         NavMeshObstacle obstacle = obj.AddComponent<NavMeshObstacle>();
         obstacle.shape = NavMeshObstacleShape.Capsule;
         obstacle.height = height;
-        obstacle.radius = radius * 0.4f;
+        obstacle.radius = radius * 0.01f;
+        if(obstacle.radius < 0.14)
+        {
+            obstacle.radius = radius * 0.16f;
+        }
         obstacle.center = new Vector3(0, height * 0.5f, 0);
         obstacle.carving = true;
         obstacle.carveOnlyStationary = true;

@@ -7,6 +7,8 @@ TagManager:
   - SelectionManager
   - Obstacle
   - Forest
+  - Rock
+  - BiomeRegion
   layers:
   - Default
   - TransparentFX

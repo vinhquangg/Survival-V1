@@ -6,13 +6,14 @@ using UnityEngine.AI;
 
 public class MonsterMove : MonoBehaviour
 {
-    public Transform _destination;
+    public Transform player;
     public NavMeshAgent _navMeshAgent;
+    public float DetectedRange;
     void Start()
     {
         _navMeshAgent=this.GetComponent<NavMeshAgent>();
-
-        if(_navMeshAgent== null)
+        player = GameObject.FindWithTag("Player").transform;
+        if (_navMeshAgent== null)
         {
             Debug.Log("Missing Navmesh");
         }
@@ -22,11 +23,44 @@ public class MonsterMove : MonoBehaviour
         //}
     }
 
+    //private bool CanSeePlayer()
+    //{
+    //    if (player == null) return false;
+    //    Vector3 directionToPlayer = player.position - transform.position;
+    //    if (directionToPlayer.magnitude < DetectedRange) return true;
+    //    return false;
+    //}
+
+    private bool CanSeePlayer()
+    {
+        if (player == null) return false;
+
+        Vector3 directionToPlayer = player.position - transform.position;
+        float distanceToPlayer = directionToPlayer.magnitude;
+
+        if (distanceToPlayer < DetectedRange)
+        {
+            Ray ray = new Ray(transform.position + Vector3.up, directionToPlayer.normalized); 
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit, DetectedRange))
+            {
+                if (hit.transform == player)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
     private void SetDestination()
     {
-        if(_destination !=null)
+        if(player !=null)
         {
-            Vector3 targetVector = _destination.transform.position;
+            Vector3 targetVector = player.transform.position;
             _navMeshAgent.SetDestination(targetVector);
         }
     }
@@ -34,6 +68,9 @@ public class MonsterMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SetDestination();
+        if (CanSeePlayer())
+        {
+            SetDestination();
+        }
     }
 }

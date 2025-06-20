@@ -3,59 +3,94 @@ using System.Collections.Generic;
 
 public class VisibilityCullingZone : MonoBehaviour
 {
-    public float outerRadius = 100f;  // Vùng nhìn xa - chỉ hiện
-    public float innerRadius = 50f;   // Vùng gần - cho phép tương tác
+    public float chunkSize = 100f;
+    public int visibleRadius = 2;
+    public string chunkTag = "Chunk";
 
-    public string tagToCheck = "Obstacle"; // Tag của object cần xét (ví dụ: cây, đá,...)
+    private List<GameObject> allChunks = new List<GameObject>();
+    private Vector2Int lastPlayerChunkCoord = Vector2Int.zero;
+    public Transform player;
+    private Vector3 terrainOrigin = Vector3.zero;
 
-    private Transform player;
-    private List<GameObject> trackedObjects = new List<GameObject>();
+    private float checkTimer = 0f;
+    public float checkInterval = 1f;
 
-    private void Start()
+    void Start()
     {
-        player = this.transform; // Gán chính Camera (gắn script này vào Camera)
+        if (player == null)
+            player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
-        // Tìm tất cả object có tag (kể cả object là con của object khác như Forest)
-        GameObject[] objs = GameObject.FindGameObjectsWithTag(tagToCheck);
-        trackedObjects.AddRange(objs);
+        if (player == null)
+        {
+            Debug.LogError("❌ Không tìm thấy player!");
+            enabled = false;
+            return;
+        }
+
+        if (Terrain.activeTerrain != null)
+            terrainOrigin = Terrain.activeTerrain.GetPosition();
+
+        UpdateChunkVisibility(force: true);
     }
 
-    private void Update()
+    void Update()
     {
-        if (player == null) return;
-
-        foreach (GameObject obj in trackedObjects)
+        checkTimer += Time.deltaTime;
+        if (checkTimer >= checkInterval)
         {
-            if (obj == null) continue;
+            checkTimer = 0f;
+            UpdateChunkVisibility();
+        }
 
-            float distance = Vector3.Distance(player.position, obj.transform.position);
-
-            bool inOuter = distance <= outerRadius;
-            bool inInner = distance <= innerRadius;
-
-            // Tắt/bật toàn bộ GameObject (bao gồm cả renderer, collider, script…)
-            obj.SetActive(inOuter);
-
-            // Nếu muốn collider chỉ hoạt động trong inner radius, phải bật lại thủ công sau khi SetActive(true)
-            if (inOuter)
-            {
-                Collider[] colliders = obj.GetComponentsInChildren<Collider>(true);
-                foreach (Collider col in colliders)
-                    col.enabled = inInner;
-            }
+        Vector2Int currentChunkCoord = GetChunkCoordFromPosition(player.position);
+        if (currentChunkCoord != lastPlayerChunkCoord)
+        {
+            lastPlayerChunkCoord = currentChunkCoord;
+            UpdateChunkVisibility();
         }
     }
 
+    public void RefreshChunkList()
+    {
+        GameObject[] chunks = GameObject.FindGameObjectsWithTag(chunkTag);
+        allChunks.Clear();
+        allChunks.AddRange(chunks);
+        Debug.Log("🔄 Chunk list cập nhật lại: " + allChunks.Count);
+        UpdateChunkVisibility(force: true);
+    }
 
+    void UpdateChunkVisibility(bool force = false)
+    {
+        Vector3 relativePlayerPos = player.position - terrainOrigin;
+        Vector2 playerPos2D = new Vector2(relativePlayerPos.x, relativePlayerPos.z);
+        float maxDistance = visibleRadius * chunkSize;
+
+        foreach (GameObject chunk in allChunks)
+        {
+            if (chunk == null) continue;
+
+            Vector3 relativeChunkPos = chunk.transform.position - terrainOrigin;
+            Vector2 chunkPos2D = new Vector2(relativeChunkPos.x, relativeChunkPos.z);
+            float dist = Vector2.Distance(playerPos2D, chunkPos2D);
+            bool isVisible = dist <= maxDistance;
+
+            if (chunk.activeSelf != isVisible || force)
+                chunk.SetActive(isVisible);
+        }
+    }
+
+    Vector2Int GetChunkCoordFromPosition(Vector3 pos)
+    {
+        Vector3 relativePos = pos - terrainOrigin;
+        return new Vector2Int(
+            Mathf.FloorToInt(relativePos.x / chunkSize),
+            Mathf.FloorToInt(relativePos.z / chunkSize));
+    }
 
     private void OnDrawGizmosSelected()
     {
         if (player == null) return;
-
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(player.position, outerRadius);
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(player.position, innerRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(player.position, visibleRadius * chunkSize);
     }
 }

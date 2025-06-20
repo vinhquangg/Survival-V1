@@ -11,37 +11,32 @@ public class ObjectScatterer : MonoBehaviour
     [Tooltip("Số lần thử spawn tối đa cho mỗi vùng nếu bị raycast fail")]
     public int maxAttemptsPerBiome = 500;
 
-    [Tooltip("Chỉ spawn nếu vùng Grass chiếm tối thiểu bao nhiêu % (0.0 - 1.0)")]
     [Range(0f, 1f)]
     public float minGrassCoverage = 0.5f;
-
-    [Tooltip("Index của texture Grass trong Terrain Layers")]
     public int grassTextureIndex = 1;
+    public float chunkSize = 100f;
+
+    private Vector3 terrainOrigin;
+    private Dictionary<string, GameObject> chunkMap = new Dictionary<string, GameObject>();
 
     private void Start()
     {
+        if (Terrain.activeTerrain != null)
+            terrainOrigin = Terrain.activeTerrain.GetPosition();
+
         ScatterObjectsPerBiome();
+
+        // Cập nhật chunk sau khi scatter (Cách B)
+        var cullingZone = FindObjectOfType<VisibilityCullingZone>();
+        if (cullingZone != null)
+            cullingZone.RefreshChunkList();
     }
 
-    void ScatterObjectsPerBiome()
+    private void ScatterObjectsPerBiome()
     {
         int totalSpawned = 0;
-        int totalRaycastFail = 0;
-        int totalPrefabFail = 0;
-        int totalNotGrass = 0;
-
         BiomeRegion[] regions = biomeManager.allBiomes;
-        if (regions == null || regions.Length == 0)
-        {
-            Debug.LogWarning("❌ Không có vùng biome nào được tìm thấy.");
-            return;
-        }
-
-        Transform forestParent = GameObject.FindWithTag("Forest")?.transform;
-        if (forestParent == null)
-        {
-            Debug.LogWarning("❌ Không tìm thấy GameObject có tag 'Forest' để gán object làm con.");
-        }
+        if (regions == null || regions.Length == 0) return;
 
         int spawnPerRegion = Mathf.CeilToInt((float)baseSpawnCount / regions.Length);
 
@@ -49,135 +44,89 @@ public class ObjectScatterer : MonoBehaviour
         {
             Collider col = region.GetComponent<Collider>();
             BiomeData biomeData = region.biomeData;
-
-            if (col == null || biomeData == null || biomeData.spawnableObjects == null || biomeData.spawnableObjects.Length == 0)
-            {
-                Debug.LogWarning($"⚠️ BiomeRegion {region.name} bị thiếu dữ liệu hoặc collider.");
-                continue;
-            }
+            if (col == null || biomeData == null || biomeData.spawnableObjects == null) continue;
 
             Bounds bounds = col.bounds;
-            int spawnedInThisRegion = 0;
-            int attempts = 0;
+            int spawned = 0, attempts = 0;
 
-            while (spawnedInThisRegion < spawnPerRegion && attempts < maxAttemptsPerBiome)
+            while (spawned < spawnPerRegion && attempts < maxAttemptsPerBiome)
             {
                 Vector3 randomPos = GetRandomPointInBounds(bounds);
-
                 if (Physics.Raycast(randomPos + Vector3.up * 50f, Vector3.down, out RaycastHit hit, 100f, groundLayer))
                 {
                     Terrain terrain = hit.collider.GetComponent<Terrain>();
-                    if (terrain != null && !IsGrassTexture(hit.point, terrain))
-                    {
-                        totalNotGrass++;
-                        attempts++;
-                        continue;
-                    }
+                    if (terrain != null && !IsGrassTexture(hit.point, terrain)) { attempts++; continue; }
 
                     GameObject prefab = biomeData.spawnableObjects[Random.Range(0, biomeData.spawnableObjects.Length)];
-                    if (prefab == null)
-                    {
-                        totalPrefabFail++;
-                        attempts++;
-                        continue;
-                    }
+                    if (prefab == null) { attempts++; continue; }
 
-                    Vector3 spawnPos = hit.point;
-                    GameObject obj = Instantiate(prefab, spawnPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
+                    GameObject obj = Instantiate(prefab, hit.point, Quaternion.Euler(0, Random.Range(0, 360), 0));
+                    GameObject chunk = GetOrCreateChunk(hit.point);
+                    obj.transform.SetParent(chunk.transform);
 
-                    if (forestParent != null)
-                        obj.transform.SetParent(forestParent);
-
-                    if (IsBlockingObject(prefab))
-                    {
-                        AddNavMeshObstacle(obj);
-                    }
-
-                    spawnedInThisRegion++;
+                    if (IsBlockingObject(prefab)) AddNavMeshObstacle(obj);
+                    spawned++;
                     totalSpawned++;
                 }
-                else
-                {
-                    totalRaycastFail++;
-                }
-
                 attempts++;
             }
-
-            Debug.Log($"🌱 Biome '{region.name}': Spawned {spawnedInThisRegion}/{spawnPerRegion} (Attempts: {attempts})");
         }
-
-        Debug.Log($"✅ Tổng object đã spawn: {totalSpawned} / {baseSpawnCount} | ❌ Raycast fail: {totalRaycastFail}, Prefab null: {totalPrefabFail}, Not Grass: {totalNotGrass}");
     }
 
+    private GameObject GetOrCreateChunk(Vector3 worldPos)
+    {
+        int chunkX = Mathf.FloorToInt((worldPos.x - terrainOrigin.x) / chunkSize);
+        int chunkZ = Mathf.FloorToInt((worldPos.z - terrainOrigin.z) / chunkSize);
+        string name = $"Chunk_{chunkX}_{chunkZ}";
 
-    Vector3 GetRandomPointInBounds(Bounds bounds)
+        if (chunkMap.TryGetValue(name, out GameObject chunk)) return chunk;
+
+        chunk = new GameObject(name);
+        chunk.transform.position = new Vector3(
+            chunkX * chunkSize + chunkSize * 0.5f + terrainOrigin.x,
+            0f,
+            chunkZ * chunkSize + chunkSize * 0.5f + terrainOrigin.z);
+        chunk.tag = "Chunk";
+        chunk.transform.SetParent(this.transform);
+        chunkMap[name] = chunk;
+        return chunk;
+    }
+
+    private Vector3 GetRandomPointInBounds(Bounds bounds)
     {
         return new Vector3(
             Random.Range(bounds.min.x, bounds.max.x),
             bounds.center.y,
-            Random.Range(bounds.min.z, bounds.max.z)
-        );
+            Random.Range(bounds.min.z, bounds.max.z));
     }
 
-    bool IsGrassTexture(Vector3 worldPos, Terrain terrain)
+    private bool IsGrassTexture(Vector3 worldPos, Terrain terrain)
     {
         Vector3 terrainPos = worldPos - terrain.transform.position;
         TerrainData data = terrain.terrainData;
-
         int mapX = Mathf.FloorToInt((terrainPos.x / data.size.x) * data.alphamapWidth);
         int mapZ = Mathf.FloorToInt((terrainPos.z / data.size.z) * data.alphamapHeight);
-
         float[,,] splat = data.GetAlphamaps(mapX, mapZ, 1, 1);
-        float grassStrength = splat[0, 0, grassTextureIndex];
-
-        return grassStrength >= minGrassCoverage;
+        return splat[0, 0, grassTextureIndex] >= minGrassCoverage;
     }
 
-    bool IsBlockingObject(GameObject prefab)
+    private bool IsBlockingObject(GameObject prefab) => prefab.CompareTag("Obstacle");
+
+    private void AddNavMeshObstacle(GameObject obj)
     {
-
-        return prefab.CompareTag("Obstacle"); 
-    }
-    void AddNavMeshObstacle(GameObject obj)
-    {
-        LODGroup lodGroup = obj.GetComponentInChildren<LODGroup>();
-        Renderer rend = null;
-
-        if (lodGroup != null)
-        {
-            LOD[] lods = lodGroup.GetLODs();
-            if (lods.Length > 0 && lods[0].renderers.Length > 0)
-            {
-                rend = lods[0].renderers[0]; 
-            }
-        }
-        else
-        {
-            rend = obj.GetComponentInChildren<Renderer>(); 
-        }
-
-        if (rend == null)
-        {
-            Debug.LogWarning($"❌ Không tìm thấy Renderer trong object {obj.name}, không thêm NavMeshObstacle.");
-            return;
-        }
+        Renderer rend = obj.GetComponentInChildren<Renderer>();
+        if (rend == null) return;
 
         Bounds bounds = rend.bounds;
         float height = bounds.size.y;
         float radius = Mathf.Max(bounds.size.x, bounds.size.z) * 0.5f;
 
-        NavMeshObstacle obstacle = obj.AddComponent<NavMeshObstacle>();
-        obstacle.shape = NavMeshObstacleShape.Capsule;
-        obstacle.height = height;
-        obstacle.radius = radius * 0.01f;
-        if(obstacle.radius < 0.14)
-        {
-            obstacle.radius = radius * 0.16f;
-        }
-        obstacle.center = new Vector3(0, height * 0.5f, 0);
-        obstacle.carving = true;
-        obstacle.carveOnlyStationary = true;
+        var obs = obj.AddComponent<NavMeshObstacle>();
+        obs.shape = NavMeshObstacleShape.Capsule;
+        obs.height = height;
+        obs.radius = Mathf.Max(0.16f, radius * 0.1f);
+        obs.center = new Vector3(0, height * 0.5f, 0);
+        obs.carving = true;
+        obs.carveOnlyStationary = true;
     }
-
 }

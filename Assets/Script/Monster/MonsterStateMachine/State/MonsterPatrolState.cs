@@ -20,7 +20,7 @@ public class MonsterPatrolState : IInterfaceMonsterState
     {
         enemy.baseMonster._navMeshAgent.isStopped = false;
         enemy.animator.SetBool("isPatrol", true);
-        enemy.PlayAnimation("Chase_Monster");
+        enemy.PlayAnimation("Patrol_Monster");
         enemy.baseMonster.SetRandomPatrolDestination(patrolRadius);
     }
 
@@ -59,6 +59,7 @@ public class MonsterPatrolState : IInterfaceMonsterState
                 waitCounter = 0f;
 
                 enemy.animator.SetBool("isPatrol", false);
+                enemy.animator.SetBool("isChase",false);
                 enemy.PlayAnimation("Idle_Monster");
             }
             else
@@ -68,8 +69,7 @@ public class MonsterPatrolState : IInterfaceMonsterState
                 {
                     isWaiting = false;
                     enemy.animator.SetBool("isPatrol", true);
-                    enemy.PlayAnimation("Chase_Monster");
-
+                    enemy.PlayAnimation("Patrol_Monster");
                     enemy.baseMonster.SetRandomPatrolDestination(patrolRadius);
                 }
             }

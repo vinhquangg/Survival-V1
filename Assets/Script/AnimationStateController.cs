@@ -3,7 +3,7 @@
 public class AnimationStateController : MonoBehaviour
 {
     private Animator animator;
-
+    private PlayerController playerController;
     private float acceleration = 4f;
     private float deceleration = 6f;
     private Vector2 currentVelocity = Vector2.zero;
@@ -20,7 +20,7 @@ public class AnimationStateController : MonoBehaviour
             Debug.LogError("Animator not found!");
             return;
         }
-
+        playerController = GetComponent<PlayerController>();
         moveXHash = Animator.StringToHash("Velocity X");
         moveYHash = Animator.StringToHash("Velocity Y");
         isRunHash = Animator.StringToHash("isRun");
@@ -40,4 +40,8 @@ public class AnimationStateController : MonoBehaviour
         animator.SetTrigger("isAttack");
     }
 
+    private void Attack()
+    {
+        playerController.HandleAtack();
+    }
 }

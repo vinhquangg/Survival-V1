@@ -18,6 +18,8 @@ public abstract class BaseMonster : MonoBehaviour
     public float knockbackForce = 5f;
     public float patrolSpeed = 1f;
     public float currentHeal;
+    private float graceTimer = 0f;
+    private float graceTimeMax = 0.5f;
     protected virtual void Start()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -34,31 +36,59 @@ public abstract class BaseMonster : MonoBehaviour
         Vector3 directionToPlayer = player.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
 
-        if (distanceToPlayer < detectedRange)
+        if (distanceToPlayer > detectedRange)
         {
-            Ray ray = new Ray(transform.position + Vector3.up, directionToPlayer.normalized);
-            RaycastHit hit;
+            graceTimer = 0f;
+            return false;
+        }
 
-            if (Physics.Raycast(ray, out hit, detectedRange))
+        Vector3 origin = transform.position + Vector3.up * 1.2f;
+        if (Physics.Raycast(origin, directionToPlayer.normalized, out RaycastHit hit, detectedRange))
+        {
+            if (hit.transform.CompareTag("Player"))
             {
-                if (hit.transform == player)
-                {
-                    return true;
-                }
+                graceTimer = 0f;
+                return true;
             }
         }
 
-        return false;
+        graceTimer += Time.deltaTime;
+        return graceTimer <= graceTimeMax;
     }
 
-    public virtual void SetDestination()
-    {
-        if (player != null)
-        {
-            Vector3 targetVector = player.transform.position;
-            _navMeshAgent.SetDestination(targetVector);
-        }
-    }
+    //public virtual bool CanSeePlayer()
+    //{
+    //    if (player == null) return false;
+
+    //    Vector3 directionToPlayer = player.position - transform.position;
+    //    float distanceToPlayer = directionToPlayer.magnitude;
+
+    //    if (distanceToPlayer < detectedRange)
+    //    {
+    //        return true;
+    //        //Ray ray = new Ray(transform.position + Vector3.up, directionToPlayer);
+    //        //RaycastHit hit;
+
+    //        //if (Physics.Raycast(ray, out hit, detectedRange))
+    //        //{
+    //        //    if (hit.transform == player)
+    //        //    {
+    //        //        return true;
+    //        //    }
+    //        //}
+    //    }
+
+    //    return false;
+    //}
+
+    //public virtual void SetDestination()
+    //{
+    //    if (player != null)
+    //    {
+    //        Vector3 targetVector = player.transform.position;
+    //        _navMeshAgent.SetDestination(targetVector);
+    //    }
+    //}
 
     public virtual void SetRandomPatrolDestination(float patrolRadius)
     {
@@ -87,7 +117,7 @@ public abstract class BaseMonster : MonoBehaviour
     protected virtual void Die()
     {
         Debug.Log($"{gameObject.name} đã chết");
-        Destroy(gameObject); // hoặc play anim chết trước khi destroy
+        gameObject.SetActive(false);
     }
 
 

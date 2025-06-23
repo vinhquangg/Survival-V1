@@ -19,6 +19,11 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
 
+    public float weaponHitRadius;
+    public Transform weaponHitPoint;
+    public int damage;
+    public LayerMask targetMask;
+
     private void Awake()
     {
         inputHandler = GetComponent<InputHandler>();
@@ -50,7 +55,10 @@ public class PlayerController : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
-        HandleAtack();
+        if (Input.GetMouseButtonDown(0))
+        {
+            animationController.TriggerAttack(); 
+        }
     }
 
     private void HandleMove(Vector2 moveInput)
@@ -80,11 +88,19 @@ public class PlayerController : MonoBehaviour
         transform.Rotate(Vector3.up * look.x);
     }
 
-    private void HandleAtack()
+    public void HandleAtack()
     {
-        if (Input.GetMouseButtonDown(0))
+        Collider[] hitTargets = Physics.OverlapSphere(weaponHitPoint.position, weaponHitRadius, targetMask);
+        Debug.Log($"Found {hitTargets.Length} targets");
+        foreach (var target in hitTargets)
         {
-            animationController.TriggerAttack();
+            Debug.Log($"Hit {target.name} with damage: {damage}");
+
+            if (target.TryGetComponent<BaseMonster>(out var monster))
+            {
+                monster.TakeDamage(damage);
+            }
         }
     }
+
 }

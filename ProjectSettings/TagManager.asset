@@ -11,6 +11,7 @@ TagManager:
   - Chunk
   - Scatter
   - PlayerWeapon
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -30,7 +31,7 @@ TagManager:
   - Environment
   - Ground
   - Tree
-  - 
+  - Enemy
   - 
   - 
   - 

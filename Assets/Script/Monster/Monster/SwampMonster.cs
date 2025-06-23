@@ -56,12 +56,9 @@ public class SwampMonster : BaseMonster
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"SwampMonster trigger va chạm với: {other.name}");
 
         if (other.CompareTag("PlayerWeapon"))
         {
-            Debug.Log($"{gameObject.name} bị trúng đòn!");
-
             float damage = 10f;
             currentHeal -= damage;
             Debug.Log($"Máu còn lại của quái: {currentHeal}");

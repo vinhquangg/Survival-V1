@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
-
+        HandleAtack();
     }
 
     private void HandleMove(Vector2 moveInput)
@@ -78,5 +78,13 @@ public class PlayerController : MonoBehaviour
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
         transform.Rotate(Vector3.up * look.x);
+    }
+
+    private void HandleAtack()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            animationController.TriggerAttack();
+        }
     }
 }

@@ -1,38 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MonsterIdleState : IInterfaceMonsterState
 {
     private MonsterStateMachine enemy;
+    private float idleDuration = 10f;
+    private float idleTimer;
+
     public MonsterIdleState(MonsterStateMachine enemy)
     {
         this.enemy = enemy;
     }
+
     public void EnterState()
     {
-        enemy.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        enemy._rigidbody.velocity = Vector3.zero;
         enemy.baseMonster._navMeshAgent.ResetPath();
         enemy.PlayAnimation("Idle_Monster");
+        idleTimer = 0f;
     }
 
     public void ExitState()
     {
-
     }
 
     public void FixedUpdateState()
     {
-        
     }
 
     public void UpdateState()
     {
-        if(enemy.baseMonster.CanSeePlayer())
+        if (enemy.baseMonster.CanSeePlayer())
         {
             enemy.SwitchState(new MonsterChaseState(enemy));
+            return;
+        }
+
+        idleTimer += Time.deltaTime;
+
+        if (idleTimer >= idleDuration)
+        {
+            enemy.SwitchState(new MonsterPatrolState(enemy));
         }
     }
-
-
 }

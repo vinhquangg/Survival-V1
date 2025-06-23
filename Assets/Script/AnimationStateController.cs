@@ -4,7 +4,6 @@ public class AnimationStateController : MonoBehaviour
 {
     private Animator animator;
 
-    // blend tốc độ mượt hơn nếu cần
     private float acceleration = 4f;
     private float deceleration = 6f;
     private Vector2 currentVelocity = Vector2.zero;
@@ -29,13 +28,16 @@ public class AnimationStateController : MonoBehaviour
 
     public void UpdateAnimationState(Vector2 input, bool isRunning)
     {
-        // mượt hóa input (nếu cần, không bắt buộc)
         currentVelocity = Vector2.MoveTowards(currentVelocity, input,
                             (isRunning ? acceleration : deceleration) * Time.deltaTime);
 
-        // Gán giá trị vào Animator
         animator.SetFloat(moveXHash, currentVelocity.x);
         animator.SetFloat(moveYHash, currentVelocity.y);
         animator.SetBool(isRunHash, isRunning);
     }
+    public void TriggerAttack()
+    {
+        animator.SetTrigger("isAttack");
+    }
+
 }

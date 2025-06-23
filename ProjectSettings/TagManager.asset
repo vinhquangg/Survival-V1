@@ -10,6 +10,7 @@ TagManager:
   - Rock
   - Chunk
   - Scatter
+  - PlayerWeapon
   layers:
   - Default
   - TransparentFX

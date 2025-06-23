@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -17,6 +17,7 @@ public abstract class BaseMonster : MonoBehaviour
     public bool isKnockback = false;
     public float knockbackForce = 5f;
     public float patrolSpeed = 1f;
+    public float currentHeal;
     protected virtual void Start()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -69,6 +70,24 @@ public abstract class BaseMonster : MonoBehaviour
         {
             _navMeshAgent.SetDestination(hit.position);
         }
+    }
+
+    public virtual void TakeDamage(float damage)
+    {
+        currentHeal -= damage;
+        Debug.Log($"{gameObject.name} bị trúng, còn {currentHeal} máu");
+
+        if (currentHeal <= 0)
+        {
+            Die();
+        }
+    }
+
+
+    protected virtual void Die()
+    {
+        Debug.Log($"{gameObject.name} đã chết");
+        Destroy(gameObject); // hoặc play anim chết trước khi destroy
     }
 
 

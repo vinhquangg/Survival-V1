@@ -1,69 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
-    public float interactionDistance;
-    public GameObject interaction_Info;
-    public GameObject interaction_Type;
-    public GameObject cursor;
+    public float interactionDistance = 3f;
+    public Transform cursorTransform;
     public LayerMask interactableLayer;
-    TextMeshProUGUI interact_text;
-    TextMeshProUGUI interact_type;
 
     private IInteractable currentInteractable;
     public IInteractable CurrentInteractable => currentInteractable;
-    void Start()
-    {
-        interact_text= interaction_Info.GetComponent<TextMeshProUGUI>();
-        interact_type = interaction_Type.GetComponent<TextMeshProUGUI>();
-
-    }
 
     void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+        Ray ray = new Ray(cursorTransform.position, cursorTransform.forward);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, 100f, interactableLayer))
+        if (Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
         {
-            var selectionTransform = hit.transform;
-            var interactable = selectionTransform.GetComponent<IInteractable>();
-
+            var interactable = hit.transform.GetComponent<IInteractable>();
             if (interactable != null)
             {
-                float distance = Vector3.Distance(Camera.main.transform.position, hit.point);
-                if (distance <= interactionDistance)
+                if (currentInteractable != interactable)
                 {
-                    ShowInteractionUI(interactable.GetItemName(), interactable.GetItemType());
+                    currentInteractable?.HideUI();    
+                    interactable.ShowUI();            
                     currentInteractable = interactable;
-                    return;
                 }
+
+                return;
             }
         }
 
-        HideInteractionUI();
+        currentInteractable?.HideUI();
         currentInteractable = null;
-    }
-
-
-
-    void ShowInteractionUI(string name, string type)
-    {
-        interact_text.text = name;
-        interact_type.text = type;
-        cursor.SetActive(false);
-        interaction_Info.SetActive(true);
-        interaction_Type.SetActive(true);
-    }
-
-    void HideInteractionUI()
-    {
-        cursor.SetActive(true);
-        interaction_Info.SetActive(false);
-        interaction_Type.SetActive(false);
     }
 }

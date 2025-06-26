@@ -1,33 +1,48 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using TMPro;
 using UnityEngine;
 
 public class ItemPickup : MonoBehaviour, IInteractable
 {
     private ItemEntity itemEntity;
-    private InteractableObject InteractableObject;
+    private InteractableObject interactableObject;
 
+    [SerializeField] private GameObject tooltipUI;
+    private TextMeshProUGUI interactionInfoText;
+    private TextMeshProUGUI interactionTypeText;
 
     private void Awake()
     {
         itemEntity = GetComponent<ItemEntity>();
         if (itemEntity == null)
             Debug.LogError("Missing ItemEntity on ItemPickup");
-        InteractableObject = GetComponent<InteractableObject>();
-        if (InteractableObject == null)
-        {
-            Debug.LogError("ItemPickup requires an InteractableObject component.");
-        }
+
+        interactableObject = GetComponent<InteractableObject>();
+        if (interactableObject == null)
+            Debug.LogError("Missing InteractableObject on ItemPickup");
+
+        if (tooltipUI == null)
+            Debug.LogWarning("Tooltip UI chưa gán cho: " + gameObject.name);
+
+        interactionInfoText = tooltipUI.transform.Find("interaction_Info")?.GetComponent<TextMeshProUGUI>();
+        interactionTypeText = tooltipUI.transform.Find("interaction_type")?.GetComponent<TextMeshProUGUI>();
+
+        if (interactionInfoText != null)
+            interactionInfoText.text = interactableObject.GetItemName();
+
+        if (interactionTypeText != null)
+            interactionTypeText.text = interactableObject.GetItemType();
+
+        HideUI();
     }
 
     public string GetItemName()
     {
-        return InteractableObject.GetItemName();
+        return interactableObject.GetItemName();
     }
 
     public string GetItemType()
     {
-        return InteractableObject.GetItemType();
+        return interactableObject.GetItemType();
     }
 
     public void Interact(GameObject interactor)
@@ -39,4 +54,21 @@ public class ItemPickup : MonoBehaviour, IInteractable
             Destroy(gameObject);
         }
     }
+    public GameObject GetItemUI()
+    {
+        return tooltipUI;
+    }
+
+    public void ShowUI()
+    {
+        if (tooltipUI != null)
+            tooltipUI.SetActive(true);
+    }
+
+    public void HideUI()
+    {
+        if (tooltipUI != null)
+            tooltipUI.SetActive(false);
+    }
+
 }

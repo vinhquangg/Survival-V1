@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class ObjectScatterer : MonoBehaviour
 {
@@ -16,6 +15,9 @@ public class ObjectScatterer : MonoBehaviour
     public int grassTextureIndex = 1;
     public float chunkSize = 100f;
 
+    [Tooltip("Container chứa tất cả các chunk")]
+    public Transform chunkContainer;
+
     private Vector3 terrainOrigin;
     private Dictionary<string, GameObject> chunkMap = new Dictionary<string, GameObject>();
 
@@ -24,9 +26,14 @@ public class ObjectScatterer : MonoBehaviour
         if (Terrain.activeTerrain != null)
             terrainOrigin = Terrain.activeTerrain.GetPosition();
 
+        if (chunkContainer == null)
+        {
+            GameObject container = GameObject.Find("ChunkContainer");
+            if (container != null) chunkContainer = container.transform;
+        }
+
         ScatterObjectsPerBiome();
 
-        // Cập nhật chunk sau khi scatter (Cách B)
         var cullingZone = FindObjectOfType<VisibilityCullingZone>();
         if (cullingZone != null)
             cullingZone.RefreshChunkList();
@@ -60,18 +67,41 @@ public class ObjectScatterer : MonoBehaviour
                     GameObject prefab = biomeData.spawnableObjects[Random.Range(0, biomeData.spawnableObjects.Length)];
                     if (prefab == null) { attempts++; continue; }
 
-                    GameObject obj = Instantiate(prefab, hit.point, Quaternion.Euler(0, Random.Range(0, 360), 0));
                     GameObject chunk = GetOrCreateChunk(hit.point);
-                    obj.transform.SetParent(chunk.transform);
 
-                    if (IsBlockingObject(prefab)) AddNavMeshObstacle(obj);
+                    // An toàn khi add component
+                    if (!chunk.TryGetComponent(out ChunkObjectSpawner spawner))
+                        spawner = chunk.AddComponent<ChunkObjectSpawner>();
+
+                    if (spawner.objectsToSpawn == null)
+                        spawner.objectsToSpawn = new List<ChunkObjectSpawner.SpawnInfo>();
+
+                    spawner.objectsToSpawn.Add(new ChunkObjectSpawner.SpawnInfo
+                    {
+                        tag = prefab.tag,
+                        localPosition = chunk.transform.InverseTransformPoint(hit.point),
+                        localRotation = new Vector3(0, Random.Range(0f, 360f), 0)
+                    });
+
                     spawned++;
                     totalSpawned++;
                 }
                 attempts++;
             }
         }
+
+        //// Sau khi scatter xong, gọi SpawnObjects() trên toàn bộ các chunk đã có
+        //foreach (GameObject chunk in chunkMap.Values)
+        //{
+        //    if (chunk.TryGetComponent(out ChunkObjectSpawner spawner))
+        //    {
+        //        spawner.SpawnObjects(); // Gọi sau khi đã có đầy đủ dữ liệu
+        //    }
+        //}
+
+        Debug.Log($"✅ Tổng object đã chuẩn bị spawn bằng Pool: {totalSpawned}");
     }
+
 
     private GameObject GetOrCreateChunk(Vector3 worldPos)
     {
@@ -86,8 +116,13 @@ public class ObjectScatterer : MonoBehaviour
             chunkX * chunkSize + chunkSize * 0.5f + terrainOrigin.x,
             0f,
             chunkZ * chunkSize + chunkSize * 0.5f + terrainOrigin.z);
+
         chunk.tag = "Chunk";
-        chunk.transform.SetParent(this.transform);
+        if (chunkContainer != null)
+            chunk.transform.SetParent(chunkContainer);
+        else
+            chunk.transform.SetParent(this.transform);
+
         chunkMap[name] = chunk;
         return chunk;
     }
@@ -108,25 +143,5 @@ public class ObjectScatterer : MonoBehaviour
         int mapZ = Mathf.FloorToInt((terrainPos.z / data.size.z) * data.alphamapHeight);
         float[,,] splat = data.GetAlphamaps(mapX, mapZ, 1, 1);
         return splat[0, 0, grassTextureIndex] >= minGrassCoverage;
-    }
-
-    private bool IsBlockingObject(GameObject prefab) => prefab.CompareTag("Obstacle");
-
-    private void AddNavMeshObstacle(GameObject obj)
-    {
-        Renderer rend = obj.GetComponentInChildren<Renderer>();
-        if (rend == null) return;
-
-        Bounds bounds = rend.bounds;
-        float height = bounds.size.y;
-        float radius = Mathf.Max(bounds.size.x, bounds.size.z) * 0.5f;
-
-        var obs = obj.AddComponent<NavMeshObstacle>();
-        obs.shape = NavMeshObstacleShape.Capsule;
-        obs.height = height;
-        obs.radius = Mathf.Max(0.16f, radius * 0.1f);
-        obs.center = new Vector3(0, height * 0.5f, 0);
-        obs.carving = true;
-        obs.carveOnlyStationary = true;
     }
 }

@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class VisibilityCullingZone : MonoBehaviour
 {
@@ -30,7 +30,7 @@ public class VisibilityCullingZone : MonoBehaviour
         if (Terrain.activeTerrain != null)
             terrainOrigin = Terrain.activeTerrain.GetPosition();
 
-        UpdateChunkVisibility(force: true);
+        RefreshChunkList();
     }
 
     void Update()
@@ -55,7 +55,7 @@ public class VisibilityCullingZone : MonoBehaviour
         GameObject[] chunks = GameObject.FindGameObjectsWithTag(chunkTag);
         allChunks.Clear();
         allChunks.AddRange(chunks);
-        Debug.Log("🔄 Chunk list cập nhật lại: " + allChunks.Count);
+        Debug.Log("🔄 Cập nhật danh sách chunk: " + allChunks.Count);
         UpdateChunkVisibility(force: true);
     }
 
@@ -68,14 +68,31 @@ public class VisibilityCullingZone : MonoBehaviour
         foreach (GameObject chunk in allChunks)
         {
             if (chunk == null) continue;
+            if (chunk.name == "ChunkContainer") continue;
 
             Vector3 relativeChunkPos = chunk.transform.position - terrainOrigin;
             Vector2 chunkPos2D = new Vector2(relativeChunkPos.x, relativeChunkPos.z);
             float dist = Vector2.Distance(playerPos2D, chunkPos2D);
+
             bool isVisible = dist <= maxDistance;
 
-            if (chunk.activeSelf != isVisible || force)
-                chunk.SetActive(isVisible);
+            ChunkObjectSpawner spawner = chunk.GetComponent<ChunkObjectSpawner>();
+
+            if (isVisible)
+            {
+                if (!chunk.activeSelf || force)
+                {
+                    chunk.SetActive(true); // ⚠️ Bật trước khi spawn
+                    spawner?.SpawnObjects();
+                }
+            }
+            else
+            {
+                if (chunk.activeSelf || force)
+                {
+                    chunk.SetActive(false); // tự động gọi OnDisable => despawn
+                }
+            }
         }
     }
 
@@ -84,7 +101,8 @@ public class VisibilityCullingZone : MonoBehaviour
         Vector3 relativePos = pos - terrainOrigin;
         return new Vector2Int(
             Mathf.FloorToInt(relativePos.x / chunkSize),
-            Mathf.FloorToInt(relativePos.z / chunkSize));
+            Mathf.FloorToInt(relativePos.z / chunkSize)
+        );
     }
 
     private void OnDrawGizmosSelected()

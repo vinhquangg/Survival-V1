@@ -33,7 +33,7 @@ public class AttackState : PlayerState
     {
         player.inputHandler.EnablePlayerInput();
 
-        player.animationController.DisableUpperBodyLayerDelayed(0.05f);
+        //player.animationController.DisableUpperBodyLayerDelayed(0.05f);
     }
 
 }

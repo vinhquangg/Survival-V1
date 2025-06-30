@@ -52,6 +52,7 @@ public class AnimationStateController : MonoBehaviour
     public void ResetAttack()
     {
         isAttacking = false;
+        SetUpperBodyLayerWeight(0f);
     }
 
     private void Attack() 

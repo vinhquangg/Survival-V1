@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +13,7 @@ public class AttackState : PlayerState
         player.inputHandler.DisablePlayerInput();
         attackTimer = attackDuration;
         player.animationController.TriggerAttack();
+        player.animationController.SetUpperBodyLayerWeight(1f);
     }
 
     public override void Update()
@@ -31,5 +32,8 @@ public class AttackState : PlayerState
     public override void Exit()
     {
         player.inputHandler.EnablePlayerInput();
+
+        player.animationController.DisableUpperBodyLayerDelayed(0.05f);
     }
+
 }

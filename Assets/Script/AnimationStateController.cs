@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class AnimationStateController : MonoBehaviour
 {
@@ -43,7 +44,6 @@ public class AnimationStateController : MonoBehaviour
     public void TriggerAttack()
     {
         if (isAttacking) return; 
-
         isAttacking = true;
         animator.SetTrigger("isAttack");
     }
@@ -54,8 +54,24 @@ public class AnimationStateController : MonoBehaviour
         isAttacking = false;
     }
 
-    private void Attack() // Gọi bằng Animation Event ở giữa animation
+    private void Attack() 
     {
         playerController.HandleAtack();
+    }
+
+    public void SetUpperBodyLayerWeight(float weight)
+    {
+        animator.SetLayerWeight(1, weight); 
+    }
+
+    public void DisableUpperBodyLayerDelayed(float delay)
+    {
+        StartCoroutine(DisableLayerCoroutine(delay));
+    }
+
+    private IEnumerator DisableLayerCoroutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        animator.SetLayerWeight(1, 0f);
     }
 }

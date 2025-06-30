@@ -8,23 +8,33 @@ public class CameraTarget : MonoBehaviour
     public float smoothSpeed = 5f;
     public float pitchSpeed = 80f;
     public Vector2 pitchClamp = new Vector2(-30f, 60f);
-    private float yaw = 0f; // thêm để xoay theo player
+    public static CameraTarget Instance { get; private set; }
+    private float yaw = 0f; 
 
     private float pitch = 0f;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     void LateUpdate()
     {
         if (target == null || lookTarget == null) return;
 
-        // xử lý pitch (xoay lên/xuống)
         float mouseY = Input.GetAxis("Mouse Y");
         pitch -= mouseY * pitchSpeed * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, pitchClamp.x, pitchClamp.y);
 
-        // xoay ngang (yaw) theo hướng Player
         yaw = target.eulerAngles.y;
 
-        // tạo quaternion từ pitch (X) và yaw (Y)
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
         Vector3 desiredPosition = target.position + rotation * offset;
 

@@ -100,10 +100,11 @@ public class VisibilityCullingZone : MonoBehaviour
     {
         Vector3 relativePos = pos - terrainOrigin;
         return new Vector2Int(
-            Mathf.FloorToInt(relativePos.x / chunkSize),
-            Mathf.FloorToInt(relativePos.z / chunkSize)
+            Mathf.RoundToInt(relativePos.x / chunkSize),
+            Mathf.RoundToInt(relativePos.z / chunkSize)
         );
     }
+
 
     private void OnDrawGizmosSelected()
     {

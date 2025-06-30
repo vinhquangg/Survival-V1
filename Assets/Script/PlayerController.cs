@@ -2,9 +2,10 @@
 
 public class PlayerController : MonoBehaviour
 {
-    private InputHandler inputHandler;
-    private CharacterController controller;
-    private AnimationStateController animationController;
+    public InputHandler inputHandler { get; private set; }
+    public CharacterController controller { get; private set; }
+    public AnimationStateController animationController { get; private set; }
+    private PlayerStateMachine playerStateMachine;
 
     public float moveSpeed = 5f;
     public float lookSensitivity = 1f;
@@ -23,9 +24,13 @@ public class PlayerController : MonoBehaviour
     public Transform weaponHitPoint;
     public int damage;
     public LayerMask targetMask;
-
+    public GameObject camera;
     private void Awake()
     {
+        if (camera == null)
+        {
+            camera = Camera.main.gameObject;
+        }
         inputHandler = GetComponent<InputHandler>();
         controller = GetComponent<CharacterController>();
         animationController = GetComponent<AnimationStateController>();
@@ -38,45 +43,48 @@ public class PlayerController : MonoBehaviour
         {
             GameManager.instance.SetCursorLock(true);
         }
+        playerStateMachine = new PlayerStateMachine();
+        playerStateMachine.Initialized(new IdleState(playerStateMachine, this));
     }
 
     private void Update()
     {
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
+        //isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
 
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
+        //if (isGrounded && velocity.y < 0)
+        //{
+        //    velocity.y = -2f;
+        //}
 
-        Vector2 moveInput = inputHandler.playerAction.Move.ReadValue<Vector2>();
-        HandleMove(moveInput);
-        HandleLook();
+        //Vector2 moveInput = inputHandler.playerAction.Move.ReadValue<Vector2>();
+        //HandleMove(moveInput);
+        //HandleLook();
 
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-        if (Input.GetMouseButtonDown(0))
-        {
-            animationController.TriggerAttack(); 
-        }
+        //velocity.y += gravity * Time.deltaTime;
+        //controller.Move(velocity * Time.deltaTime);
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    animationController.TriggerAttack(); 
+        //}
+        playerStateMachine.Update();
     }
 
-    private void HandleMove(Vector2 moveInput)
-    {
-        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-        float inputMagnitude = moveInput.magnitude;
+    //private void HandleMove(Vector2 moveInput)
+    //{
+    //    Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
+    //    float inputMagnitude = moveInput.magnitude;
 
-        bool isMoving = inputMagnitude >= 0.1f;
+    //    bool isMoving = inputMagnitude >= 0.1f;
 
-        bool isRunning = isMoving && moveInput.y > 0f && Input.GetKey(KeyCode.LeftShift);
+    //    bool isRunning = isMoving && moveInput.y > 0f && Input.GetKey(KeyCode.LeftShift);
 
-        float speedMultiplier = isRunning ? 1f : (isMoving ? 0.5f : 0f);
-        controller.Move(move * moveSpeed * speedMultiplier * Time.deltaTime);
+    //    float speedMultiplier = isRunning ? 1f : (isMoving ? 0.5f : 0f);
+    //    controller.Move(move * moveSpeed * speedMultiplier * Time.deltaTime);
 
-        animationController.UpdateAnimationState(moveInput, isRunning);
-    }
+    //    animationController.UpdateAnimationState(moveInput, isRunning);
+    //}
 
-    private void HandleLook()
+    public void HandleLook()
     {
         Vector2 look = inputHandler.playerAction.Look.ReadValue<Vector2>();
         look *= lookSensitivity * Time.deltaTime;
@@ -101,6 +109,15 @@ public class PlayerController : MonoBehaviour
                 monster.TakeDamage(damage);
             }
         }
+    }
+
+    public void ApplyGravity()
+    {
+        if (isGrounded && velocity.y < 0)
+            velocity.y = -2f;
+
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
 
 }

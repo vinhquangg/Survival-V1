@@ -4,6 +4,9 @@ public class AnimationStateController : MonoBehaviour
 {
     private Animator animator;
     private PlayerController playerController;
+
+    private bool isAttacking = false;
+
     private float acceleration = 4f;
     private float deceleration = 6f;
     private Vector2 currentVelocity = Vector2.zero;
@@ -20,6 +23,7 @@ public class AnimationStateController : MonoBehaviour
             Debug.LogError("Animator not found!");
             return;
         }
+
         playerController = GetComponent<PlayerController>();
         moveXHash = Animator.StringToHash("Velocity X");
         moveYHash = Animator.StringToHash("Velocity Y");
@@ -35,12 +39,22 @@ public class AnimationStateController : MonoBehaviour
         animator.SetFloat(moveYHash, currentVelocity.y);
         animator.SetBool(isRunHash, isRunning);
     }
+
     public void TriggerAttack()
     {
+        if (isAttacking) return; 
+
+        isAttacking = true;
         animator.SetTrigger("isAttack");
     }
 
-    private void Attack()
+    // ✅ Gọi hàm này từ Animation Event
+    public void ResetAttack()
+    {
+        isAttacking = false;
+    }
+
+    private void Attack() // Gọi bằng Animation Event ở giữa animation
     {
         playerController.HandleAtack();
     }

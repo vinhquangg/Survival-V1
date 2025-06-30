@@ -49,4 +49,20 @@ public class ChunkObjectSpawner : MonoBehaviour
         spawnedObjects.Clear();
         hasSpawned = false;
     }
+
+    public void DespawnObjects()
+{
+    foreach (GameObject obj in spawnedObjects)
+    {
+        if (obj != null)
+        {
+            obj.transform.SetParent(null); // ✅ đặt parent về null trước
+            ObjectPoolManager.Instance?.ReturnToPool(obj);
+        }
+    }
+
+    spawnedObjects.Clear();
+    hasSpawned = false;
+}
+
 }

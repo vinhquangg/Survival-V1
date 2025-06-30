@@ -58,6 +58,7 @@ public class InventoryManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.I))
         {
             ToggleInventory();
+            
         }
     }
 
@@ -150,6 +151,9 @@ public class InventoryManager : MonoBehaviour
         PlayerController.enabled = !isInventoryOpen;
 
         GameManager.instance?.SetCursorLock(!isInventoryOpen);
+
+        if (CameraTarget.Instance != null)
+            CameraTarget.Instance.enabled = !isInventoryOpen;
 
         if (isInventoryOpen)
         {

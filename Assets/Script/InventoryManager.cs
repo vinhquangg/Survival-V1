@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
@@ -153,7 +154,8 @@ public class InventoryManager : MonoBehaviour
         GameManager.instance?.SetCursorLock(!isInventoryOpen);
 
         if (CameraTarget.Instance != null)
-            CameraTarget.Instance.enabled = !isInventoryOpen;
+            CameraTarget.Instance.allowCameraInput = !isInventoryOpen;
+
 
         if (isInventoryOpen)
         {

@@ -32,7 +32,6 @@ public class AttackState : PlayerState
     public override void Exit()
     {
         player.inputHandler.EnablePlayerInput();
-
         //player.animationController.DisableUpperBodyLayerDelayed(0.05f);
     }
 

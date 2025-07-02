@@ -8,9 +8,9 @@ public class CameraTarget : MonoBehaviour
     public float smoothSpeed = 5f;
     public float pitchSpeed = 80f;
     public Vector2 pitchClamp = new Vector2(-30f, 60f);
+    public bool allowCameraInput = true;
     public static CameraTarget Instance { get; private set; }
     private float yaw = 0f; 
-
     private float pitch = 0f;
 
     private void Awake()
@@ -29,11 +29,14 @@ public class CameraTarget : MonoBehaviour
     {
         if (target == null || lookTarget == null) return;
 
-        float mouseY = Input.GetAxis("Mouse Y");
-        pitch -= mouseY * pitchSpeed * Time.deltaTime;
-        pitch = Mathf.Clamp(pitch, pitchClamp.x, pitchClamp.y);
+        if (allowCameraInput)
+        {
+            float mouseY = Input.GetAxis("Mouse Y");
+            pitch -= mouseY * pitchSpeed * Time.deltaTime;
+            pitch = Mathf.Clamp(pitch, pitchClamp.x, pitchClamp.y);
 
-        yaw = target.eulerAngles.y;
+            yaw = target.eulerAngles.y;
+        }
 
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0);
         Vector3 desiredPosition = target.position + rotation * offset;
@@ -42,5 +45,6 @@ public class CameraTarget : MonoBehaviour
 
         transform.LookAt(lookTarget.position);
     }
+
 
 }

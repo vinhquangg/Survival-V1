@@ -49,40 +49,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        //isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
-
-        //if (isGrounded && velocity.y < 0)
-        //{
-        //    velocity.y = -2f;
-        //}
-
-        //Vector2 moveInput = inputHandler.playerAction.Move.ReadValue<Vector2>();
-        //HandleMove(moveInput);
-        //HandleLook();
-
-        //velocity.y += gravity * Time.deltaTime;
-        //controller.Move(velocity * Time.deltaTime);
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    animationController.TriggerAttack(); 
-        //}
         playerStateMachine.Update();
     }
-
-    //private void HandleMove(Vector2 moveInput)
-    //{
-    //    Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-    //    float inputMagnitude = moveInput.magnitude;
-
-    //    bool isMoving = inputMagnitude >= 0.1f;
-
-    //    bool isRunning = isMoving && moveInput.y > 0f && Input.GetKey(KeyCode.LeftShift);
-
-    //    float speedMultiplier = isRunning ? 1f : (isMoving ? 0.5f : 0f);
-    //    controller.Move(move * moveSpeed * speedMultiplier * Time.deltaTime);
-
-    //    animationController.UpdateAnimationState(moveInput, isRunning);
-    //}
 
     public void HandleLook()
     {
@@ -115,7 +83,6 @@ public class PlayerController : MonoBehaviour
     {
         if (isGrounded && velocity.y < 0)
             velocity.y = -2f;
-
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }

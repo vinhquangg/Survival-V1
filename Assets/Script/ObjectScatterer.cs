@@ -47,8 +47,9 @@ public class ObjectScatterer : MonoBehaviour
 
         int spawnPerRegion = Mathf.CeilToInt((float)baseSpawnCount / regions.Length);
 
-        foreach (BiomeRegion region in regions)
+        for (int i = 0; i < regions.Length; i++)
         {
+            BiomeRegion region = regions[i];
             Collider col = region.GetComponent<Collider>();
             BiomeData biomeData = region.biomeData;
             if (col == null || biomeData == null || biomeData.spawnableObjects == null) continue;
@@ -56,20 +57,28 @@ public class ObjectScatterer : MonoBehaviour
             Bounds bounds = col.bounds;
             int spawned = 0, attempts = 0;
 
+            int regionSeed = WorldSeedManager.Seed
+                             ^ i
+                             ^ biomeData.name.GetHashCode();
+
+            System.Random prng = new System.Random(regionSeed);
+
             while (spawned < spawnPerRegion && attempts < maxAttemptsPerBiome)
             {
-                Vector3 randomPos = GetRandomPointInBounds(bounds);
+                Vector3 randomPos = GetRandomPointInBounds(bounds, prng);
                 if (Physics.Raycast(randomPos + Vector3.up * 50f, Vector3.down, out RaycastHit hit, 100f, groundLayer))
                 {
+                    Debug.DrawLine(randomPos + Vector3.up * 50f, hit.point, Color.red, 10f);
+                    Debug.Log($"[RAY] Hit {hit.collider.name} tại {hit.point}");
                     Terrain terrain = hit.collider.GetComponent<Terrain>();
                     if (terrain != null && !IsGrassTexture(hit.point, terrain)) { attempts++; continue; }
 
-                    GameObject prefab = biomeData.spawnableObjects[Random.Range(0, biomeData.spawnableObjects.Length)];
+                    GameObject prefab = biomeData.spawnableObjects[prng.Next(0, biomeData.spawnableObjects.Length)];
                     if (prefab == null) { attempts++; continue; }
+                    Debug.Log($"[SCATTERED] {prefab.name} at {hit.point} with rotation Y = {(float)(prng.NextDouble() * 360f)}");
 
                     GameObject chunk = GetOrCreateChunk(hit.point);
 
-                    // An toàn khi add component
                     if (!chunk.TryGetComponent(out ChunkObjectSpawner spawner))
                         spawner = chunk.AddComponent<ChunkObjectSpawner>();
 
@@ -80,28 +89,21 @@ public class ObjectScatterer : MonoBehaviour
                     {
                         tag = prefab.tag,
                         localPosition = chunk.transform.InverseTransformPoint(hit.point),
-                        localRotation = new Vector3(0, Random.Range(0f, 360f), 0)
+                        localRotation = new Vector3(0, (float)(prng.NextDouble() * 360f), 0)
                     });
 
                     spawned++;
                     totalSpawned++;
                 }
                 attempts++;
-            }
-        }
 
-        //// Sau khi scatter xong, gọi SpawnObjects() trên toàn bộ các chunk đã có
-        //foreach (GameObject chunk in chunkMap.Values)
-        //{
-        //    if (chunk.TryGetComponent(out ChunkObjectSpawner spawner))
-        //    {
-        //        spawner.SpawnObjects(); // Gọi sau khi đã có đầy đủ dữ liệu
-        //    }
-        //}
+            }
+
+
+        }
 
         Debug.Log($"✅ Tổng object đã chuẩn bị spawn bằng Pool: {totalSpawned}");
     }
-
 
     private GameObject GetOrCreateChunk(Vector3 worldPos)
     {
@@ -127,12 +129,11 @@ public class ObjectScatterer : MonoBehaviour
         return chunk;
     }
 
-    private Vector3 GetRandomPointInBounds(Bounds bounds)
+    private Vector3 GetRandomPointInBounds(Bounds bounds, System.Random prng)
     {
-        return new Vector3(
-            Random.Range(bounds.min.x, bounds.max.x),
-            bounds.center.y,
-            Random.Range(bounds.min.z, bounds.max.z));
+        float x = Mathf.Lerp(bounds.min.x, bounds.max.x, (float)prng.NextDouble());
+        float z = Mathf.Lerp(bounds.min.z, bounds.max.z, (float)prng.NextDouble());
+        return new Vector3(x, bounds.center.y, z);
     }
 
     private bool IsGrassTexture(Vector3 worldPos, Terrain terrain)

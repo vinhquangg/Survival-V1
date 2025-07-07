@@ -83,7 +83,18 @@ public class VisibilityCullingZone : MonoBehaviour
                 if (!chunk.activeSelf || force)
                 {
                     chunk.SetActive(true); // ⚠️ Bật trước khi spawn
-                    spawner?.SpawnObjects();
+                    if (spawner != null)
+                    {
+                        try
+                        {
+                            spawner.SpawnObjects();
+                        }
+                        catch (System.Exception ex)
+                        {
+                            Debug.LogWarning($"⚠️ Spawn lỗi ở chunk {chunk.name}: {ex.Message}");
+                        }
+                    }
+
                 }
             }
             else

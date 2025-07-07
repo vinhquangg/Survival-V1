@@ -55,12 +55,29 @@ public class ObjectPoolManager : MonoBehaviour
             return null;
         }
 
-        GameObject obj = poolDictionary[tag].Dequeue();
-        obj.SetActive(true);
-        obj.transform.SetPositionAndRotation(position, rotation);
-        poolDictionary[tag].Enqueue(obj);
-        return obj;
+        GameObject obj = null;
+        int attempts = 0;
+        int maxAttempts = poolDictionary[tag].Count;
+
+        while (attempts < maxAttempts)
+        {
+            obj = poolDictionary[tag].Dequeue();
+
+            if (obj != null)
+            {
+                obj.SetActive(true);
+                obj.transform.SetPositionAndRotation(position, rotation);
+                poolDictionary[tag].Enqueue(obj);
+                return obj;
+            }
+
+            attempts++;
+        }
+
+        Debug.LogWarning($"❌ Pool '{tag}' không còn object hợp lệ hoặc đã bị destroy!");
+        return null;
     }
+
 
     public void ReturnToPool(GameObject obj)
     {

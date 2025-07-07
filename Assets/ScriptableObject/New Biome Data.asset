@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 534c4b5b5cc0518498cc8404b335f83f, type: 3}
   m_Name: New Biome Data
   m_EditorClassIdentifier: 
-  biomeType: 0
+  biomeType: 1
   fogColor: {r: 0, g: 0, b: 0, a: 0}
   ambientSound: {fileID: 0}
   spawnableObjects:

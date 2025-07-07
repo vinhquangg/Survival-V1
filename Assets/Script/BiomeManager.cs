@@ -10,8 +10,14 @@ public class BiomeManager : MonoBehaviour
     private void Start()
     {
         allBiomes = FindObjectsOfType<BiomeRegion>();
+
+        // ✅ Sắp xếp theo vị trí X hoặc tên biome để ổn định
+        System.Array.Sort(allBiomes, (a, b) =>
+            a.transform.position.sqrMagnitude.CompareTo(b.transform.position.sqrMagnitude));
+
         Debug.Log($"🌿 Đã tìm thấy {allBiomes.Length} vùng biome.");
     }
+
 
     public BiomeData GetBiomeAtPosition(Vector3 worldPosition)
     {

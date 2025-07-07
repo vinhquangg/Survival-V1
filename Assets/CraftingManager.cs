@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -9,7 +9,7 @@ public class CraftingManager : MonoBehaviour
 {
     public GameObject craftingScreen;
     public GameObject toolsScreen;
-
+    [SerializeField] private BlueprintData blueprint;
     public List<string> inventoryItemList = new List<string>();
 
     //Category Buttons
@@ -44,6 +44,8 @@ public class CraftingManager : MonoBehaviour
         toolsBTN = craftingScreen.transform.Find("ToolsButton").GetComponent<Button>();
         toolsBTN.onClick.AddListener(delegate { OpenToolsCategory(); });
 
+        InventoryManager.Instance.OnInventoryChanged += CheckCanCraft;
+
         //Sword
         requiredItemText1 = toolsScreen.transform.Find("Sword").transform.Find("RequireItem1").GetComponent<TextMeshProUGUI>();
         requiredItemText2 = toolsScreen.transform.Find("Sword").transform.Find("RequireItem2").GetComponent<TextMeshProUGUI>();
@@ -54,11 +56,29 @@ public class CraftingManager : MonoBehaviour
 
     private void CraftItem()
     {
-        //Add Item Into Inventory
+        var inventory = InventoryManager.Instance.playerInventory;
 
-        //Remove Resource Item From Inventory
+        // check if player has enough items to craft
+        foreach (var req in blueprint.requirements)
+        {
+            if (!inventory.HasItem(req.item, req.amount))
+            {
+                Debug.Log("Không đủ nguyên liệu để chế tạo!");
+                return;
+            }
+        }
 
+        // subtract items from inventory
+        foreach (var req in blueprint.requirements)
+            inventory.RemoveItem(req.item, req.amount);
+
+        // Add item craft to inventory
+        InventoryManager.Instance.AddItem(blueprint.resultItem, blueprint.resultAmount);
+        InventoryManager.Instance.RefreshAllUI();
+
+        Debug.Log($"Đã chế: {blueprint.resultItem.itemName}");
     }
+
 
     void OpenToolsCategory()
     {
@@ -79,7 +99,10 @@ public class CraftingManager : MonoBehaviour
     private void ToggleCrafting()
     {
         isOpen = !isOpen;
-
+        if (isOpen)
+        {
+            CheckCanCraft(); 
+        }
         craftingScreen.SetActive(isOpen);
         toolsScreen .SetActive(false);
         PlayerController.enabled = !isOpen;
@@ -88,4 +111,37 @@ public class CraftingManager : MonoBehaviour
             CameraTarget.Instance.allowCameraInput = !isOpen;
 
     }
+
+    private void CheckCanCraft()
+    {
+        var inventory = InventoryManager.Instance.playerInventory;
+        bool canCraft = true;
+
+        // Update required items text
+        if (blueprint.requirements.Count > 0)
+        {
+            int have1 = inventory.GetTotalQuantity(blueprint.requirements[0].item);
+            int need1 = blueprint.requirements[0].amount;
+            requiredItemText1.text = $"{blueprint.requirements[0].item.itemName}: {have1} / {need1}";
+            if (have1 < need1) canCraft = false;
+        }
+
+        if (blueprint.requirements.Count > 1)
+        {
+            int have2 = inventory.GetTotalQuantity(blueprint.requirements[1].item);
+            int need2 = blueprint.requirements[1].amount;
+            requiredItemText2.text = $"{blueprint.requirements[1].item.itemName}: {have2} / {need2}";
+            if (have2 < need2) canCraft = false;
+        }
+
+        craftingBTN.gameObject.SetActive(canCraft);
+    }
+
+
+    private void OnDisable()
+    {
+        if (InventoryManager.Instance != null)
+            InventoryManager.Instance.OnInventoryChanged -= CheckCanCraft;
+    }
+
 }

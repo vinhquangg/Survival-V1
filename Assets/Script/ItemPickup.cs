@@ -45,15 +45,33 @@ public class ItemPickup : MonoBehaviour, IInteractable
         return interactableObject.GetItemType();
     }
 
+    //public void Interact(GameObject interactor)
+    //{
+    //    var inventory = interactor.GetComponentInChildren<InventoryManager>();
+    //    if (inventory != null)
+    //    {
+    //        inventory.AddItem(itemEntity.GetItemData(), itemEntity.GetQuantity());
+    //        Destroy(gameObject);
+    //    }
+    //}
+
     public void Interact(GameObject interactor)
     {
-        var inventory = interactor.GetComponentInChildren<InventoryManager>();
+        var inventory = interactor.GetComponentInChildren<PlayerInventory>();
         if (inventory != null)
         {
-            inventory.AddItem(itemEntity.GetItemData(), itemEntity.GetQuantity());
-            Destroy(gameObject);
+            bool added = inventory.AddItem(itemEntity.GetItemData(), itemEntity.GetQuantity());
+
+            if (added)
+            {
+                InventoryManager.Instance?.RefreshAllUI();
+                Destroy(gameObject);
+            }
         }
     }
+
+
+
     public GameObject GetItemUI()
     {
         return tooltipUI;

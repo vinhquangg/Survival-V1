@@ -15,7 +15,6 @@ public class InteractionManager : MonoBehaviour
             Debug.LogError("SelectionManager not found in the scene. Please ensure it is tagged correctly.");
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(SelectionManager == null)

@@ -1,19 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting.Antlr3.Runtime;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
-    public SlotClass[] items;
-    public SlotClass[] itemstoremove;
-    public SlotClass[] hotbarItems;
     public GameObject inventoryPanel;
     public InventoryUIHandler inventoryUI;
     public InventoryUIHandler hotbarUI;
     public ItemDropper dropper;
+    public event Action OnInventoryChanged;
+    public PlayerInventory playerInventory; 
+
     private PlayerController PlayerController;
     private bool isInventoryOpen = false;
+
+    public static InventoryManager Instance { get; private set; }
 
     void Awake()
     {
@@ -22,11 +23,19 @@ public class InventoryManager : MonoBehaviour
 
         inventoryUI.Init();
         hotbarUI.Init();
+        playerInventory.Init(inventoryUI.GetSlotCount(), hotbarUI.GetSlotCount());
 
-        items = new SlotClass[inventoryUI.GetSlotCount()];
-        hotbarItems = new SlotClass[hotbarUI.GetSlotCount()];
+        if(Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogWarning("Multiple InventoryManager instances found! Using the first one.");
+            Destroy(gameObject);
+        }
+
     }
-
 
     void Start()
     {
@@ -35,127 +44,37 @@ public class InventoryManager : MonoBehaviour
         dropper.playerTransform = PlayerController.transform;
     }
 
-
-    public bool AddItem(ItemClass item, int quantity = 1)
-    {
-        if (item == null || quantity <= 0)
-            return false;
-
-        if (item.isStack)
-        {
-            if (TryStackItem(InventoryArea.Inventory, item, ref quantity)) return true;
-            if (TryStackItem(InventoryArea.Hotbar, item, ref quantity)) return true;
-        }
-
-        if (TryAddToEmptySlot(InventoryArea.Hotbar, item, ref quantity)) return true;
-        if (TryAddToEmptySlot(InventoryArea.Inventory, item, ref quantity)) return true;
-
-        Debug.LogWarning("Không thể thêm item, inventory & hotbar đầy.");
-        return false;
-    }
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
             ToggleInventory();
-            
         }
     }
 
-    private bool TryStackItem(InventoryArea area, ItemClass item, ref int quantity)
+    public bool AddItem(ItemClass item, int quantity = 1)
     {
-        var container = GetContainer(area);
-
-        for (int i = 0; i < container.Length; i++)
-        {
-            var slot = container[i];
-            if (slot != null &&
-                slot.GetItem() == item &&
-                slot.GetQuantity() < item.maxStack)
-            {
-                int canAdd = Mathf.Min(quantity, item.maxStack - slot.GetQuantity());
-                slot.AddQuantity(canAdd);
-                quantity -= canAdd;
-
-                if (quantity <= 0)
-                {
-                    RefreshAllUI();
-                    return true;
-                }
-            }
-        }
-        return false;
+        bool added = playerInventory.AddItem(item, quantity);
+        if (added) RefreshAllUI();
+        return added;
     }
 
-    private bool TryAddToEmptySlot(InventoryArea area, ItemClass item, ref int quantity)
-    {
-        var container = GetContainer(area);
-
-        for (int i = 0; i < container.Length; i++)
-        {
-            if (container[i] == null || container[i].IsEmpty())
-            {
-                int toAdd = Mathf.Min(quantity, item.maxStack);
-                container[i] = new SlotClass(item, toAdd);
-                quantity -= toAdd;
-
-                if (quantity <= 0)
-                {
-                    RefreshAllUI();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public bool RemoveItem(ItemClass item)
-    {
-        SlotClass temp = Contains(item);
-
-        if( temp != null)
-        {
-            if(temp.GetQuantity() > 1)
-            {
-                temp.SubQuantity(1);
-            }
-            else
-            {
-                int slotToRemoveIndex = 0; 
-                for(int i=0;i<items.Length;i++)
-                {
-                    if (items[i].GetItem()==item)
-                    {
-                        slotToRemoveIndex = i;
-                        break;
-                    }
-                }
-                items[slotToRemoveIndex].IsEmpty();
-            }
-        }
-        else
-        {
-            return false;
-        }
-        RefreshAllUI();
-        return true;
-
-    }
+    //public bool RemoveItem(ItemClass item)
+    //{
+    //    bool removed = playerInventory.RemoveItem(item);
+    //    if (removed) RefreshAllUI();
+    //    return removed;
+    //}
 
     private void ToggleInventory()
     {
         isInventoryOpen = !isInventoryOpen;
-
         inventoryPanel.SetActive(isInventoryOpen);
-
         PlayerController.enabled = !isInventoryOpen;
-
         GameManager.instance?.SetCursorLock(!isInventoryOpen);
 
         if (CameraTarget.Instance != null)
             CameraTarget.Instance.allowCameraInput = !isInventoryOpen;
-
 
         if (isInventoryOpen)
         {
@@ -163,22 +82,18 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public SlotClass Contains(ItemClass item)
+    public SlotClass GetSlot(InventoryArea area, int index)
     {
-        foreach (SlotClass slot in items)
-        {
-            if (slot != null && slot.GetItem() == item)
-            {
-                return slot;
-            }
-        }
+        var container = area == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
+        if (index >= 0 && index < container.Length)
+            return container[index];
         return null;
     }
 
     public void TryMergeOrSwap(InventoryArea fromArea, int fromIndex, InventoryArea toArea, int toIndex)
     {
-        var fromContainer = (fromArea == InventoryArea.Hotbar) ? hotbarItems : items;
-        var toContainer = (toArea == InventoryArea.Hotbar) ? hotbarItems : items;
+        var fromContainer = fromArea == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
+        var toContainer = toArea == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
 
         var fromSlot = fromContainer[fromIndex];
         var toSlot = toContainer[toIndex];
@@ -208,6 +123,7 @@ public class InventoryManager : MonoBehaviour
             }
         }
 
+        // swap items if they are not stackable or no space left
         var temp = fromContainer[fromIndex];
         fromContainer[fromIndex] = toContainer[toIndex];
         toContainer[toIndex] = temp;
@@ -217,7 +133,7 @@ public class InventoryManager : MonoBehaviour
 
     public void SplitItem(InventoryArea area, int fromIndex)
     {
-        var container = area == InventoryArea.Hotbar ? hotbarItems : items;
+        var container = area == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
         var fromSlot = container[fromIndex];
 
         if (fromSlot == null || fromSlot.IsEmpty()) return;
@@ -239,24 +155,9 @@ public class InventoryManager : MonoBehaviour
         Debug.LogWarning("No empty slot to split item!");
     }
 
-    private SlotClass[] GetContainer(InventoryArea area)
-    {
-        return area == InventoryArea.Hotbar ? hotbarItems : items;
-    }
-
-    public SlotClass GetSlot(InventoryArea area, int index)
-    {
-        var container = GetContainer(area);
-        if (index >= 0 && index < container.Length)
-        {
-            return container[index];
-        }
-        return null;
-    }
-
     public void DropItemToWorld(InventoryArea area, int index)
     {
-        var container = GetContainer(area);
+        var container = area == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
         if (container == null || index < 0 || index >= container.Length) return;
 
         var slot = container[index];
@@ -269,7 +170,8 @@ public class InventoryManager : MonoBehaviour
 
     public void RefreshAllUI()
     {
-        inventoryUI.RefreshUI(items);
-        hotbarUI.RefreshUI(hotbarItems);
+        inventoryUI.RefreshUI(playerInventory.items);
+        hotbarUI.RefreshUI(playerInventory.hotbarItems);
+        OnInventoryChanged?.Invoke();
     }
 }

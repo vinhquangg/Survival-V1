@@ -16,8 +16,8 @@ MonoBehaviour:
   fogColor: {r: 0.9622642, g: 0.9269471, b: 0.6590601, a: 0}
   ambientSound: {fileID: 0}
   spawnableObjects:
-  - {fileID: 1028921820866644714, guid: 111a3a320ce23214181f5e2fe23ed49e, type: 3}
-  - {fileID: 1028921820866644714, guid: a529fe0ab772e3741a05b52fca2d8102, type: 3}
+  - {fileID: 7958535128054660741, guid: 5affa63adb5a6e44ea78a6528f5b7331, type: 3}
+  - {fileID: 3242701622731383044, guid: 37f9aeb2fdaf19f4a8efd7ce8a593dcd, type: 3}
   spawnDensity: 100
   terrainTextures:
   - {fileID: 8574412962073106934, guid: 6030d4ecea42c4a4a8df94e0e7854f90, type: 2}

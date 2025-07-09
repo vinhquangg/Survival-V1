@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 534c4b5b5cc0518498cc8404b335f83f, type: 3}
+  m_Name: New Biome Data 1
+  m_EditorClassIdentifier: 
+  biomeType: 0
+  fogColor: {r: 0.9622642, g: 0.9269471, b: 0.6590601, a: 0}
+  ambientSound: {fileID: 0}
+  spawnableObjects:
+  - {fileID: 1028921820866644714, guid: 111a3a320ce23214181f5e2fe23ed49e, type: 3}
+  - {fileID: 1028921820866644714, guid: a529fe0ab772e3741a05b52fca2d8102, type: 3}
+  spawnDensity: 100
+  terrainTextures:
+  - {fileID: 8574412962073106934, guid: 6030d4ecea42c4a4a8df94e0e7854f90, type: 2}

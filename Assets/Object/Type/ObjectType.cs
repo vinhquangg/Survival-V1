@@ -4,4 +4,5 @@ public enum ObjectType
     Item,
     Rock,
     Tree,
+    Stick,
 }

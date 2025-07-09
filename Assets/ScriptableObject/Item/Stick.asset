@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8372ce9efa46f3c49b688aefa30e0e18, type: 3}
+  m_Name: Stick
+  m_EditorClassIdentifier: 
+  itemType: 6
+  itemName: Branch
+  itemIcon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  isStack: 1
+  maxStack: 64
+  dropPrefab: {fileID: 3242701622731383044, guid: 37f9aeb2fdaf19f4a8efd7ce8a593dcd,
+    type: 3}

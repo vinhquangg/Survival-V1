@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -9,8 +13,12 @@ public class InventoryManager : MonoBehaviour
     public InventoryUIHandler hotbarUI;
     public ItemDropper dropper;
     public event Action OnInventoryChanged;
-    public PlayerInventory playerInventory; 
-
+    public PlayerInventory playerInventory;
+    public GameObject pickupNotification; 
+    public TextMeshProUGUI pickupText;
+    public Image pickupImage;
+    public float notifyDuration = 5f;
+    private Coroutine notifyCoroutine;
     private PlayerController PlayerController;
     private bool isInventoryOpen = false;
 
@@ -55,9 +63,35 @@ public class InventoryManager : MonoBehaviour
     public bool AddItem(ItemClass item, int quantity = 1)
     {
         bool added = playerInventory.AddItem(item, quantity);
-        if (added) RefreshAllUI();
+        if (added)
+        {
+            RefreshAllUI();
+            ShowPickupNotification($"+{quantity} {item.itemName}",item);
+        }
         return added;
     }
+
+
+    private void ShowPickupNotification(string message, ItemClass item)
+    {
+        if (pickupNotification == null || pickupText == null || pickupImage == null) return;
+
+        if (notifyCoroutine != null)
+            StopCoroutine(notifyCoroutine);
+
+        pickupText.text = message;
+        if (item != null && item.itemIcon != null)
+            pickupImage.sprite = item.itemIcon;
+        notifyCoroutine = StartCoroutine(ShowAndHideNotification());
+    }
+
+    private IEnumerator ShowAndHideNotification()
+    {
+        pickupNotification.SetActive(true);
+        yield return new WaitForSeconds(notifyDuration);
+        pickupNotification.SetActive(false);
+    }
+
 
     //public bool RemoveItem(ItemClass item)
     //{

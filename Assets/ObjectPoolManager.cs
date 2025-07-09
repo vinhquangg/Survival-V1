@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 public class ObjectPoolManager : MonoBehaviour
@@ -25,6 +26,9 @@ public class ObjectPoolManager : MonoBehaviour
 
     void Start()
     {
+        // ✅ Tạo Random có seed cố định để đảm bảo prefab được chọn giống nhau mỗi lần play
+        System.Random prng = new System.Random(WorldSeedManager.Seed);
+
         foreach (Pool pool in pools)
         {
             Queue<GameObject> objectQueue = new Queue<GameObject>();
@@ -34,18 +38,23 @@ public class ObjectPoolManager : MonoBehaviour
 
             for (int i = 0; i < pool.size; i++)
             {
-                // Chọn ngẫu nhiên một prefab từ danh sách
-                GameObject prefab = pool.prefabs[Random.Range(0, pool.prefabs.Count)];
+                // ✅ Dùng System.Random thay vì UnityEngine.Random
+                int prefabIndex = prng.Next(0, pool.prefabs.Count);
+                GameObject prefab = pool.prefabs[prefabIndex];
+
+                // ✅ Tạo object từ prefab được chọn
                 GameObject obj = Instantiate(prefab);
                 obj.SetActive(false);
                 objectQueue.Enqueue(obj);
 
                 prefabReference[pool.tag].Add(prefab);
+    
             }
 
             poolDictionary[pool.tag] = objectQueue;
         }
     }
+
 
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {

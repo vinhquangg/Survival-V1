@@ -57,18 +57,17 @@ public class ItemPickup : MonoBehaviour, IInteractable
 
     public void Interact(GameObject interactor)
     {
-        var inventory = interactor.GetComponentInChildren<PlayerInventory>();
-        if (inventory != null)
-        {
-            bool added = inventory.AddItem(itemEntity.GetItemData(), itemEntity.GetQuantity());
+        var inventoryManager = InventoryManager.Instance;
+        if (inventoryManager == null) return;
 
-            if (added)
-            {
-                InventoryManager.Instance?.RefreshAllUI();
-                Destroy(gameObject);
-            }
+        bool added = inventoryManager.AddItem(itemEntity.GetItemData(), itemEntity.GetQuantity());
+
+        if (added)
+        {
+            ObjectPoolManager.Instance?.ReturnToPool(gameObject);
         }
     }
+
 
 
 

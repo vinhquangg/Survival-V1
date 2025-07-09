@@ -69,13 +69,12 @@ public class ObjectScatterer : MonoBehaviour
                 if (Physics.Raycast(randomPos + Vector3.up * 50f, Vector3.down, out RaycastHit hit, 100f, groundLayer))
                 {
                     Debug.DrawLine(randomPos + Vector3.up * 50f, hit.point, Color.red, 10f);
-                    Debug.Log($"[RAY] Hit {hit.collider.name} tại {hit.point}");
+
                     Terrain terrain = hit.collider.GetComponent<Terrain>();
                     if (terrain != null && !IsGrassTexture(hit.point, terrain)) { attempts++; continue; }
 
                     GameObject prefab = biomeData.spawnableObjects[prng.Next(0, biomeData.spawnableObjects.Length)];
-                    if (prefab == null) { attempts++; continue; }
-                    Debug.Log($"[SCATTERED] {prefab.name} at {hit.point} with rotation Y = {(float)(prng.NextDouble() * 360f)}");
+                    if (prefab == null) { attempts++; continue; };
 
                     GameObject chunk = GetOrCreateChunk(hit.point);
 

@@ -14,6 +14,7 @@ public class PlayerInventory : MonoBehaviour
     public bool AddItem(ItemClass item, int quantity = 1)
     {
         if (item == null || quantity <= 0) return false;
+        int originalQuantity = quantity;
 
         if (item.isStack)
         {
@@ -23,6 +24,12 @@ public class PlayerInventory : MonoBehaviour
 
         if (TryAddToEmptySlot(hotbarItems, item, ref quantity)) return true;
         if (TryAddToEmptySlot(items, item, ref quantity)) return true;
+
+        if (quantity < originalQuantity)
+        {
+            // ✅ Thêm được ít nhất một phần → không log
+            return true;
+        }
 
         Debug.LogWarning("Inventory và hotbar đầy.");
         return false;
@@ -35,7 +42,7 @@ public class PlayerInventory : MonoBehaviour
         // Check item in inventory first
         foreach (var slot in items)
         {
-            if (slot != null && slot.GetItem() == item)
+            if (slot != null && slot.GetItem().itemName == item.itemName)
             {
                 total += slot.GetQuantity();
                 if (total >= amount) return true;
@@ -64,7 +71,7 @@ public class PlayerInventory : MonoBehaviour
         for (int i = 0; i < items.Length; i++)
         {
             var slot = items[i];
-            if (slot != null && slot.GetItem() == item)
+            if (slot != null && slot.GetItem().itemName == item.itemName)
             {
                 int qty = slot.GetQuantity();
                 int toRemove = Mathf.Min(qty, amount - removed);
@@ -105,7 +112,7 @@ public class PlayerInventory : MonoBehaviour
     {
         foreach (SlotClass slot in items)
         {
-            if (slot != null && slot.GetItem() == item)
+            if (slot != null && slot.GetItem().itemName == item.itemName)
                 return slot;
         }
         return null;
@@ -115,7 +122,7 @@ public class PlayerInventory : MonoBehaviour
     {
         foreach (SlotClass slot in container)
         {
-            if (slot != null && slot.GetItem() == item && slot.GetQuantity() < item.maxStack)
+            if (slot != null && slot.GetItem().itemName == item.itemName && slot.GetQuantity() < item.maxStack)
             {
                 int canAdd = Mathf.Min(quantity, item.maxStack - slot.GetQuantity());
                 slot.AddQuantity(canAdd);
@@ -155,6 +162,15 @@ public class PlayerInventory : MonoBehaviour
                 total += slot.GetQuantity();
 
         return total;
+    }
+
+    public void Clear()
+    {
+        for (int i = 0; i < items.Length; i++)
+            items[i] = null;
+
+        for (int i = 0; i < hotbarItems.Length; i++)
+            hotbarItems[i] = null;
     }
 
 }

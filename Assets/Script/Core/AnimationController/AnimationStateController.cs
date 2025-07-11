@@ -32,15 +32,17 @@ public class AnimationStateController : MonoBehaviour
         isRunHash = Animator.StringToHash("isRun");
     }
 
-    public void UpdateAnimationState(Vector2 input, bool isRunning)
+    public void UpdateAnimationState(Vector2 input, bool isRunning, float currentSpeed)
     {
-        currentVelocity = Vector2.MoveTowards(currentVelocity, input,
+        Vector2 targetVelocity = input.normalized * (currentSpeed / playerController.moveSpeed); // scale theo tỉ lệ
+        currentVelocity = Vector2.MoveTowards(currentVelocity, targetVelocity,
                             (isRunning ? acceleration : deceleration) * Time.deltaTime);
 
         animator.SetFloat(moveXHash, currentVelocity.x);
         animator.SetFloat(moveYHash, currentVelocity.y);
         animator.SetBool(isRunHash, isRunning);
     }
+
 
     public void TriggerAttack()
     {

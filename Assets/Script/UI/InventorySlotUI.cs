@@ -2,8 +2,9 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 
-public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
+public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler,IPointerEnterHandler
 {
     public InventoryManager inventoryManager;
     public InventoryArea inventoryArea; 
@@ -17,6 +18,8 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     void Start()
     {
+        if (inventoryManager == null)
+            inventoryManager = GetComponentInParent<InventoryManager>();
         canvas = GetComponentInParent<Canvas>();
         iconImage = transform.GetChild(0).GetComponent<Image>();
         amountText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
@@ -81,13 +84,27 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
     }
 
-
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             inventoryManager.SplitItem(inventoryArea, slotIndex);
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        var slot = inventoryManager.GetSlot(inventoryArea, slotIndex);
+        if (slot != null && !slot.IsEmpty() && eventData.pointerEnter == gameObject)
+        {
+            ItemClass item = slot.GetItem();
+            ItemInfo.Instance.ShowInfo(slot.GetItem(), eventData.position);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        ItemInfo.Instance.HideInfo();
     }
 
 }

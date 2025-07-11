@@ -15,6 +15,8 @@ MonoBehaviour:
   itemType: 6
   itemName: Branch
   itemIcon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  itemDesc: Dry Stick
+  itemFunc: Use for crafting
   isStack: 1
   maxStack: 64
   dropPrefab: {fileID: 3242701622731383044, guid: 37f9aeb2fdaf19f4a8efd7ce8a593dcd,

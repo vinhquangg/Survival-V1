@@ -8,6 +8,8 @@ public abstract class ItemClass:ScriptableObject
     public ItemType itemType = ItemType.None;
     public string itemName;
     public Sprite itemIcon;
+    public string itemDesc;
+    public string itemFunc;
     public bool isStack;
     public int maxStack;
     public GameObject dropPrefab;

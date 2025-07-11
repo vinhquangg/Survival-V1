@@ -22,17 +22,17 @@ public class PlayerStatusUI : MonoBehaviour
         // Update Health Bar
         if (healthData != null)
         {
-            healthData.UpdateBar(playerStatus.health.GetPercent());
+            healthData.UpdateBar(playerStatus.health.currentValue, playerStatus.thirstData.maxValue);
         }
         // Update Calories Bar
         if (caloriesData != null)
         {
-            caloriesData.UpdateBar(playerStatus.hunger.GetPercent());
+            caloriesData.UpdateBar(playerStatus.hunger.currentValue, playerStatus.thirstData.maxValue);
         }
         // Update Thirst Bar
         if (thirstData != null)
         {
-            thirstData.UpdateBar(playerStatus.thirst.GetPercent());
+            thirstData.UpdateBar(playerStatus.thirst.currentValue,playerStatus.thirstData.maxValue);
         }
     }
 }

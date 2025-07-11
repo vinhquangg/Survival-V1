@@ -12,6 +12,7 @@ TagManager:
   - Scatter
   - PlayerWeapon
   - Enemy
+  - InventoryManager
   layers:
   - Default
   - TransparentFX

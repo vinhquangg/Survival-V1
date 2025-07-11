@@ -15,6 +15,8 @@ MonoBehaviour:
   itemType: 2
   itemName: Sword
   itemIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  itemDesc: A stone sword
+  itemFunc: Deal damage
   isStack: 0
   maxStack: 1
   dropPrefab: {fileID: 7958535128054660741, guid: 5affa63adb5a6e44ea78a6528f5b7331,

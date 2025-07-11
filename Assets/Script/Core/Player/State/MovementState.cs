@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,9 +19,15 @@ public class MovementState : PlayerState
         Vector3 moveDirection = player.transform.right * moveInput.x + player.transform.forward * moveInput.y;
         bool isRunning = moveInput.magnitude >= 0.1f && Input.GetKey(KeyCode.LeftShift) && moveInput.y > 0f;
 
-        float speed = isRunning ? 1f : 0.5f;
-        player.controller.Move(moveDirection * player.moveSpeed * speed * Time.deltaTime);
-        player.animationController.UpdateAnimationState(moveInput, isRunning);
+        float speedMultiplier = isRunning ? 1f : 0.5f;
+
+        float finalSpeed = player.moveSpeed * speedMultiplier;
+
+        Vector3 movement = moveDirection * finalSpeed * Time.deltaTime;
+        player.controller.Move(movement);
+
+        // truyền tốc độ thực tế vào Animator
+        player.animationController.UpdateAnimationState(moveInput, isRunning, finalSpeed);
 
         if (player.inputHandler.IsAttackInputPressed())
         {

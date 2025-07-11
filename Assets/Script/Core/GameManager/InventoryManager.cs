@@ -105,6 +105,7 @@ public class InventoryManager : MonoBehaviour
         isInventoryOpen = !isInventoryOpen;
         inventoryPanel.SetActive(isInventoryOpen);
         PlayerController.enabled = !isInventoryOpen;
+        //ItemInfo.Instance.HideInfo();
         GameManager.instance?.SetCursorLock(!isInventoryOpen);
 
         if (CameraTarget.Instance != null)

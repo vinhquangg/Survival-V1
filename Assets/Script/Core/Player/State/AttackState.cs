@@ -24,10 +24,13 @@ public class AttackState : PlayerState
         Vector2 moveInput = player.inputHandler.playerAction.Move.ReadValue<Vector2>();
         Vector3 moveDirection = player.transform.right * moveInput.x + player.transform.forward * moveInput.y;
         bool isRunning = moveInput.magnitude >= 0.1f && Input.GetKey(KeyCode.LeftShift);
-        float speed = isRunning ? 1f : 0.5f;
+        float speedMultiplier = isRunning ? 1f : 0.5f;
+        float finalSpeed = player.moveSpeed * speedMultiplier;
 
-        player.controller.Move(moveDirection * player.moveSpeed * speed * Time.deltaTime);
-        player.animationController.UpdateAnimationState(moveInput, isRunning);
+        player.controller.Move(moveDirection * finalSpeed * Time.deltaTime);
+
+        player.animationController.UpdateAnimationState(moveInput, isRunning, finalSpeed);
+
 
         attackTimer -= Time.deltaTime;
         if (attackTimer <= 0f)

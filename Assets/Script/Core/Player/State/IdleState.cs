@@ -16,8 +16,7 @@ public class IdleState : PlayerState
             return; 
         }
 
-        player.animationController.UpdateAnimationState(Vector2.zero,false);
-
+        player.animationController.UpdateAnimationState(Vector2.zero, false, 0f);
 
         if (player.inputHandler.IsAttackInputPressed())
         {

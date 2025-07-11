@@ -17,5 +17,5 @@ MonoBehaviour:
   itemIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   isStack: 1
   maxStack: 64
-  dropPrefab: {fileID: 3024517758387373337, guid: ed18eacbf5bb4514d8a6b7a36c669520,
+  dropPrefab: {fileID: 7958535128054660741, guid: 5affa63adb5a6e44ea78a6528f5b7331,
     type: 3}

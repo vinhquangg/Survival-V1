@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: NewTool
   m_EditorClassIdentifier: 
   itemType: 2
-  itemName: Tool
+  itemName: Sword
   itemIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   isStack: 0
   maxStack: 1
-  toolType: 3
+  dropPrefab: {fileID: 7958535128054660741, guid: 5affa63adb5a6e44ea78a6528f5b7331,
+    type: 3}
+  toolType: 6
   durability: 1

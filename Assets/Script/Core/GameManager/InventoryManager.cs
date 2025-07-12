@@ -104,8 +104,12 @@ public class InventoryManager : MonoBehaviour
     {
         isInventoryOpen = !isInventoryOpen;
         inventoryPanel.SetActive(isInventoryOpen);
-        PlayerController.enabled = !isInventoryOpen;
-        //ItemInfo.Instance.HideInfo();
+
+        PlayerController.inputHandler.DisablePlayerInput(); // <-- tắt input
+        if (!isInventoryOpen)
+            PlayerController.inputHandler.EnablePlayerInput(); // <-- bật lại khi đóng
+
+        ItemInfo.Instance.HideInfo();
         GameManager.instance?.SetCursorLock(!isInventoryOpen);
 
         if (CameraTarget.Instance != null)
@@ -116,6 +120,7 @@ public class InventoryManager : MonoBehaviour
             RefreshAllUI();
         }
     }
+
 
     public SlotClass GetSlot(InventoryArea area, int index)
     {

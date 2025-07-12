@@ -13,47 +13,57 @@ public class ItemInfo : MonoBehaviour
     public TextMeshProUGUI itemDescriptionText;
     public TextMeshProUGUI itemFuncText;
 
+    private float hideDelay = 0.15f;
+    private float hideTimer = -1f;
+    private bool isHoveringSlot = false;
     //private RectTransform panelRect;
     //private RectTransform canvasRect;
-
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0)) // Chuột trái
-        {
-            // Kiểm tra xem chuột có đang nằm trên slot không
-            if (!IsPointerOverInventorySlot())
-            {
-                HideInfo();
-            }
-        }
-    }
-
-    private bool IsPointerOverInventorySlot()
-    {
-        var pointerEventData = new PointerEventData(UnityEngine.EventSystems.EventSystem.current);
-        pointerEventData.position = Input.mousePosition;
-
-        List<RaycastResult> results = new List<RaycastResult>();
-        UnityEngine.EventSystems.EventSystem.current.RaycastAll(pointerEventData, results);
-
-        foreach (var result in results)
-        {
-            if (result.gameObject.GetComponent<InventorySlotUI>() != null)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
 
     void Start()
     {
         Instance = this;
-        //panelRect = itemInfoPanel.GetComponent<RectTransform>();
-        //canvasRect = GetComponentInParent<Canvas>().GetComponent<RectTransform>();
         itemInfoPanel.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (hideTimer > 0f)
+        {
+            hideTimer -= Time.deltaTime;
+            if (hideTimer <= 0f)
+            {
+                HideInfo();
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0) && !IsPointerOverInventorySlot())
+        {
+            HideInfo();
+            hideTimer = -1f;
+        }
+    }
+
+    public void SetHovering(bool hovering)
+    {
+        isHoveringSlot = hovering;
+    }
+
+
+    private bool IsPointerOverInventorySlot()
+    {
+        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+        pointerData.position = Input.mousePosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+
+        foreach (var result in results)
+        {
+            if (result.gameObject.GetComponent<InventorySlotUI>() != null)
+                return true;
+        }
+
+        return false;
     }
 
     public void ShowInfo(ItemClass item, Vector2 Pos)
@@ -63,15 +73,21 @@ public class ItemInfo : MonoBehaviour
         itemNameText.text = item.itemName;
         itemDescriptionText.text = item.itemDesc;
         itemFuncText.text = item.itemFunc;
-
-        //Vector2 localPoint;
-        //RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, Pos, null, out localPoint);
-        //panelRect.anchoredPosition = localPoint;
     }
 
     public void HideInfo()
     {
         itemInfoPanel.SetActive(false);
+    }
+
+    public void StartHideTimer()
+    {
+        hideTimer = hideDelay;
+    }
+
+    public void CancelHideTimer()
+    {
+        hideTimer = -1f;
     }
 
 

@@ -68,9 +68,6 @@ public class ItemPickup : MonoBehaviour, IInteractable
         }
     }
 
-
-
-
     public GameObject GetItemUI()
     {
         return tooltipUI;

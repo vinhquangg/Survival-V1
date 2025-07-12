@@ -92,7 +92,6 @@ public class CraftingManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C))
         {
             ToggleCrafting();
-
         }
     }
 
@@ -105,7 +104,10 @@ public class CraftingManager : MonoBehaviour
         }
         craftingScreen.SetActive(isOpen);
         toolsScreen .SetActive(false);
-        PlayerController.enabled = !isOpen;
+        PlayerController.inputHandler.DisablePlayerInput();
+        if (!isOpen)
+            PlayerController.inputHandler.EnablePlayerInput();
+
         GameManager.instance?.SetCursorLock(!isOpen);
         if (CameraTarget.Instance != null)
             CameraTarget.Instance.allowCameraInput = !isOpen;

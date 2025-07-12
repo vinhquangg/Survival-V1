@@ -95,16 +95,20 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnPointerEnter(PointerEventData eventData)
     {
         var slot = inventoryManager.GetSlot(inventoryArea, slotIndex);
-        if (slot != null && !slot.IsEmpty() && eventData.pointerEnter == gameObject)
+        if (slot != null && !slot.IsEmpty())
         {
-            ItemClass item = slot.GetItem();
             ItemInfo.Instance.ShowInfo(slot.GetItem(), eventData.position);
+            ItemInfo.Instance.CancelHideTimer(); // không ẩn nữa
         }
     }
 
+
     public void OnPointerExit(PointerEventData eventData)
     {
-        ItemInfo.Instance.HideInfo();
+        ItemInfo.Instance.StartHideTimer(); // bắt đầu đếm lùi để ẩn
     }
+
+
+
 
 }

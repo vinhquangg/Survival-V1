@@ -33,4 +33,25 @@ public class InputHandler : MonoBehaviour
     {
         return CanAttack && playerAction.Attack.triggered;
     }
+
+    //------Interact Controller------
+    private bool CanInteract = true;
+
+    public void EnableInteractInput() => CanInteract = true;
+    public void DisableInteractInput() => CanInteract = false;
+
+    public bool IsInteractPressed()
+    {
+        return CanInteract && playerAction.Interact.triggered;
+    }
+
+    //------Crafting Controller------
+    private bool CanCraft = true;
+    public void EnableCraftInput() => CanCraft = true;
+    public void DisableCraftInput() => CanCraft = false;
+
+    public bool IsCraftPressed()
+    {
+        return CanCraft && playerAction.Crafting.triggered;
+    }
 }

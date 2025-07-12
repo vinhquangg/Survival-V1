@@ -6,5 +6,7 @@ public enum ItemType
     Armor = 3,
     Consumable = 4,
     QuestItem = 5,
-    Miscellaneous = 6
+    Miscellaneous = 6,
+    Equipment = 7,
+
 }

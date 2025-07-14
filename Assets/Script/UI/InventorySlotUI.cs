@@ -90,6 +90,10 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             inventoryManager.SplitItem(inventoryArea, slotIndex);
         }
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            inventoryManager.UseItemFromSlot(inventoryArea, slotIndex);
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -98,14 +102,14 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (slot != null && !slot.IsEmpty())
         {
             ItemInfo.Instance.ShowInfo(slot.GetItem(), eventData.position);
-            ItemInfo.Instance.CancelHideTimer(); // không ẩn nữa
+            ItemInfo.Instance.CancelHideTimer(); 
         }
     }
 
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        ItemInfo.Instance.StartHideTimer(); // bắt đầu đếm lùi để ẩn
+        ItemInfo.Instance.StartHideTimer(); 
     }
 
 

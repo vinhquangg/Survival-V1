@@ -164,6 +164,28 @@ public class PlayerInventory : MonoBehaviour
         return total;
     }
 
+    public void UseItemFromSlot(InventoryArea area, int index)
+    {
+        SlotClass[] container = area == InventoryArea.Hotbar ? hotbarItems : items;
+
+        if (index < 0 || index >= container.Length) return;
+
+        var slot = container[index];
+        if (slot == null || slot.IsEmpty()) return;
+
+        ItemClass item = slot.GetItem();
+
+        if (item is IUsableItem usable)
+        {
+            usable.UseItem(PlayerStatus.Instance, this);
+        }
+        else
+        {
+            Debug.LogWarning($"Item {item.itemName} is not usable.");
+        }
+    }
+
+
     public void Clear()
     {
         for (int i = 0; i < items.Length; i++)

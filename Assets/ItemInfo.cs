@@ -13,7 +13,7 @@ public class ItemInfo : MonoBehaviour
     public TextMeshProUGUI itemDescriptionText;
     public TextMeshProUGUI itemFuncText;
 
-    private float hideDelay = 0.15f;
+    private float hideDelay = 0.2f;
     private float hideTimer = -1f;
     private bool isHoveringSlot = false;
     //private RectTransform panelRect;
@@ -27,21 +27,12 @@ public class ItemInfo : MonoBehaviour
 
     void Update()
     {
-        if (hideTimer > 0f)
+        if (!IsPointerOverInventorySlot() || Input.GetMouseButtonDown(0))
         {
-            hideTimer -= Time.deltaTime;
-            if (hideTimer <= 0f)
-            {
-                HideInfo();
-            }
-        }
-
-        if (Input.GetMouseButtonDown(0) && !IsPointerOverInventorySlot())
-        {
-            HideInfo();
-            hideTimer = -1f;
+            HideInfo(); 
         }
     }
+
 
     public void SetHovering(bool hovering)
     {
@@ -65,6 +56,7 @@ public class ItemInfo : MonoBehaviour
 
         return false;
     }
+
 
     public void ShowInfo(ItemClass item, Vector2 Pos)
     {

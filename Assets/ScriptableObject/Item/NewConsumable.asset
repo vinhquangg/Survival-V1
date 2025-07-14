@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: NewConsumable
   m_EditorClassIdentifier: 
   itemType: 4
-  itemName: Stone
+  itemName: Mushroom
   itemIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  itemDesc: Red Mushroom
+  itemFunc: Use to restore a small heal
   isStack: 1
   maxStack: 64
-  dropPrefab: {fileID: 1028921820866644714, guid: a529fe0ab772e3741a05b52fca2d8102,
+  dropPrefab: {fileID: 4353292526679080624, guid: f9ba43b4d4d826f47aa990da47cf55a1,
     type: 3}
   headthAdded: 10

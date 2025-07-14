@@ -208,6 +208,25 @@ public class InventoryManager : MonoBehaviour
         RefreshAllUI();
     }
 
+    public void UseItemFromSlot(InventoryArea area, int slotIndex)
+    {
+        var slot = GetSlot(area, slotIndex);
+        if (slot == null || slot.IsEmpty()) return;
+
+        var item = slot.GetItem();
+
+        if (item is IUsableItem usable)
+        {
+            usable.UseItem(PlayerStatus.Instance, playerInventory);
+            RefreshAllUI();
+        }
+        else
+        {
+            Debug.Log($"Item {item.itemName} is not usable.");
+        }
+    }
+
+
     public void RefreshAllUI()
     {
         inventoryUI.RefreshUI(playerInventory.items);

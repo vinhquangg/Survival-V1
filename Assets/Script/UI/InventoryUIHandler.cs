@@ -33,6 +33,16 @@ public class InventoryUIHandler : MonoBehaviour
             var uiRef = slots[i].GetComponent<SlotUIRef>();
             if (uiRef == null) continue;
 
+            if (area == InventoryArea.Hotbar && uiRef.hotkeyText != null)
+            {
+                uiRef.hotkeyText.text = (i + 1).ToString();
+                uiRef.hotkeyText.gameObject.SetActive(true);
+            }
+            else if (uiRef.hotkeyText != null)
+            {
+                uiRef.hotkeyText.gameObject.SetActive(false);
+            }
+
             if (i < dataSlots.Length && dataSlots[i] != null && !dataSlots[i].IsEmpty())
             {
                 var slot = dataSlots[i];
@@ -66,6 +76,7 @@ public class InventoryUIHandler : MonoBehaviour
             }
         }
     }
+
 
     public int GetSlotCount()
     {

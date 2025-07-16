@@ -6,6 +6,7 @@ public class InteractableObject : MonoBehaviour
 {
     public string itemName;
     public ObjectType objectType;
+    //public Sprite icon;
     public string GetItemName()
     {
         return itemName;
@@ -14,4 +15,6 @@ public class InteractableObject : MonoBehaviour
     {
         return objectType.ToString();
     }
+
+
 }

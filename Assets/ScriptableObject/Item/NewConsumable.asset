@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 4
   itemName: Mushroom
-  itemIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: 5ebcf8f1098bad74e8edcbbc0f65ca01, type: 3}
   itemDesc: Red Mushroom
   itemFunc: Use to restore a small heal
   isStack: 1

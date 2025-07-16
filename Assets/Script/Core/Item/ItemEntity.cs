@@ -16,4 +16,6 @@ public class ItemEntity : MonoBehaviour
     public ItemClass GetItemData() => itemData;
     public int GetQuantity() => quantity;
     public float GetDurability() => durability;
+    public Sprite GetItemIcon() => itemData.itemIcon;
+
 }

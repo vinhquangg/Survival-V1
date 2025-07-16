@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-public class ItemPickup : MonoBehaviour, IInteractable
+public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
 {
     private ItemEntity itemEntity;
     private InteractableObject interactableObject;
@@ -20,19 +20,19 @@ public class ItemPickup : MonoBehaviour, IInteractable
         if (interactableObject == null)
             Debug.LogError("Missing InteractableObject on ItemPickup");
 
-        if (tooltipUI == null)
-            Debug.LogWarning("Tooltip UI chưa gán cho: " + gameObject.name);
+        //if (tooltipUI == null)
+        //    Debug.LogWarning("Tooltip UI chưa gán cho: " + gameObject.name);
 
-        interactionInfoText = tooltipUI.transform.Find("interaction_Info")?.GetComponent<TextMeshProUGUI>();
-        interactionTypeText = tooltipUI.transform.Find("interaction_type")?.GetComponent<TextMeshProUGUI>();
+        //interactionInfoText = tooltipUI.transform.Find("interaction_Info")?.GetComponent<TextMeshProUGUI>();
+        //interactionTypeText = tooltipUI.transform.Find("interaction_type")?.GetComponent<TextMeshProUGUI>();
 
-        if (interactionInfoText != null)
-            interactionInfoText.text = interactableObject.GetItemName();
+        //if (interactionInfoText != null)
+        //    interactionInfoText.text = interactableObject.GetItemName();
 
-        if (interactionTypeText != null)
-            interactionTypeText.text = interactableObject.GetItemType();
+        //if (interactionTypeText != null)
+        //    interactionTypeText.text = interactableObject.GetItemType();
 
-        HideUI();
+        //HideUI();
     }
 
     public string GetItemName()
@@ -60,6 +60,8 @@ public class ItemPickup : MonoBehaviour, IInteractable
         var inventoryManager = InventoryManager.Instance;
         if (inventoryManager == null) return;
 
+        Debug.Log($"▶️ Nhặt: {itemEntity.GetItemData().name} - SL: {itemEntity.GetQuantity()}");
+
         bool added = inventoryManager.AddItem(itemEntity.GetItemData(), itemEntity.GetQuantity());
 
         if (added)
@@ -68,21 +70,42 @@ public class ItemPickup : MonoBehaviour, IInteractable
         }
     }
 
+
     public GameObject GetItemUI()
     {
         return tooltipUI;
     }
 
-    public void ShowUI()
+    //public void ShowUI()
+    //{
+    //    if (tooltipUI != null)
+    //        tooltipUI.SetActive(true);
+    //}
+
+    //public void HideUI()
+    //{
+    //    if (tooltipUI != null)
+    //        tooltipUI.SetActive(false);
+    //}
+
+    public string GetName()
     {
-        if (tooltipUI != null)
-            tooltipUI.SetActive(true);
+        return interactableObject.GetItemName();
     }
 
-    public void HideUI()
+    //public string GetDescription()
+    //{
+    //    throw new System.NotImplementedException();
+    //}
+
+    public Sprite GetIcon()
     {
-        if (tooltipUI != null)
-            tooltipUI.SetActive(false);
+       return itemEntity.GetItemIcon();
+    }
+    public string GetItemAmount()
+    {
+        return "x" + itemEntity.GetQuantity().ToString();
     }
 
+    public InteractionType GetInteractionType() => InteractionType.Pickup;
 }

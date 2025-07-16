@@ -709,6 +709,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Mushroom
   objectType: 1
+  icon: {fileID: 21300000, guid: 5ebcf8f1098bad74e8edcbbc0f65ca01, type: 3}
+  interactionType: 4
 --- !u!1 &7795498838026886592
 GameObject:
   m_ObjectHideFlags: 0

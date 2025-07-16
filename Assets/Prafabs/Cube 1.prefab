@@ -284,7 +284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 6c1d1a44776ff274d930153981cfa32e, type: 2}
   quantity: 2
-  durability: 0
+  durability: 100
 --- !u!1 &6997452478848833653
 GameObject:
   m_ObjectHideFlags: 0

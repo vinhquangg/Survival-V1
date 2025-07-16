@@ -4,10 +4,10 @@ using UnityEngine;
 
 public interface IInteractable
 {
-    string GetItemName();
-    string GetItemType();
-    GameObject GetItemUI();
     void Interact(GameObject interactor);
-    void ShowUI();         
-    void HideUI();
+    //string GetItemName();
+    //string GetItemType();
+    //GameObject GetItemUI();
+    //void ShowUI();
+    //void HideUI();
 }

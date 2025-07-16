@@ -90,10 +90,10 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             inventoryManager.SplitItem(inventoryArea, slotIndex);
         }
-        if (eventData.button == PointerEventData.InputButton.Left)
-        {
-            inventoryManager.UseItemFromSlot(inventoryArea, slotIndex);
-        }
+        //if (eventData.button == PointerEventData.InputButton.Left)
+        //{
+        //    inventoryManager.UseItemFromSlot(inventoryArea, slotIndex);
+        //}
     }
 
     public void OnPointerEnter(PointerEventData eventData)

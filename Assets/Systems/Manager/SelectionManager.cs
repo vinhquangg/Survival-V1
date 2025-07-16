@@ -9,6 +9,15 @@ public class SelectionManager : MonoBehaviour
     private IInteractable currentInteractable;
     public IInteractable CurrentInteractable => currentInteractable;
 
+    private PlayerUIManager uiManager;
+
+    void Start()
+    {
+        uiManager = FindObjectOfType<PlayerUIManager>();
+        if (uiManager == null)
+            Debug.LogError("Không tìm thấy PlayerUIManager trong scene!");
+    }
+
     void Update()
     {
         Ray ray = new Ray(cursorTransform.position, cursorTransform.forward);
@@ -17,20 +26,20 @@ public class SelectionManager : MonoBehaviour
         if (Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
         {
             var interactable = hit.transform.GetComponent<IInteractable>();
-            if (interactable != null)
+            var info = hit.transform.GetComponent<IInteractableInfo>();
+
+            if (interactable != null && info != null)
             {
                 if (currentInteractable != interactable)
                 {
-                    currentInteractable?.HideUI();    
-                    interactable.ShowUI();            
                     currentInteractable = interactable;
-                }
-
+                    uiManager.ShowPrompt(info);
+                }   
                 return;
             }
         }
 
-        currentInteractable?.HideUI();
         currentInteractable = null;
+        uiManager.HidePrompt();
     }
 }

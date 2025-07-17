@@ -12,8 +12,16 @@ public class AttackState : PlayerState
     {
         //player.inputHandler.DisablePlayerInput();
         attackTimer = attackDuration;
-        player.animationController.TriggerAttack();
-        player.animationController.SetUpperBodyLayerWeight(1f);
+        if (player.weaponManager != null && player.weaponManager.HasWeaponEquipped())
+        {
+            player.animationController.TriggerAttack();
+            player.animationController.SetUpperBodyLayerWeight(1f);
+        }
+        else
+        {
+            player.animationController.SetUpperBodyLayerWeight(0f);
+        }
+
     }
 
     public override void Update()

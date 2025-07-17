@@ -7,7 +7,7 @@ public class EquipSystem : MonoBehaviour
     //------UI--------
     public GameObject quickSlot;
     public List<GameObject> quickSlotItems = new List<GameObject>();
-
+    [SerializeField] private WeaponHolder weaponHolder;
 
     public static EquipSystem instance { get;  set; }
 
@@ -45,5 +45,19 @@ public class EquipSystem : MonoBehaviour
             quickSlotItems.Add(child);
         }
 
+    }
+
+    public void TryEquipWeaponHotbar()
+    {
+        foreach(var slotUI in quickSlotItems)
+        {
+            var uiRef = slotUI.GetComponent<SlotUIRef>();
+            if(uiRef == null)
+            {
+                continue;
+            }
+
+            //var inventorySlot = uiRef.
+        }
     }
 }

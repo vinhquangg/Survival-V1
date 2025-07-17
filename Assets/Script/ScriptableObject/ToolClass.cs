@@ -22,12 +22,14 @@ public class ToolClass : ItemClass
         Pickaxe = 3,
         Shovel = 4,
         FishingRod = 5,
-        Sword = 6,
     }
     public override ItemClass GetItem() { return this; }
     public override ToolClass GetTool() { return this; }
     public override MiscClass GetMisc() { return null; }
     public override Consumable GetConsumable() { return null; }
+
+    public override WeaponClass GetWeapon() { return null; }
+
 
     public override float GetDurability()
     {

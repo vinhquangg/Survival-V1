@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59db7984863349544b26efa05708ef59, type: 3}
   m_Name: New Blueprint Data
   m_EditorClassIdentifier: 
-  resultItem: {fileID: 11400000, guid: c5ae0eb687469b1499e49b5f3859de1f, type: 2}
+  resultItem: {fileID: 11400000, guid: 9a0afbe5beb4b974ea2dfd96f4acc613, type: 2}
   resultAmount: 1
   requirements:
   - item: {fileID: 11400000, guid: 6c1d1a44776ff274d930153981cfa32e, type: 2}

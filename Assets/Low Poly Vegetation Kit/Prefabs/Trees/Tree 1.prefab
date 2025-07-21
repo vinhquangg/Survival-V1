@@ -440,7 +440,8 @@ GameObject:
   - component: {fileID: 6305784862037544347}
   - component: {fileID: 9034725886311247817}
   - component: {fileID: 715026825678343970}
-  m_Layer: 0
+  - component: {fileID: 6270688869665628910}
+  m_Layer: 14
   m_Name: Tree 1
   m_TagString: Obstacle
   m_Icon: {fileID: 0}
@@ -542,6 +543,19 @@ MonoBehaviour:
   m_IgnoreFromBuild: 0
   m_ApplyToChildren: 1
   m_AffectedAgents: ffffffff
+--- !u!114 &6270688869665628910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7614006570771573068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2828b929d200f24da1313393c04731c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  treeName: Tree
 --- !u!1 &8785772867368445908
 GameObject:
   m_ObjectHideFlags: 0

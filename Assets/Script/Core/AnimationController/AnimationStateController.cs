@@ -7,7 +7,7 @@ public class AnimationStateController : MonoBehaviour
     private PlayerController playerController;
     private PlayerCombat playerCombat;
     private bool isAttacking = false;
-
+    private bool isChop = false;
     private float acceleration = 4f;
     private float deceleration = 6f;
     private Vector2 currentVelocity = Vector2.zero;
@@ -50,6 +50,24 @@ public class AnimationStateController : MonoBehaviour
         isAttacking = true;
         animator.SetTrigger("isAttack");
     }
+    public void TriggerChop()
+    {
+        animator.SetBool("isChop", true);
+        isChop = true;
+        StartCoroutine(ResetChopAfterDelay(6f));
+    }
+
+    private IEnumerator ResetChopAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ResetChop();
+    }
+
+    public void ResetChop()
+    {
+        isChop = false;
+        animator.SetBool("isChop", false);
+    }
 
     public void ResetAttack()
     {
@@ -59,7 +77,6 @@ public class AnimationStateController : MonoBehaviour
 
     public void Attack()
     {
-        Debug.Log("⚔️ Animation event gọi Attack()");
         playerCombat.HandleAtack();
     }
 

@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
     public InputHandler inputHandler { get; private set; }
     public CharacterController controller { get; private set; }
     public AnimationStateController animationController { get; private set; }
-    private PlayerStateMachine playerStateMachine;
+    public PlayerStateMachine playerStateMachine { get; private set; }
     public WeaponManager weaponManager;
     public float moveSpeed = 5f;
     public float lookSensitivity = 1f;
@@ -34,6 +34,8 @@ public class PlayerController : MonoBehaviour
         inputHandler = GetComponent<InputHandler>();
         controller = GetComponent<CharacterController>();
         animationController = GetComponent<AnimationStateController>();
+        playerStateMachine = new PlayerStateMachine();
+        playerStateMachine.Initialized(new IdleState(playerStateMachine, this));
     }
 
     private void Start()
@@ -43,8 +45,7 @@ public class PlayerController : MonoBehaviour
         {
             GameManager.instance.SetCursorLock(true);
         }
-        playerStateMachine = new PlayerStateMachine();
-        playerStateMachine.Initialized(new IdleState(playerStateMachine, this));
+
     }
 
     private void Update()

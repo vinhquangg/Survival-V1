@@ -19,7 +19,7 @@ public class WeaponManager : MonoBehaviour
             if (playerAnimator != null)
             {
                 playerAnimator.SetInteger("WeaponType", (int)weapon.weaponType);
-                playerAnimator.SetLayerWeight(playerAnimator.GetLayerIndex("WeaponLayer"), 1f);
+                playerAnimator.SetLayerWeight(playerAnimator.GetLayerIndex("UpperLayer"), 1f);
             }
         }
         else

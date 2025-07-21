@@ -342,6 +342,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   treeName: Tree
+  stumpPrefab: {fileID: 5098319865391523867, guid: 0c1dc9162f86dac488068fdcb3cf9715,
+    type: 3}
+  stumpPoolTag: Stump1
 --- !u!1 &3568812898604265704
 GameObject:
   m_ObjectHideFlags: 0

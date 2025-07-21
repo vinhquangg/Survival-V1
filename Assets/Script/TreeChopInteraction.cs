@@ -5,6 +5,8 @@ using UnityEngine;
 public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableInfo
 {
     [SerializeField] private string treeName;
+    [SerializeField] private GameObject stumpPrefab;
+    [SerializeField] private string stumpPoolTag;
     public Sprite GetIcon()
     {
         return null;
@@ -38,6 +40,19 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
     public void OnChopped()
     {
         Debug.Log("🌳 Cây bị chặt rồi!");
-        // Gợi ý: Animator cây, đổ gỗ, spawn item, play sound...
+
+        Vector3 pos = transform.position;
+        Quaternion rot = transform.rotation;
+
+        // 🟢 Spawn từ pool thay vì Instantiate
+        if (!string.IsNullOrEmpty(stumpPoolTag))
+        {
+            ObjectPoolManager.Instance.SpawnFromPool(stumpPoolTag, pos, rot);
+        }
+
+        // Cuối cùng, tắt cây
+        ObjectPoolManager.Instance.ReturnToPool(gameObject);
     }
+
+
 }

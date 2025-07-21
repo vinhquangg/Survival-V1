@@ -13,6 +13,9 @@ TagManager:
   - PlayerWeapon
   - Enemy
   - InventoryManager
+  - Stump1
+  - Stump2
+  - Stump3
   layers:
   - Default
   - TransparentFX

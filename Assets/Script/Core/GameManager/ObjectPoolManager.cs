@@ -86,10 +86,30 @@ public class ObjectPoolManager : MonoBehaviour
         Debug.LogWarning($"❌ Pool '{tag}' không còn object hợp lệ hoặc đã bị destroy!");
         return null;
     }
+    public void ReenableFromPool(GameObject obj)
+    {
+        if (obj == null)
+        {
+            Debug.LogWarning("❌ Object null trong ReenableFromPool!");
+            return;
+        }
 
+        obj.SetActive(true); // ✅ Bật lại object đã return
+    }
 
     public void ReturnToPool(GameObject obj)
     {
         obj.SetActive(false);
+
+        string tag = obj.tag;
+
+        if (!poolDictionary.ContainsKey(tag))
+        {
+            Debug.LogWarning($"❌ Không tìm thấy pool cho tag '{tag}' khi ReturnToPool.");
+            return;
+        }
+
+        poolDictionary[tag].Enqueue(obj); // ✅ Đưa lại vào queue
     }
+
 }

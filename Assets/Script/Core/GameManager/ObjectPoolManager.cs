@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using UnityEngine;
 
 public class ObjectPoolManager : MonoBehaviour
@@ -10,13 +9,14 @@ public class ObjectPoolManager : MonoBehaviour
     public class Pool
     {
         public string tag;
-        public List<GameObject> prefabs; // ✅ Danh sách prefab dùng chung tag
+        public List<GameObject> prefabs;
         public int size;
     }
 
     public List<Pool> pools;
-    private Dictionary<string, Queue<GameObject>> poolDictionary = new Dictionary<string, Queue<GameObject>>();
-    private Dictionary<string, List<GameObject>> prefabReference = new Dictionary<string, List<GameObject>>();
+
+    private Dictionary<string, Queue<GameObject>> poolDictionary = new();
+    private Dictionary<string, List<GameObject>> prefabReference = new();
 
     private void Awake()
     {
@@ -24,68 +24,89 @@ public class ObjectPoolManager : MonoBehaviour
         else { Destroy(gameObject); return; }
     }
 
-    void Start()
+    private void Start()
     {
-        // ✅ Tạo Random có seed cố định để đảm bảo prefab được chọn giống nhau mỗi lần play
+        InitializePools();
+    }
+
+    #region Init
+
+    private void InitializePools()
+    {
         System.Random prng = new System.Random(WorldSeedManager.Seed);
 
-        foreach (Pool pool in pools)
+        foreach (var pool in pools)
         {
-            Queue<GameObject> objectQueue = new Queue<GameObject>();
-
-            if (!prefabReference.ContainsKey(pool.tag))
-                prefabReference[pool.tag] = new List<GameObject>();
+            Queue<GameObject> objectQueue = new();
+            prefabReference[pool.tag] = new List<GameObject>();
 
             for (int i = 0; i < pool.size; i++)
             {
-                // ✅ Dùng System.Random thay vì UnityEngine.Random
-                int prefabIndex = prng.Next(0, pool.prefabs.Count);
-                GameObject prefab = pool.prefabs[prefabIndex];
-
-                // ✅ Tạo object từ prefab được chọn
+                GameObject prefab = GetRandomPrefab(pool, prng);
                 GameObject obj = Instantiate(prefab);
                 obj.SetActive(false);
                 objectQueue.Enqueue(obj);
-
                 prefabReference[pool.tag].Add(prefab);
-    
             }
 
             poolDictionary[pool.tag] = objectQueue;
         }
     }
 
+    private GameObject GetRandomPrefab(Pool pool, System.Random prng)
+    {
+        int index = prng.Next(0, pool.prefabs.Count);
+        return pool.prefabs[index];
+    }
+
+    #endregion
+
+    #region Spawn
 
     public GameObject SpawnFromPool(string tag, Vector3 position, Quaternion rotation)
     {
         if (!poolDictionary.ContainsKey(tag))
         {
-            Debug.LogWarning("❌ Không tìm thấy tag '" + tag + "' trong Pool!");
+            Debug.LogWarning($"❌ Không tìm thấy tag '{tag}' trong Pool!");
             return null;
         }
 
-        GameObject obj = null;
+        Queue<GameObject> queue = poolDictionary[tag];
+
+        int maxAttempts = queue.Count;
         int attempts = 0;
-        int maxAttempts = poolDictionary[tag].Count;
 
         while (attempts < maxAttempts)
         {
-            obj = poolDictionary[tag].Dequeue();
-
+            GameObject obj = queue.Dequeue();
             if (obj != null)
             {
-                obj.SetActive(true);
-                obj.transform.SetPositionAndRotation(position, rotation);
-                poolDictionary[tag].Enqueue(obj);
+                SetupObject(obj, position, rotation);
+                queue.Enqueue(obj);
                 return obj;
             }
-
             attempts++;
         }
 
         Debug.LogWarning($"❌ Pool '{tag}' không còn object hợp lệ hoặc đã bị destroy!");
         return null;
     }
+
+    private void SetupObject(GameObject obj, Vector3 position, Quaternion rotation)
+    {
+        obj.SetActive(true);
+        obj.transform.SetPositionAndRotation(position, rotation);
+
+        // 🟡 Gọi hàm khởi tạo lại nếu có TreeInstance hoặc các thành phần đặc biệt
+        var tree = obj.GetComponent<TreeInstance>();
+        if (tree != null && tree.isChopped)
+        {
+            obj.SetActive(false); // Ẩn cây nếu đã bị chặt
+        }
+
+        // 🟡 (Sau này: Nếu có IPoolable thì gọi poolable.OnSpawned(); )
+    }
+
     public void ReenableFromPool(GameObject obj)
     {
         if (obj == null)
@@ -94,14 +115,26 @@ public class ObjectPoolManager : MonoBehaviour
             return;
         }
 
-        obj.SetActive(true); // ✅ Bật lại object đã return
+        obj.SetActive(true);
+
+        // 🟡 Reset lại nếu có TreeInstance
+        var tree = obj.GetComponent<TreeInstance>();
+        if (tree != null && tree.isChopped)
+        {
+            obj.SetActive(false);
+        }
     }
+
+    #endregion
+
+    #region Return
 
     public void ReturnToPool(GameObject obj)
     {
-        obj.SetActive(false);
+        if (obj == null) return;
 
         string tag = obj.tag;
+        obj.SetActive(false);
 
         if (!poolDictionary.ContainsKey(tag))
         {
@@ -109,7 +142,10 @@ public class ObjectPoolManager : MonoBehaviour
             return;
         }
 
-        poolDictionary[tag].Enqueue(obj); // ✅ Đưa lại vào queue
+        poolDictionary[tag].Enqueue(obj);
+
+        // 🟡 (Sau này: Nếu có IPoolable thì gọi poolable.OnReturned(); )
     }
 
+    #endregion
 }

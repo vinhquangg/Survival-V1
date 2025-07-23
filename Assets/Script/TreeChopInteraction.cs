@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableInfo
 {
-    [SerializeField] private string treeName;
-    [SerializeField] private GameObject stumpPrefab;
-    [SerializeField] private string stumpPoolTag;
+    private TreeInstance treeInstance;
+    //[SerializeField] private string treeName;
+    //[SerializeField] private GameObject stumpPrefab;
+    //[SerializeField] private string stumpPoolTag;
+
+    private void Start()
+    {
+        treeInstance = GetComponent<TreeInstance>();
+    }
     public Sprite GetIcon()
     {
         return null;
@@ -24,7 +30,10 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
 
     public string GetName()
     {
-        return "Chop " + treeName;
+        if (treeInstance == null)
+            treeInstance = GetComponent<TreeInstance>();
+
+        return "Chop " + (treeInstance?.treeData?.treeName ?? "Unknown");
     }
 
     public void Interact(GameObject interactor)
@@ -41,18 +50,27 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
     {
         Debug.Log("🌳 Cây bị chặt rồi!");
 
-        Vector3 pos = transform.position;
-        Quaternion rot = transform.rotation;
-
-        // 🟢 Spawn từ pool thay vì Instantiate
-        if (!string.IsNullOrEmpty(stumpPoolTag))
+        var treeInstance = GetComponent<TreeInstance>();
+        if (treeInstance != null)
         {
-            ObjectPoolManager.Instance.SpawnFromPool(stumpPoolTag, pos, rot);
-        }
+            treeInstance.isChopped = true;
+            if (!string.IsNullOrEmpty(treeInstance.treeData.stumpPoolTag))
+            {
+                ObjectPoolManager.Instance.SpawnFromPool(treeInstance.treeData.stumpPoolTag, transform.position, transform.rotation);
+            }
 
-        // Cuối cùng, tắt cây
+            treeInstance.ShowLogDropAfterDelay(0.5f); // 👈 Gọi hàm này
+
+            StartCoroutine(ReturnToPoolWithDelay(0.6f)); // 👈 Delay nhỏ hơn hoặc bằng thời gian hiển thị log
+        }
+    }
+
+    private IEnumerator ReturnToPoolWithDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         ObjectPoolManager.Instance.ReturnToPool(gameObject);
     }
+
 
 
 }

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 795317104224191227}
   - component: {fileID: 4871893610061177515}
   - component: {fileID: -5744828932601805158}
+  - component: {fileID: 5271446448139335248}
   m_Layer: 14
   m_Name: Tree 3
   m_TagString: Obstacle
@@ -127,10 +128,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2828b929d200f24da1313393c04731c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treeName: Tree
-  stumpPrefab: {fileID: 1213606728356105615, guid: 284148a5985781342877af69bf326a2e,
+--- !u!114 &5271446448139335248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2747371392609877469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f800b5eee4f9e34fa280eda0cc16cf1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  treeData: {fileID: 11400000, guid: b0cddf24d99950e40995d3be8b23d814, type: 2}
+  isChopped: 0
+  logDropGO: {fileID: 4370736543054296596, guid: edb158f4ce929cb4e88a8904570b0257,
     type: 3}
-  stumpPoolTag: Stump3
 --- !u!1 &4529416127168741076
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,6 +16,58 @@ public class ChunkObjectSpawner : MonoBehaviour
 
     private bool hasSpawned = false;
 
+    private void SpawnNewObject(SpawnInfo info, int index)
+    {
+        Vector3 worldPos = transform.TransformPoint(info.localPosition);
+        Quaternion worldRot = Quaternion.Euler(info.localRotation);
+
+        GameObject obj = ObjectPoolManager.Instance?.SpawnFromPool(info.tag, worldPos, worldRot);
+        if (obj != null)
+        {
+            obj.transform.SetParent(transform);
+
+            if (index < spawnedObjects.Count)
+                spawnedObjects[index] = obj;
+            else
+                spawnedObjects.Add(obj);
+        }
+        else
+        {
+            Debug.LogWarning($"❌ Không tìm thấy tag '{info.tag}' trong Pool!");
+        }
+    }
+
+    private void ReenableExistingObject(GameObject obj, SpawnInfo info)
+    {
+        ObjectPoolManager.Instance?.ReenableFromPool(obj);
+        obj.transform.SetPositionAndRotation(
+            transform.TransformPoint(info.localPosition),
+            Quaternion.Euler(info.localRotation)
+        );
+        obj.transform.SetParent(transform);
+    }
+
+    private void ReturnAllSpawnedObjectsToPool()
+    {
+        foreach (GameObject obj in spawnedObjects)
+        {
+            if (obj != null)
+                ObjectPoolManager.Instance?.ReturnToPool(obj);
+        }
+    }
+
+    private void DespawnAllObjects()
+    {
+        foreach (GameObject obj in spawnedObjects)
+        {
+            if (obj != null)
+            {
+                obj.transform.SetParent(null);
+                ObjectPoolManager.Instance?.ReturnToPool(obj);
+            }
+        }
+    }
+
     public void SpawnObjects()
     {
         if (hasSpawned) return;
@@ -23,70 +75,26 @@ public class ChunkObjectSpawner : MonoBehaviour
 
         for (int i = 0; i < objectsToSpawn.Count; i++)
         {
-            // Nếu đã có object trong list → skip
             if (i < spawnedObjects.Count && spawnedObjects[i] != null)
             {
-                // Bật lại object cũ thay vì tạo mới
-                ObjectPoolManager.Instance?.ReenableFromPool(spawnedObjects[i]);
-
-                // Đặt lại vị trí/rotation trong trường hợp object bị xê dịch trước đó
-                spawnedObjects[i].transform.SetPositionAndRotation(
-                    transform.TransformPoint(objectsToSpawn[i].localPosition),
-                    Quaternion.Euler(objectsToSpawn[i].localRotation)
-                );
-
-                spawnedObjects[i].transform.SetParent(transform);
+                ReenableExistingObject(spawnedObjects[i], objectsToSpawn[i]);
                 continue;
             }
 
-
-            SpawnInfo info = objectsToSpawn[i];
-            Vector3 worldPos = transform.TransformPoint(info.localPosition);
-            Quaternion worldRot = Quaternion.Euler(info.localRotation);
-
-            GameObject obj = ObjectPoolManager.Instance?.SpawnFromPool(info.tag, worldPos, worldRot);
-            if (obj != null)
-            {
-                obj.transform.SetParent(transform);
-                if (i < spawnedObjects.Count)
-                    spawnedObjects[i] = obj;
-                else
-                    spawnedObjects.Add(obj);
-            }
-            else
-            {
-                Debug.LogWarning($"❌ Không tìm thấy tag '{info.tag}' trong Pool!");
-            }
+            SpawnNewObject(objectsToSpawn[i], i);
         }
     }
-
-
-
     private void OnDisable()
     {
-        foreach (GameObject obj in spawnedObjects)
-        {
-            if (obj != null)
-                ObjectPoolManager.Instance?.ReturnToPool(obj);
-        }
-        //spawnedObjects.Clear();
+        ReturnAllSpawnedObjectsToPool();
+        hasSpawned = false;
+    }
+    public void DespawnObjects()
+    {
+        DespawnAllObjects();
         hasSpawned = false;
     }
 
-    public void DespawnObjects()
-    {
-        for (int i = 0; i < spawnedObjects.Count; i++)
-        {
-            GameObject obj = spawnedObjects[i];
-            if (obj != null)
-            {
-                obj.transform.SetParent(null);
-                ObjectPoolManager.Instance?.ReturnToPool(obj);
-            }
-        }
-        // spawnedObjects.Clear(); ❌ KHÔNG CLEAR
-        hasSpawned = false;
-    }
 
 
 }

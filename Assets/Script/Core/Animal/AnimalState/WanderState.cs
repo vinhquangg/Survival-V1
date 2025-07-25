@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -20,10 +20,12 @@ public class WanderState : IAnimalState
     {
         Wander();
     }
-
     public void Tick()
     {
         timer += Time.deltaTime;
+        bool isRunning = agent.velocity.magnitude > 0.1f;
+        stateMachine.baseAnimal.animator.SetBool("isRunning", isRunning);
+
         if (timer >= wanderInterval)
         {
             Wander();

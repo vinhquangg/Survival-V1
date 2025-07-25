@@ -8,4 +8,5 @@ public enum ItemType
     QuestItem = 5,
     Miscellaneous = 6,
     Equipment = 7,
+    Item = 8,
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2343929393051508552}
   - component: {fileID: 4433918209108607370}
   - component: {fileID: 1193912403051048016}
-  m_Layer: 0
+  m_Layer: 19
   m_Name: Log 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,7 +129,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8192
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -580,7 +580,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2193541497726747328
 Transform:
   m_ObjectHideFlags: 0
@@ -611,7 +611,10 @@ GameObject:
   - component: {fileID: 3131473772681602909}
   - component: {fileID: 5323832400561071955}
   - component: {fileID: 1029799876096640811}
-  m_Layer: 0
+  - component: {fileID: 8430071212285939467}
+  - component: {fileID: 2306065494349526240}
+  - component: {fileID: 5527759304233200394}
+  m_Layer: 19
   m_Name: Log
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -700,7 +703,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -727,7 +730,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8192
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
@@ -735,3 +738,45 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8430071212285939467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5763931122859566700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e60abddd1303a3479fb114e4fcf7317, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemData: {fileID: 11400000, guid: 581088832f2307c47b9bd1a6910d95c0, type: 2}
+  quantity: 2
+  durability: 0
+--- !u!114 &2306065494349526240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5763931122859566700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 332e623d8449f12499cfe84be9cb7353, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tooltipUI: {fileID: 5763931122859566700}
+--- !u!114 &5527759304233200394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5763931122859566700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85ff8df05a1e24541812e5a06f6e01f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: Log Wood
+  objectType: 5

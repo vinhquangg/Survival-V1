@@ -5,4 +5,5 @@ public enum ObjectType
     Rock,
     Tree,
     Stick,
+    Log,
 }

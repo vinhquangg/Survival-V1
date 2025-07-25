@@ -35,11 +35,25 @@ public class TreeInstance : MonoBehaviour
     private IEnumerator ShowLogCoroutine(float delay)
     {
         yield return new WaitForSeconds(delay);
+
         if (logDropGO != null)
         {
-            GameObject spawnedLog = Instantiate(logDropGO, transform.position, Quaternion.identity);
-            spawnedLog.SetActive(true); 
+            Vector3 spawnPosition = GetGroundPosition(transform.position + Vector3.up * 3f); // ray từ trên cao xuống
+            GameObject spawnedLog = Instantiate(logDropGO, spawnPosition, Quaternion.identity);
+            spawnedLog.SetActive(true);
         }
     }
+
+
+    private Vector3 GetGroundPosition(Vector3 origin)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(origin, Vector3.down, out hit, 10f))
+        {
+            return hit.point; // Vị trí mặt đất
+        }
+        return origin; // fallback nếu không có ground
+    }
+
 
 }

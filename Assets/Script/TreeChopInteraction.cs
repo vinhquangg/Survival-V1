@@ -59,9 +59,9 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
                 ObjectPoolManager.Instance.SpawnFromPool(treeInstance.treeData.stumpPoolTag, transform.position, transform.rotation);
             }
 
-            treeInstance.ShowLogDropAfterDelay(0.5f); // 👈 Gọi hàm này
+            treeInstance.ShowLogDropAfterDelay(0.5f); 
 
-            StartCoroutine(ReturnToPoolWithDelay(0.6f)); // 👈 Delay nhỏ hơn hoặc bằng thời gian hiển thị log
+            StartCoroutine(ReturnToPoolWithDelay(0.6f)); 
         }
     }
 

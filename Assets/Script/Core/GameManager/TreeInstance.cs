@@ -10,8 +10,7 @@ public class TreeInstance : MonoBehaviour
     private Quaternion originalRotation;
 
     [Header("Log Spawn")]
-    public GameObject logDropGO; // Kéo logDrop child vào đây trong prefab
-
+    public GameObject logDropGO;
     private void Awake()
     {
         originalPosition = transform.position;
@@ -38,9 +37,9 @@ public class TreeInstance : MonoBehaviour
         yield return new WaitForSeconds(delay);
         if (logDropGO != null)
         {
-            //logDropGO.transform.position = transform.position; // Hoặc position + offset
             GameObject spawnedLog = Instantiate(logDropGO, transform.position, Quaternion.identity);
-            logDropGO.SetActive(true);
+            spawnedLog.SetActive(true); 
         }
     }
+
 }

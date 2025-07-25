@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
@@ -19,14 +20,16 @@ public class PlayerCombat : MonoBehaviour
     }
     public void HandleAtack()
     {
-        Collider[] hitTargets = Physics.OverlapSphere(weaponHitPoint.position, weaponHitRadius, targetMask);
+        Vector3 start = weaponHitPoint.position;
+        Vector3 end = start + transform.forward; 
+        float radius = weaponHitRadius;
+        Collider[] hitTargets = Physics.OverlapCapsule(start, end, radius, targetMask);
         Debug.Log($"🔍 Found {hitTargets.Length} targets");
 
         foreach (var target in hitTargets)
         {
             Debug.Log($"🎯 Hit {target.name}");
 
-            // 👇 Dùng GetComponentInParent thay vì TryGetComponent
             if (target.GetComponentInParent<IDamageable>() is IDamageable damageable)
             {
                 Debug.Log($"✅ Gọi TakeDamage() trên {target.name}");
@@ -34,7 +37,7 @@ public class PlayerCombat : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"❌ Không tìm thấy IDamageable trên {target.name} hoặc cha của nó");
+                //Debug.LogWarning($"❌ Không tìm thấy IDamageable trên {target.name} hoặc cha của nó");
             }
         }
     }
@@ -43,8 +46,16 @@ public class PlayerCombat : MonoBehaviour
     {
         if (weaponHitPoint != null)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(weaponHitPoint.position, weaponHitRadius);
+            Vector3 start = weaponHitPoint.position;
+            Vector3 end = start + transform.forward;
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(start, weaponHitRadius);
+            Gizmos.DrawWireSphere(end, weaponHitRadius);
+            Gizmos.DrawLine(start + Vector3.up * weaponHitRadius, end + Vector3.up * weaponHitRadius);
+            Gizmos.DrawLine(start - Vector3.up * weaponHitRadius, end - Vector3.up * weaponHitRadius);
+            Gizmos.DrawLine(start + Vector3.right * weaponHitRadius, end + Vector3.right * weaponHitRadius);
+            Gizmos.DrawLine(start - Vector3.right * weaponHitRadius, end - Vector3.right * weaponHitRadius);
         }
     }
+
 }

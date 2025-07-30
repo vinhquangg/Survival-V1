@@ -6,6 +6,7 @@ public class StatInstance
     public StatsData data;
     public float currentValue;
     public Action<float> OnStatChanged;
+    private float decayTimer = 0f;
     public StatInstance(StatsData data)
     {
         this.data = data;
@@ -14,11 +15,13 @@ public class StatInstance
 
     public void Reduce(float amount)
     {
- 
+        float old = currentValue;
         currentValue = Mathf.Clamp(currentValue - amount, 0, data.maxValue);
-        OnStatChanged?.Invoke(currentValue); 
-        
+        OnStatChanged?.Invoke(currentValue);
+
+        Debug.Log($"[Reduce] {data.statName}: {old:F6} -> {currentValue:F6} (-{amount})");
     }
+
 
     public void Restore(float amount)
     {
@@ -32,14 +35,17 @@ public class StatInstance
 
     public void UpdateStat(float deltaTime)
     {
-        if (data.decayRate > 0)
+        decayTimer += deltaTime;
+
+        if (data.decayRate > 0 && decayTimer >= data.decayInterval)
         {
-            Reduce(data.decayRate * deltaTime);
+            Reduce(data.decayRate); 
+            decayTimer = 0f;
         }
 
         if (data.regenRate > 0)
         {
-            Restore(data.regenRate * deltaTime);
+            Restore(data.regenRate * deltaTime); 
         }
 
         if (IsEmpty() && data.affectsHealth)
@@ -49,9 +55,10 @@ public class StatInstance
     }
 
 
+
     public bool IsFull()
     {
-        return Mathf.Approximately(currentValue, data.maxValue) || currentValue >= data.maxValue;
+        return currentValue >= data.maxValue - 0.01f;
     }
 
 

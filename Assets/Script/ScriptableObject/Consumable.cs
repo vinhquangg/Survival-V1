@@ -26,11 +26,14 @@ public class Consumable : ItemClass,IUsableItem
         //    return;
         //}
 
+        Debug.Log($"Current hunger: {status.hunger.currentValue}/{status.hunger.data.maxValue}");
+
         if (status.hunger.IsFull())
         {
             Debug.Log("❗ No quá rồi!");
             return;
         }
+
 
 
         Debug.Log($"[Consumable] Hunger: +{statAdded}");

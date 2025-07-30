@@ -11,6 +11,7 @@ public class StatsData : ScriptableObject
     public float regenRate;
     public float decayRate;
     public float currentValue;
+    public float decayInterval = 1f;
     [Header("Effect if equal 0")]
     public bool affectsHealth = false;
     public float damePerSecondWhenEmpty = 0f;

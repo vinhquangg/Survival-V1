@@ -15,7 +15,8 @@ MonoBehaviour:
   statName: Hunger
   maxValue: 100
   regenRate: 0
-  decayRate: 0
+  decayRate: 1
   currentValue: 100
+  decayInterval: 10
   affectsHealth: 1
   damePerSecondWhenEmpty: 0.5

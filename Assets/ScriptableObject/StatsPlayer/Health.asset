@@ -17,5 +17,6 @@ MonoBehaviour:
   regenRate: 0
   decayRate: 0
   currentValue: 80
+  decayInterval: 0
   affectsHealth: 0
   damePerSecondWhenEmpty: 0

@@ -19,25 +19,22 @@ public class PlayerCombat : MonoBehaviour
     }
     public void HandleAtack()
     {
-        Collider[] hitTargets = Physics.OverlapSphere(weaponHitPoint.position, weaponHitRadius, targetMask);
-        Debug.Log($"🔍 Found {hitTargets.Length} targets");
+        Collider[] hitColliders = Physics.OverlapSphere(weaponHitPoint.position, weaponHitRadius, targetMask);
+        HashSet<IDamageable> uniqueDamageables = new();
 
-        foreach (var target in hitTargets)
+        foreach (Collider col in hitColliders)
         {
-            Debug.Log($"🎯 Hit {target.name}");
-
-            // 👇 Dùng GetComponentInParent thay vì TryGetComponent
-            if (target.GetComponentInParent<IDamageable>() is IDamageable damageable)
+            if (col.GetComponentInParent<IDamageable>() is IDamageable damageable)
             {
-                Debug.Log($"✅ Gọi TakeDamage() trên {target.name}");
-                damageable.TakeDamage(damage);
-            }
-            else
-            {
-                Debug.LogWarning($"❌ Không tìm thấy IDamageable trên {target.name} hoặc cha của nó");
+                if (!uniqueDamageables.Contains(damageable))
+                {
+                    damageable.TakeDamage(damage);
+                    uniqueDamageables.Add(damageable);
+                }
             }
         }
     }
+
 
     private void OnDrawGizmosSelected()
     {

@@ -23,7 +23,10 @@ public class SelectionManager : MonoBehaviour
         Ray ray = new Ray(cursorTransform.position, cursorTransform.forward);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, interactionDistance, interactableLayer))
+        // Thêm bán kính "tương tác" → giúp dễ trúng object nhỏ
+        float sphereRadius = 0.3f;
+
+        if (Physics.SphereCast(ray, sphereRadius, out hit, interactionDistance, interactableLayer))
         {
             var interactable = hit.transform.GetComponent<IInteractable>();
             var info = hit.transform.GetComponent<IInteractableInfo>();
@@ -34,10 +37,16 @@ public class SelectionManager : MonoBehaviour
                 {
                     currentInteractable = interactable;
                     uiManager.ShowPrompt(info);
-                }   
+                }
                 return;
             }
         }
+
+        // Không trúng gì
+        currentInteractable = null;
+        uiManager.HidePrompt();
+
+
 
         currentInteractable = null;
         uiManager.HidePrompt();

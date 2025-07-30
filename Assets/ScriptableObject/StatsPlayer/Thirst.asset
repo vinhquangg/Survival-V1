@@ -15,7 +15,7 @@ MonoBehaviour:
   statName: Thirst
   maxValue: 100
   regenRate: 0
-  decayRate: 0.5
+  decayRate: 1
   currentValue: 100
   affectsHealth: 1
-  damePerSecondWhenEmpty: 0.5
+  damePerSecondWhenEmpty: 1

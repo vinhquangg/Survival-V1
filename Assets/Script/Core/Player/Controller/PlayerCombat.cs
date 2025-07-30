@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
@@ -40,8 +41,16 @@ public class PlayerCombat : MonoBehaviour
     {
         if (weaponHitPoint != null)
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(weaponHitPoint.position, weaponHitRadius);
+            Vector3 start = weaponHitPoint.position;
+            Vector3 end = start + transform.forward;
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(start, weaponHitRadius);
+            Gizmos.DrawWireSphere(end, weaponHitRadius);
+            Gizmos.DrawLine(start + Vector3.up * weaponHitRadius, end + Vector3.up * weaponHitRadius);
+            Gizmos.DrawLine(start - Vector3.up * weaponHitRadius, end - Vector3.up * weaponHitRadius);
+            Gizmos.DrawLine(start + Vector3.right * weaponHitRadius, end + Vector3.right * weaponHitRadius);
+            Gizmos.DrawLine(start - Vector3.right * weaponHitRadius, end - Vector3.right * weaponHitRadius);
         }
     }
+
 }

@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerStatusUI : MonoBehaviour
 {
@@ -9,30 +7,36 @@ public class PlayerStatusUI : MonoBehaviour
     public StatsBar thirstData;
 
     private PlayerStatus playerStatus;
+
     void Start()
     {
         playerStatus = PlayerStatus.Instance;
+        if (playerStatus == null) return;
+
+        playerStatus.health.OnStatChanged += UpdateHealth;
+        playerStatus.hunger.OnStatChanged += UpdateCalories;
+        playerStatus.thirst.OnStatChanged += UpdateThirst;
+
+        UpdateHealth(playerStatus.health.currentValue);
+        UpdateCalories(playerStatus.hunger.currentValue);
+        UpdateThirst(playerStatus.thirst.currentValue);
     }
 
-    // Update is called once per frame
-    void Update()
+    void UpdateHealth(float value)
     {
-        if(playerStatus == null) return;
-
-        // Update Health Bar
         if (healthData != null)
-        {
-            healthData.UpdateBar(playerStatus.health.currentValue, playerStatus.thirstData.maxValue);
-        }
-        // Update Calories Bar
+            healthData.UpdateBar(value, playerStatus.health.data.maxValue);
+    }
+
+    void UpdateCalories(float value)
+    {
         if (caloriesData != null)
-        {
-            caloriesData.UpdateBar(playerStatus.hunger.currentValue, playerStatus.thirstData.maxValue);
-        }
-        // Update Thirst Bar
+            caloriesData.UpdateBar(value, playerStatus.hunger.data.maxValue);
+    }
+
+    void UpdateThirst(float value)
+    {
         if (thirstData != null)
-        {
-            thirstData.UpdateBar(playerStatus.thirst.currentValue,playerStatus.thirstData.maxValue);
-        }
+            thirstData.UpdateBar(value, playerStatus.thirst.data.maxValue);
     }
 }

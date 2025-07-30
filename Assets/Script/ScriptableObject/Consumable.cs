@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewConsumable", menuName = "Item/Consumable")]
 public class Consumable : ItemClass,IUsableItem
 {
-    public float headthAdded;
+    public float statAdded;
     public override ItemClass GetItem() { return this; }
     public override ToolClass GetTool() { return null; }
     public override MiscClass GetMisc() { return null; }
@@ -20,14 +20,21 @@ public class Consumable : ItemClass,IUsableItem
             return;
         }
 
-        if (status.health.currentValue >= status.health.data.maxValue)
+        //if (/*status.health.currentValue >= status.health.data.maxValue ||*/ status.hunger.currentValue >= status.hunger.data.maxValue)
+        //{
+        //    Debug.Log("✅ Máu đã đầy hoặc không còn đói, không thể dùng vật phẩm.");
+        //    return;
+        //}
+
+        if (status.hunger.IsFull())
         {
-            Debug.Log("✅ Máu đã đầy, không thể dùng vật phẩm hồi máu.");
+            Debug.Log("❗ No quá rồi!");
             return;
         }
 
-        Debug.Log($"[Consumable] Heal: +{headthAdded}");
-        status.health.Restore(headthAdded);
+
+        Debug.Log($"[Consumable] Hunger: +{statAdded}");
+        status.hunger.Restore(statAdded);
         inventory.RemoveItem(this, 1);
     }
 

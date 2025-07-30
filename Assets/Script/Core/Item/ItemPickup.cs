@@ -60,6 +60,18 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
         var inventoryManager = InventoryManager.Instance;
         if (inventoryManager == null) return;
 
+        var itemData = itemEntity.GetItemData();
+
+        if(itemData.itemType == ItemType.Consumable)
+        {
+            var playerStatus = interactor.GetComponent<PlayerStatus>();
+
+            if(playerStatus != null && playerStatus.hunger.IsFull())
+            {
+                Debug.Log("❗ Không thể ăn, no quá rồi!");
+                return;
+            }
+        }
         Debug.Log($"▶️ Nhặt: {itemEntity.GetItemData().name} - SL: {itemEntity.GetQuantity()}");
 
         bool added = inventoryManager.AddItem(itemEntity.GetItemData(), itemEntity.GetQuantity());

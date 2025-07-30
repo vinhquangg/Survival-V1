@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,11 +26,16 @@ public class PlayerStatus : MonoBehaviour,IDamageable
         }
         Instance = this;
 
-        // Initialize Stat Instances
         health = new StatInstance(healthData);
+        healthData.currentValue = health.currentValue;
+
         hunger = new StatInstance(hungerData);
+        hungerData.currentValue = hunger.currentValue;
+
         thirst = new StatInstance(thirstData);
-    
+        thirstData.currentValue = thirst.currentValue;
+
+
     }
 
     // Start is called before the first frame update
@@ -40,33 +45,21 @@ public class PlayerStatus : MonoBehaviour,IDamageable
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        float deltTime = Time.deltaTime;
+        float deltaTime = Time.deltaTime;
 
-        hunger.Reduce(hunger.data.decayRate * deltTime);
-        thirst.Reduce(thirst.data.decayRate * deltTime);
+        hunger.UpdateStat(deltaTime);
+        thirst.UpdateStat(deltaTime);
+        health.UpdateStat(deltaTime);
 
-        if(healthData.regenRate>0)
+        if (health.IsEmpty())
         {
-            health.Restore(healthData.regenRate * deltTime);
-        }
-
-        if(hunger.IsEmpty() && hungerData.affectsHealth)
-        {
-            health.Reduce(hungerData.damePerSecondWhenEmpty * deltTime);
-        }
-
-        if(thirst.IsEmpty() && thirstData.affectsHealth)
-        {
-            health.Reduce(thirstData.damePerSecondWhenEmpty * deltTime);
-        }
-
-        if(health.IsEmpty())
-        {
-            Debug.Log("Player is dead!");
+            Die();
         }
     }
+
+
 
     public void TakeDamage(float amount)
     {

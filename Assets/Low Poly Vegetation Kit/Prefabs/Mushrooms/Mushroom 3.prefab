@@ -708,7 +708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemName: Mushroom
-  objectType: 1
+  objectType: 6
 --- !u!1 &7795498838026886592
 GameObject:
   m_ObjectHideFlags: 0

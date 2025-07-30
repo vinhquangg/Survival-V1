@@ -6,4 +6,5 @@ public enum ObjectType
     Tree,
     Stick,
     Log,
+    Consumable,
 }

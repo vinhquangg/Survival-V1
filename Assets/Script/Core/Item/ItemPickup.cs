@@ -78,7 +78,9 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
 
         if (added)
         {
-            ObjectPoolManager.Instance?.ReturnToPool(gameObject);
+            // ✅ Trả về prefab cha có PoolableObject
+            GameObject root = gameObject.GetComponent<PoolableObject>() != null ? gameObject : gameObject.transform.root.gameObject;
+            ObjectPoolManager.Instance?.ReturnToPool(root);
         }
     }
 

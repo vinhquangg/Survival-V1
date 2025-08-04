@@ -1,18 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableInfo
 {
     private TreeInstance treeInstance;
-    //[SerializeField] private string treeName;
-    //[SerializeField] private GameObject stumpPrefab;
-    //[SerializeField] private string stumpPoolTag;
 
     private void Start()
     {
         treeInstance = GetComponent<TreeInstance>();
     }
+
     public Sprite GetIcon()
     {
         return null;
@@ -41,27 +38,54 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         var player = interactor.GetComponent<PlayerController>();
         if (player != null)
         {
-            player.playerStateMachine.ChangeState(new ChopState(player.playerStateMachine,player,this));
+            player.playerStateMachine.ChangeState(new ChopState(player.playerStateMachine, player, this));
         }
     }
-
 
     public void OnChopped()
     {
         Debug.Log("🌳 Cây bị chặt rồi!");
 
-        var treeInstance = GetComponent<TreeInstance>();
+        if (treeInstance == null)
+            treeInstance = GetComponent<TreeInstance>();
+
         if (treeInstance != null)
         {
             treeInstance.isChopped = true;
+
+            // 🌱 Spawn gốc cây từ Pool
             if (!string.IsNullOrEmpty(treeInstance.treeData.stumpPoolID))
             {
-                ObjectPoolManager.Instance.SpawnFromPool(treeInstance.treeData.stumpPoolID, transform.position, transform.rotation);
+                ObjectPoolManager.Instance.SpawnFromPool(
+                    treeInstance.treeData.stumpPoolID,
+                    transform.position,
+                    transform.rotation
+                );
             }
 
-            treeInstance.ShowLogDropAfterDelay(0.5f); 
+            // 🪵 Spawn LogDrop từ Pool
+            if (!string.IsNullOrEmpty(treeInstance.treeData.logPoolID))
+            {
+                Vector3 spawnPos = GetGroundPosition(transform.position + Vector3.up * 3f);
+                GameObject logDrop = ObjectPoolManager.Instance.SpawnFromPool(
+                    treeInstance.treeData.logPoolID,
+                    spawnPos,
+                    Quaternion.identity
+                );
 
-            StartCoroutine(ReturnToPoolWithDelay(0.6f)); 
+                // ⚙️ Nếu có Rigidbody thì cho rơi nhẹ rồi đứng yên
+                if (logDrop != null && logDrop.TryGetComponent<Rigidbody>(out var rb))
+                {
+                    rb.isKinematic = false;
+                    rb.useGravity = true;
+                    rb.velocity = Vector3.down * 1f;
+
+                    treeInstance.StartCoroutine(DropAndSettle(rb));
+                }
+            }
+
+            // ⏱ Trả cây về pool sau khi chặt
+            StartCoroutine(ReturnToPoolWithDelay(0.6f));
         }
     }
 
@@ -71,6 +95,20 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         ObjectPoolManager.Instance.ReturnToPool(gameObject);
     }
 
+    private IEnumerator DropAndSettle(Rigidbody rb)
+    {
+        yield return new WaitForSeconds(0.5f);
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        rb.isKinematic = true;
+    }
 
-
+    private Vector3 GetGroundPosition(Vector3 origin)
+    {
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 10f, LayerMask.GetMask("Ground")))
+        {
+            return hit.point;
+        }
+        return origin;
+    }
 }

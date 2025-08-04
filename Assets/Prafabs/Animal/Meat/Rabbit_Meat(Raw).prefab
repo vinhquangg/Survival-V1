@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e2a524a3c8c75a44a9de20cfee129ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolID: Rabbit_Meat(Raw)
+  poolID: Rabbit_Meat
 --- !u!1 &1889957960626272105
 GameObject:
   m_ObjectHideFlags: 0

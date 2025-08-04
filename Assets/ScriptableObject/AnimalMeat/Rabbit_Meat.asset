@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c82664061c1498f429a9290d7007dcfa, type: 3}
-  m_Name: Rabbit_Meat(Raw)
+  m_Name: Rabbit_Meat
   m_EditorClassIdentifier: 
   itemType: 4
-  itemName: Rabbit_Meat(Raw)
-  itemIcon: {fileID: 0}
+  itemName: Rabbit_Meat
+  itemIcon: {fileID: 21300000, guid: b62c89a89b77e0849b53b683e7e2909f, type: 3}
   itemDesc: Rabbit_Meat(Raw)
   itemFunc: Use to restore a small hunger
   isStack: 1

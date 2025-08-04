@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: NewDropTable
   m_EditorClassIdentifier: 
   drops:
-  - poolID: Rabbit_Meat(Raw)
+  - poolID: Rabbit_Meat
     spawnCount: 1
     chance: 1
     offset: {x: 0, y: 0, z: 0}

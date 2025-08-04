@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 6
   itemName: Branch
-  itemIcon: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: e012a1ecdd02e144fb109de0d149905b, type: 3}
   itemDesc: Dry Stick
   itemFunc: Use for crafting
   isStack: 1

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 1
   itemName: Weapon
-  itemIcon: {fileID: 21300000, guid: 273800075a011d842980ad838b5e60c3, type: 3}
+  itemIcon: {fileID: 21300000, guid: 7f15818abe877ca4480568a0925261c6, type: 3}
   itemDesc: A stone machete
   itemFunc: Deal damgage
   isStack: 0

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 59db7984863349544b26efa05708ef59, type: 3}
-  m_Name: New Blueprint Data
+  m_Name: Machete Blueprint Data
   m_EditorClassIdentifier: 
   resultItem: {fileID: 11400000, guid: 9a0afbe5beb4b974ea2dfd96f4acc613, type: 2}
   resultAmount: 1

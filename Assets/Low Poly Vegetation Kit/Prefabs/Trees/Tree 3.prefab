@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4871893610061177515}
   - component: {fileID: -5744828932601805158}
   - component: {fileID: 5271446448139335248}
+  - component: {fileID: -374002779810453143}
   m_Layer: 14
   m_Name: Tree 3
   m_TagString: Obstacle
@@ -144,6 +145,19 @@ MonoBehaviour:
   isChopped: 0
   logDropGO: {fileID: 4370736543054296596, guid: edb158f4ce929cb4e88a8904570b0257,
     type: 3}
+--- !u!114 &-374002779810453143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2747371392609877469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2a524a3c8c75a44a9de20cfee129ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolID: Tree
 --- !u!1 &4529416127168741076
 GameObject:
   m_ObjectHideFlags: 0

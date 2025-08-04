@@ -15,4 +15,5 @@ MonoBehaviour:
   treeName: Tree
   stumpPrefab: {fileID: 1213606728356105615, guid: 284148a5985781342877af69bf326a2e,
     type: 3}
-  stumpPoolTag: Stump3
+  stumpPoolID: Stump_3
+  logPoolID: log_wood

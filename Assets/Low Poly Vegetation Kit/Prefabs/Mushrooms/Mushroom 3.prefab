@@ -583,6 +583,7 @@ GameObject:
   - component: {fileID: 8207760220933374312}
   - component: {fileID: 8723909045340844240}
   - component: {fileID: 9112501916197534473}
+  - component: {fileID: -4348034279949902415}
   m_Layer: 19
   m_Name: Mushroom 3
   m_TagString: Untagged
@@ -709,6 +710,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Mushroom
   objectType: 6
+--- !u!114 &-4348034279949902415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4353292526679080624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2a524a3c8c75a44a9de20cfee129ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolID: Foliage
 --- !u!1 &7795498838026886592
 GameObject:
   m_ObjectHideFlags: 0

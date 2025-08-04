@@ -36,13 +36,25 @@ public class TreeInstance : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        if (logDropGO != null)
+        if (!string.IsNullOrEmpty(treeData.logPoolID))
         {
-            Vector3 spawnPosition = GetGroundPosition(transform.position + Vector3.up * 3f); // ray từ trên cao xuống
-            GameObject spawnedLog = Instantiate(logDropGO, spawnPosition, Quaternion.identity);
-            spawnedLog.SetActive(true);
+            // 🟢 Rơi 2 log
+            for (int i = 0; i < 2; i++)
+            {
+                Vector3 dropOffset = new Vector3(Random.Range(-0.5f, 0.5f), 0, Random.Range(-0.5f, 0.5f));
+                Vector3 spawnPosition = GetGroundPosition(transform.position + Vector3.up * 3f + dropOffset);
+                GameObject log = ObjectPoolManager.Instance.SpawnFromPool(treeData.logPoolID, spawnPosition, Quaternion.identity);
+
+                if (log == null)
+                    Debug.LogWarning("❌ Không spawn được log từ poolID: " + treeData.logPoolID);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("❌ treeData.logPoolID trống, không thể spawn log");
         }
     }
+
 
 
     private Vector3 GetGroundPosition(Vector3 origin)

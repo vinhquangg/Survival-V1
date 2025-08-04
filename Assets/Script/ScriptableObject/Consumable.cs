@@ -30,7 +30,9 @@ public class Consumable : ItemClass,IUsableItem
 
         if (status.hunger.IsFull())
         {
-            Debug.Log("❗ No quá rồi!");
+            var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
+            if (feedback != null)
+                feedback.ShowFeedback();
             return;
         }
 

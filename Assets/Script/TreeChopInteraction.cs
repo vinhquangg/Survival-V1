@@ -54,9 +54,9 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         if (treeInstance != null)
         {
             treeInstance.isChopped = true;
-            if (!string.IsNullOrEmpty(treeInstance.treeData.stumpPoolTag))
+            if (!string.IsNullOrEmpty(treeInstance.treeData.stumpPoolID))
             {
-                ObjectPoolManager.Instance.SpawnFromPool(treeInstance.treeData.stumpPoolTag, transform.position, transform.rotation);
+                ObjectPoolManager.Instance.SpawnFromPool(treeInstance.treeData.stumpPoolID, transform.position, transform.rotation);
             }
 
             treeInstance.ShowLogDropAfterDelay(0.5f); 

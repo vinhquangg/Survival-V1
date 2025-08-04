@@ -6,5 +6,6 @@ public class TreeClass : ScriptableObject
 {
     public string treeName;
     public GameObject stumpPrefab;
-    public string stumpPoolTag;
+    public string stumpPoolID;
+    public string logPoolID;
 }

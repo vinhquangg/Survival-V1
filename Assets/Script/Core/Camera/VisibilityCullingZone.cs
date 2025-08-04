@@ -67,45 +67,34 @@ public class VisibilityCullingZone : MonoBehaviour
 
         foreach (GameObject chunk in allChunks)
         {
-            if (chunk == null) continue;
-            if (chunk.name == "ChunkContainer") continue;
+            if (chunk == null || chunk.name == "ChunkContainer") continue;
 
             Vector3 relativeChunkPos = chunk.transform.position - terrainOrigin;
             Vector2 chunkPos2D = new Vector2(relativeChunkPos.x, relativeChunkPos.z);
             float dist = Vector2.Distance(playerPos2D, chunkPos2D);
-
             bool isVisible = dist <= maxDistance;
 
             ChunkObjectSpawner spawner = chunk.GetComponent<ChunkObjectSpawner>();
+            if (spawner == null) continue;
 
             if (isVisible)
             {
-                if (!chunk.activeSelf || force)
+                if (!spawner.HasSpawned || force)
                 {
-                    chunk.SetActive(true); // ⚠️ Bật trước khi spawn
-                    if (spawner != null)
-                    {
-                        try
-                        {
-                            spawner.SpawnObjects();
-                        }
-                        catch (System.Exception ex)
-                        {
-                            Debug.LogWarning($"⚠️ Spawn lỗi ở chunk {chunk.name}: {ex.Message}");
-                        }
-                    }
-
+                    spawner.SpawnObjects(); // ✅ Gọi khi cần hiển thị
                 }
             }
             else
             {
-                if (chunk.activeSelf || force)
+                if (spawner.HasSpawned || force)
                 {
-                    chunk.SetActive(false); // tự động gọi OnDisable => despawn
+                    spawner.DespawnObjects(); // ✅ Gọi để ẩn object trong chunk
                 }
             }
+
         }
     }
+
 
     Vector2Int GetChunkCoordFromPosition(Vector3 pos)
     {

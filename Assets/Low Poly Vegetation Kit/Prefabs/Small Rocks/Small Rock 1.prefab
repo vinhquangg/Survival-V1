@@ -823,6 +823,7 @@ GameObject:
   - component: {fileID: 4535428803862858516}
   - component: {fileID: 1213993171463717443}
   - component: {fileID: 9054600862570944167}
+  - component: {fileID: -3260339844331046178}
   m_Layer: 19
   m_Name: Small Rock 1
   m_TagString: Untagged
@@ -949,6 +950,19 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 0c3b7996f5e928c498ec214df00bb5f3, type: 2}
   quantity: 2
   durability: 0
+--- !u!114 &-3260339844331046178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7958535128054660741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2a524a3c8c75a44a9de20cfee129ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolID: Foliage
 --- !u!1 &8659570603966222196
 GameObject:
   m_ObjectHideFlags: 0

@@ -116,9 +116,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8114227858834741768}
   - component: {fileID: 8712241694070164684}
+  - component: {fileID: 436803443174836081}
   m_Layer: 0
   m_Name: Stump 1
-  m_TagString: Stump1
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -178,6 +179,19 @@ LODGroup:
     renderers:
     - renderer: {fileID: 1418811404899985422}
   m_Enabled: 1
+--- !u!114 &436803443174836081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5098319865391523867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2a524a3c8c75a44a9de20cfee129ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolID: Stump_1
 --- !u!1 &5304611635215933657
 GameObject:
   m_ObjectHideFlags: 0

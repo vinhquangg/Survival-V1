@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 2
   itemName: Campfire
-  itemIcon: {fileID: 21300000, guid: 362772d28e6430a408929ec30fe10832, type: 3}
+  itemIcon: {fileID: 21300000, guid: 09f5f32cc860fd64eb54d303816cce87, type: 3}
   itemDesc: Campfire
   itemFunc: Make warm or cook food
   isStack: 0
-  maxStack: 0
+  maxStack: 1
   dropPrefab: {fileID: 7812148314607090011, guid: f188fe7e540bc3043bad405cd1b26d99,
     type: 3}
   toolType: 6
-  durability: 100
+  durability: 0

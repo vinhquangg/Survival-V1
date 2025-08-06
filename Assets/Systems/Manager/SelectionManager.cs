@@ -42,9 +42,9 @@ public class SelectionManager : MonoBehaviour
             }
         }
 
-        // Không trúng gì
-        currentInteractable = null;
-        uiManager.HidePrompt();
+        //// Không trúng gì
+        //currentInteractable = null;
+        //uiManager.HidePrompt();
 
 
 

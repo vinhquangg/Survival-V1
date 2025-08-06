@@ -28,12 +28,17 @@ public class ToolClass : ItemClass
     public override ToolClass GetTool() { return this; }
     public override MiscClass GetMisc() { return null; }
     public override Consumable GetConsumable() { return null; }
-
+    public override SurvivalClass GetSurvival() { return null; }
     public override WeaponClass GetWeapon() { return null; }
 
 
     public override float GetDurability()
     {
         return durability;
+    }
+
+    public override EquipType GetEquipType()
+    {
+        return EquipType.Tool; 
     }
 }

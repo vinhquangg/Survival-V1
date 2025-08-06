@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
     public CharacterController controller { get; private set; }
     public AnimationStateController animationController { get; private set; }
     public PlayerStateMachine playerStateMachine { get; private set; }
-    public WeaponManager weaponManager;
+    public EquipManager equipManager;
     public float moveSpeed = 5f;
     public float lookSensitivity = 1f;
     public Transform playerCamera;

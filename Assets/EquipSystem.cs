@@ -7,7 +7,8 @@ public class EquipSystem : MonoBehaviour
     //------UI--------
     public GameObject quickSlot;
     public List<GameObject> quickSlotItems = new List<GameObject>();
-    [SerializeField] private WeaponHolder weaponHolder;
+    [SerializeField] private EquipHolder equipHolder;
+
 
     public static EquipSystem instance { get;  set; }
 

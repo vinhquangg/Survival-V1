@@ -9,4 +9,5 @@ public enum ItemType
     Miscellaneous = 6,
     Equipment = 7,
     Item = 8,
+    Survivals = 9,
 }

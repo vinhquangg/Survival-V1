@@ -15,6 +15,7 @@ public class AnimationStateController : MonoBehaviour
     private int moveXHash;
     private int moveYHash;
     private int isRunHash;
+    public bool IsAttacking => isAttacking;
 
     private void Start()
     {

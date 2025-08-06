@@ -10,9 +10,20 @@ public class AttackState : PlayerState
 
     public override void Enter()
     {
-        //player.inputHandler.DisablePlayerInput();
         attackTimer = attackDuration;
-        if (player.weaponManager != null && player.weaponManager.HasWeaponEquipped())
+
+        // ✅ Kiểm tra có EquipManager không
+        if (player.equipManager == null)
+        {
+            Debug.LogError("[AttackState] player.equipManager is NULL!");
+            return;
+        }
+
+        // ✅ Lấy vũ khí đang được trang bị
+        var equipped = player.equipManager.GetEquippedItem(EquipType.Weapon);
+        Debug.Log($"[AttackState] Equipped Weapon: {(equipped != null ? equipped.itemName : "None")}");
+
+        if (equipped != null)
         {
             player.animationController.TriggerAttack();
             player.animationController.SetUpperBodyLayerWeight(1f);
@@ -20,9 +31,10 @@ public class AttackState : PlayerState
         else
         {
             player.animationController.SetUpperBodyLayerWeight(0f);
+            Debug.LogWarning("[AttackState] Không thể attack vì chưa cầm vũ khí.");
         }
-
     }
+
 
     public override void Update()
     {

@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +18,12 @@ public abstract class ItemClass:ScriptableObject
     public abstract MiscClass GetMisc();
     public abstract Consumable GetConsumable();
     public abstract WeaponClass GetWeapon();
+    public abstract SurvivalClass GetSurvival();
 
     public abstract float GetDurability();
+
+    public virtual EquipType GetEquipType()
+    {
+        return EquipType.None; // Mặc định nếu không override
+    }
 }

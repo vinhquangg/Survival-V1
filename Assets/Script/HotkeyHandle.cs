@@ -62,7 +62,12 @@ public class HotkeyHandle : MonoBehaviour
                 Debug.LogWarning("[Hotkey] Không thể thay đổi trang bị khi đang attack.");
                 return;
             }
-
+            if (item is IUsableItem usable)
+            {
+                usable.UseItem(PlayerStatus.Instance, inventoryManager.playerInventory);
+                inventoryManager.RefreshAllUI();
+            }
+            // Nếu là tool, có thể xử lý logic sử dụng tool tại đây
             equipManager.UnequipItem(EquipType.Weapon);
             equipManager.UnequipItem(EquipType.Tool);
         }

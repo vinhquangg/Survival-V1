@@ -68,7 +68,9 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
 
             if(playerStatus != null && playerStatus.hunger.IsFull())
             {
-                Debug.Log("❗ Không thể ăn, no quá rồi!");
+                var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
+                if (feedback != null)
+                    feedback.ShowFeedback();
                 return;
             }
         }

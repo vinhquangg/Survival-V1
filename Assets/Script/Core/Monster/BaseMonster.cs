@@ -8,11 +8,14 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
     public MonsterStateMachine _stateMachine { get; protected set; }
     protected Animator animMonster { get; private set; }
     public Rigidbody _rigidbody { get; protected set; }
+    public MonsterCombat combat { get; protected set; }
+
+    [Header("Monster Settings")]
     public Transform player;
     public NavMeshAgent _navMeshAgent;
     public float hitDuration;
     public float detectedRange;
-    public float attackRange;
+    //public float attackRange;
     public float moveSpeed;
     public bool isKnockback = false;
     public float knockbackForce = 5f;
@@ -27,6 +30,12 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         animMonster = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        combat = GetComponent<MonsterCombat>();
+        if (combat != null)
+        {
+            combat.target = player;
+        }
     }
 
     public virtual bool CanSeePlayer()
@@ -101,6 +110,15 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
             _navMeshAgent.SetDestination(hit.position);
         }
     }
+
+    public void OnAttackAnimationFinished()
+    {
+        if (_stateMachine._currentState is MonsterAttackState attackState)
+        {
+            attackState.OnAttackAnimationFinished();
+        }
+    }
+
 
     public virtual void TakeDamage(float damage)
     {

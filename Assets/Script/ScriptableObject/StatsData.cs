@@ -15,4 +15,9 @@ public class StatsData : ScriptableObject
     [Header("Effect if equal 0")]
     public bool affectsHealth = false;
     public float damePerSecondWhenEmpty = 0f;
+    [Header("Effect when full")]
+    public bool regenHealthWhenFull = false;
+    public float healthRegenRateWhenFull = 0f;
+    public float healthRegenDurationWhenFull = 5f;
+
 }

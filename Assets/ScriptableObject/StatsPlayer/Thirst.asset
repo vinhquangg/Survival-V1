@@ -20,3 +20,6 @@ MonoBehaviour:
   decayInterval: 5
   affectsHealth: 1
   damePerSecondWhenEmpty: 1
+  regenHealthWhenFull: 1
+  healthRegenRateWhenFull: 0.5
+  healthRegenDurationWhenFull: 2

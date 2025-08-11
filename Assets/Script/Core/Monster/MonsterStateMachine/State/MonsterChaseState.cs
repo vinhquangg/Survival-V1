@@ -41,7 +41,7 @@ public class MonsterChaseState : IInterfaceMonsterState
 
         float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.baseMonster.player.position);
 
-        if (distanceToPlayer <= enemy.baseMonster.attackRange)
+        if (distanceToPlayer <= enemy.baseMonster.combat.attackRange)
         {
             enemy.SwitchState(new MonsterAttackState(enemy));
             return;

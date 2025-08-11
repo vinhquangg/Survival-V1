@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MonsterStateMachine : MonoBehaviour
 {
-    private IInterfaceMonsterState _currentState;
+    public IInterfaceMonsterState _currentState { get; private set; }
     //public MonsterData monsterData;   
     public Animator animator { get; private set; }
     public Rigidbody _rigidbody { get; private set; }

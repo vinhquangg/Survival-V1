@@ -7,6 +7,8 @@ public class StatInstance
     public float currentValue;
     public Action<float> OnStatChanged;
     private float decayTimer = 0f;
+    private float fullRegenTimer = 0f;
+    private bool canRegenHealth = false;
     public StatInstance(StatsData data)
     {
         this.data = data;
@@ -47,6 +49,32 @@ public class StatInstance
         {
             Restore(data.regenRate * deltaTime); 
         }
+
+        if (IsFull() && data.healthRegenRateWhenFull > 0)
+        {
+            if (!canRegenHealth)
+            {
+                canRegenHealth = true;
+                fullRegenTimer = data.healthRegenDurationWhenFull;
+            }
+
+            if (canRegenHealth && fullRegenTimer > 0f)
+            {
+                PlayerStatus.Instance?.health?.Restore(data.healthRegenRateWhenFull * deltaTime);
+                fullRegenTimer -= deltaTime;
+            }
+            else
+            {
+                canRegenHealth = false;
+            }
+        }
+        else
+        {
+            // nếu không còn full thì reset trạng thái regen
+            canRegenHealth = false;
+            fullRegenTimer = 0f;
+        }
+
 
         if (IsEmpty() && data.affectsHealth)
         {

@@ -27,7 +27,6 @@ public class PlayerInventory : MonoBehaviour
 
         if (quantity < originalQuantity)
         {
-            // ✅ Thêm được ít nhất một phần → không log
             return true;
         }
 
@@ -183,6 +182,27 @@ public class PlayerInventory : MonoBehaviour
         {
             Debug.LogWarning($"Item {item.itemName} is not usable.");
         }
+    }
+
+    public bool HasPlacableItem()
+    {
+        foreach (var slot in items)
+        {
+            if (slot != null && slot.GetItem() != null && slot.GetItem().itemType == ItemType.Placable)
+            {
+                return true;
+            }
+        }
+
+        foreach (var slot in hotbarItems)
+        {
+            if (slot != null && slot.GetItem() != null && slot.GetItem().itemType == ItemType.Placable)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

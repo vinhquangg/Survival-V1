@@ -16,6 +16,7 @@ TagManager:
   - Stump1
   - Stump2
   - Stump3
+  - Buildable
   layers:
   - Default
   - TransparentFX
@@ -37,7 +38,7 @@ TagManager:
   - Tree
   - Enemy
   - Collectable
-  - 
+  - Buildable
   - 
   - 
   - 

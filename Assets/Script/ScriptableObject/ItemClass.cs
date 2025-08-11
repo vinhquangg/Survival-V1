@@ -13,6 +13,8 @@ public abstract class ItemClass:ScriptableObject
     public bool isStack;
     public int maxStack;
     public GameObject dropPrefab;
+    [Header("Placement")]
+    public GameObject placementPrefab;
     public abstract ItemClass GetItem();
     public abstract ToolClass GetTool();
     public abstract MiscClass GetMisc();

@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using UnityEditorInternal.Profiling.Memory.Experimental;
+using System;
 
 public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler,IPointerEnterHandler
 {
@@ -90,6 +91,27 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         {
             inventoryManager.SplitItem(inventoryArea, slotIndex);
         }
+        else if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            var slot = inventoryManager.GetSlot(inventoryArea, slotIndex);
+            if (slot != null && !slot.IsEmpty())
+            {
+                var item = slot.GetItem();
+                if (item.itemType == ItemType.Placable)
+                {
+                    // ✅ Chỉ bật preview
+                    Debug.Log($"[UI] Bắt đầu chế độ đặt cho {item.itemName}");
+                    PlacementSystem.Instance.StartPlacement(item, -1);
+                    return;
+                }
+                //else if (item is IUsableItem usable)
+                //{
+                //    usable.UseItem(PlayerStatus.Instance, inventoryManager.playerInventory);
+                //    inventoryManager.RefreshAllUI();
+                //}
+            }
+        }
+
         //if (eventData.button == PointerEventData.InputButton.Left)
         //{
         //    inventoryManager.UseItemFromSlot(inventoryArea, slotIndex);

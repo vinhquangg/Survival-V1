@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InteractionManager : MonoBehaviour
 {
@@ -22,11 +20,14 @@ public class InteractionManager : MonoBehaviour
 
     void Update()
     {
-        if(SelectionManager == null)
+        if (SelectionManager == null)
             return;
-        if (SelectionManager != null && inputHandler.IsInteractPressed())
+
+        if (SelectionManager.CurrentInteractable != null && inputHandler.IsInteractPressed())
         {
-            SelectionManager.CurrentInteractable?.Interact(transform.root.gameObject);
+            // Không cần ép kiểu BuildableObject mà gọi thẳng Interact()
+            // vì BuildableObject đã implement Interact()
+            SelectionManager.CurrentInteractable.Interact(transform.root.gameObject);
         }
     }
 }

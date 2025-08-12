@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
-public class BuildableObject : MonoBehaviour,IInteractableInfo,IHasBlueprint
+public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, IInteractable
 {
     BlueprintData bluePrint;
     private PlayerInventory playerInventory;
@@ -8,6 +9,10 @@ public class BuildableObject : MonoBehaviour,IInteractableInfo,IHasBlueprint
     private Renderer[] renderers;
     private bool isBuilt = false;
     private ParticleSystem[] buildVFX;
+    public delegate void OnMaterialChangedHandler();
+    public event OnMaterialChangedHandler OnMaterialChanged;
+    [SerializeField] private GameObject defaultObject;  // Kéo thả trong Inspector
+
     public int LastHotkeyIndex { get; set; }
     public bool IsBuilt => isBuilt;
 
@@ -17,15 +22,27 @@ public class BuildableObject : MonoBehaviour,IInteractableInfo,IHasBlueprint
         playerInventory = inventory;
 
         currentMaterials = new int[bluePrint.requirements.Count];
-        renderers = GetComponentsInChildren<Renderer>();
+
+        // Chỉ lấy Renderer từ defaultObject, nếu defaultObject null thì tạo mảng rỗng
+        if (defaultObject != null)
+            renderers = defaultObject.GetComponentsInChildren<Renderer>()
+                       .Where(r => r is MeshRenderer || r is SkinnedMeshRenderer)
+                       .ToArray();
+        else
+            renderers = new Renderer[0];
+
+
         buildVFX = GetComponentsInChildren<ParticleSystem>(true);
         foreach (var vfx in buildVFX)
             vfx.gameObject.SetActive(false);
-        if(bluePrint.resultItem is SurvivalClass survival && survival.previewMaterial != null)
+
+        if (bluePrint.resultItem is SurvivalClass survival && survival.previewMaterial != null)
             SetMaterial(survival.previewMaterial);
+
+        isBuilt = false;
     }
 
-    private void OnMouseDown()
+    public void AddMaterialByPlayerInput()
     {
         if (!isBuilt)
             TryAddMaterial();
@@ -40,8 +57,7 @@ public class BuildableObject : MonoBehaviour,IInteractableInfo,IHasBlueprint
         {
             var req = bluePrint.requirements[i];
 
-            if (currentMaterials[i] < req.amount &&
-                playerInventory.HasItem(req.item, 1))
+            if (currentMaterials[i] < req.amount && playerInventory.HasItem(req.item, 1))
             {
                 playerInventory.RemoveItem(req.item, 1);
                 currentMaterials[i]++;
@@ -55,15 +71,20 @@ public class BuildableObject : MonoBehaviour,IInteractableInfo,IHasBlueprint
         if (anyAdded)
         {
             InventoryManager.Instance.RefreshAllUI();
-            if(bluePrint.resultItem is SurvivalClass survival && survival.previewMaterial != null)
+
+            OnMaterialChanged?.Invoke();
+
+            if (bluePrint.resultItem is SurvivalClass survival && survival.previewMaterial != null)
+            {
                 SetMaterial(allComplete ? survival.originalMaterial : survival.validMaterial);
+            }
 
             if (allComplete)
                 CompleteBuild();
         }
         else
         {
-            if(bluePrint.resultItem is SurvivalClass survival && survival.invalidMaterial != null)
+            if (bluePrint.resultItem is SurvivalClass survival && survival.invalidMaterial != null)
                 SetMaterial(survival.invalidMaterial);
         }
     }
@@ -71,8 +92,9 @@ public class BuildableObject : MonoBehaviour,IInteractableInfo,IHasBlueprint
     private void CompleteBuild()
     {
         isBuilt = true;
-        if (bluePrint.resultItem is SurvivalClass survival && survival.invalidMaterial != null)
-            SetMaterial(survival.invalidMaterial);
+
+        if (bluePrint.resultItem is SurvivalClass survival && survival.originalMaterial != null)
+            SetMaterial(survival.originalMaterial);
 
         foreach (var vfx in buildVFX)
         {
@@ -86,12 +108,18 @@ public class BuildableObject : MonoBehaviour,IInteractableInfo,IHasBlueprint
         return bluePrint == otherData;
     }
 
-    private void SetMaterial(Material mat)
+    public void SetMaterial(Material mat)
     {
-        if (mat == null) return;
-        foreach (var r in renderers)
-            r.material = mat;
+        if (defaultObject != null)
+        {
+            var defaultRenderer = defaultObject.GetComponent<Renderer>();
+            if (defaultRenderer != null)
+            {
+                defaultRenderer.material = mat;
+            }
+        }
     }
+
 
     public string GetName()
     {
@@ -102,7 +130,6 @@ public class BuildableObject : MonoBehaviour,IInteractableInfo,IHasBlueprint
     {
         if (bluePrint == null) return "";
 
-        // Ví dụ hiển thị số nguyên liệu đã có / cần
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         for (int i = 0; i < bluePrint.requirements.Count; i++)
         {
@@ -127,5 +154,10 @@ public class BuildableObject : MonoBehaviour,IInteractableInfo,IHasBlueprint
     public BlueprintData GetBlueprint()
     {
         return bluePrint;
+    }
+
+    public void Interact(GameObject interactor)
+    {
+        AddMaterialByPlayerInput();
     }
 }

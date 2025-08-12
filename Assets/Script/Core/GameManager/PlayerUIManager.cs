@@ -16,45 +16,39 @@ public class PlayerUIManager : MonoBehaviour
     public TextMeshProUGUI craftingNameText;
     public TextMeshProUGUI craftingItemAmount;
     public Image craftingIconImage;
-    /// <summary>
-    /// Hiển thị prompt với thông tin từ object
-    /// </summary>
+
     public void ShowPrompt(IInteractableInfo info)
     {
-        if (interactUI != null)
-            interactUI.SetActive(true);
-
-        nameText.text = info.GetName();
-
         if (info.GetInteractionType() == InteractionType.Pickup)
         {
+            if (interactUI != null)
+                interactUI.SetActive(true);
+
+            nameText.text = info.GetName();
             itemAmount.gameObject.SetActive(true);
             iconImage.gameObject.SetActive(true);
 
             itemAmount.text = info.GetItemAmount();
             iconImage.sprite = info.GetIcon();
         }
-        else
+        else if(info.GetInteractionType() ==  InteractionType.Chop)
         {
+            if (interactUI != null)
+                interactUI.SetActive(true);
+
+            nameText.text = info.GetName();
             itemAmount.gameObject.SetActive(false);
             iconImage.gameObject.SetActive(false);
+
+            itemAmount.text = info.GetItemAmount();
+            iconImage.sprite = info.GetIcon();
+        }
+        else
+        {
+            HidePrompt();
         }
     }
 
-
-    /// <summary>
-    /// Ẩn prompt
-    /// </summary>
-    public void HidePrompt()
-    {
-        if (interactUI != null)
-            interactUI.SetActive(false);
-    }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="blueprint"></param>
-    /// <param name="buildable"></param>
     public void ShowCraftingInfo(BlueprintData blueprint, BuildableObject buildable)
     {
         if (craftingUI != null)
@@ -64,19 +58,24 @@ public class PlayerUIManager : MonoBehaviour
             craftingNameText.text = blueprint.name;
 
         if (buildable != null)
-            craftingItemAmount.text = buildable.GetItemAmount().ToString();
+            craftingItemAmount.text = buildable.GetItemAmount();
 
         if (blueprint != null && blueprint.resultItem.itemIcon != null)
             craftingIconImage.sprite = blueprint.resultItem.itemIcon;
     }
-    /// <summary>
-    /// 
-    /// </summary>
+
+    public void HidePrompt()
+    {
+        if (interactUI != null)
+            interactUI.SetActive(false);
+    }
+
     public void HideCraftingInfo()
     {
         if (craftingUI != null)
             craftingUI.SetActive(false);
     }
+
 
 
 }

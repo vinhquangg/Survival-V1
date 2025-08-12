@@ -152,22 +152,22 @@ public class PlacementSystem : MonoBehaviour
 
         GameObject placedObj = Instantiate(prefabToPlace, previewObject.transform.position, previewObject.transform.rotation);
 
-        // Set preview material nếu là SurvivalClass
-        if (currentBlueprint.resultItem is SurvivalClass sData && sData.previewMaterial != null)
+        BuildableObject buildScript = placedObj.GetComponent<BuildableObject>();
+        if (buildScript != null)
         {
-            foreach (var r in placedObj.GetComponentsInChildren<Renderer>())
-                r.material = sData.previewMaterial;
+            buildScript.Init(currentBlueprint, inventoryManager.playerInventory);
+            buildScript.LastHotkeyIndex = currentHotkeyIndex;
 
-            BuildableObject buildScript = placedObj.GetComponent<BuildableObject>();
-            if (buildScript != null)
+            // Chỉ đổi material trên defaultObject qua method SetMaterial
+            if (currentBlueprint.resultItem is SurvivalClass sData && sData.previewMaterial != null)
             {
-                buildScript.Init(currentBlueprint, inventoryManager.playerInventory);
-                buildScript.LastHotkeyIndex = currentHotkeyIndex;
+                buildScript.SetMaterial(sData.previewMaterial);
             }
         }
 
         CancelPlacement();
     }
+
 
     public void CancelPlacement()
     {

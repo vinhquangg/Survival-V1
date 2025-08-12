@@ -17,6 +17,7 @@ TagManager:
   - Stump2
   - Stump3
   - Buildable
+  - BuildablePart
   layers:
   - Default
   - TransparentFX

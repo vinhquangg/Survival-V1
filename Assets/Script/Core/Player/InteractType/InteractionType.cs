@@ -6,5 +6,6 @@ public enum InteractionType
     Chop,
     Talk,
     Open,
-    Use
+    Use,
+    Placeable,
 }

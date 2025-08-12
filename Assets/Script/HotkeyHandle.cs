@@ -34,8 +34,13 @@ public class HotkeyHandle : MonoBehaviour
         // ✅ Nếu là item có thể đặt
         if (item.itemType == ItemType.Placable)
         {
+            if (item.blueprint == null)
+            {
+                return;
+            }
+
             Debug.Log($"[Hotkey] Bắt đầu chế độ đặt cho {item.itemName}");
-            PlacementSystem.Instance.StartPlacement(item, index);
+            PlacementSystem.Instance.StartPlacement(item.blueprint, index);
             return; // Không chạy tiếp logic khác
         }
         else

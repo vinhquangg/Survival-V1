@@ -40,6 +40,21 @@ public class SelectionManager : MonoBehaviour
                 }
                 return;
             }
+            if (info != null && info.GetInteractionType() == InteractionType.Placeable)
+            {
+                var buildable = hit.transform.GetComponent<BuildableObject>();
+                if (buildable != null)
+                {
+                    // Gọi hiển thị crafting UI qua PlayerUIManager
+                    uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
+
+                    // Nếu trước đó có prompt UI thì ẩn đi
+                    currentInteractable = null;
+                    uiManager.HidePrompt();
+                    //uiManager.HideCraftingInfo();
+                }
+                return;
+            }
         }
 
         //// Không trúng gì
@@ -50,5 +65,6 @@ public class SelectionManager : MonoBehaviour
 
         currentInteractable = null;
         uiManager.HidePrompt();
+        uiManager.HideCraftingInfo();
     }
 }

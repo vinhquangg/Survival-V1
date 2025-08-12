@@ -101,7 +101,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 {
                     // ✅ Chỉ bật preview
                     Debug.Log($"[UI] Bắt đầu chế độ đặt cho {item.itemName}");
-                    PlacementSystem.Instance.StartPlacement(item, -1);
+                    PlacementSystem.Instance.StartPlacement(item.blueprint, -1);
                     return;
                 }
                 //else if (item is IUsableItem usable)

@@ -21,5 +21,6 @@ MonoBehaviour:
   maxStack: 1
   dropPrefab: {fileID: 919132149155446097, guid: e941505c31a368f4ca682fbac743f7f1,
     type: 3}
+  blueprint: {fileID: 11400000, guid: a5076cd0ac2beed43888a9a5f1fb0c2c, type: 2}
   toolType: 2
   durability: 0

@@ -226,17 +226,20 @@ public class CraftingManager : MonoBehaviour
 
     private void CraftItem(BlueprintData blueprint)
     {
-        var inventory = InventoryManager.Instance.playerInventory;
+    var inventory = InventoryManager.Instance.playerInventory;
 
-        foreach (var req in blueprint.requirements)
+    foreach (var req in blueprint.requirements)
+    {
+        if (!inventory.HasItem(req.item, req.amount))
         {
-            if (!inventory.HasItem(req.item, req.amount))
-            {
-                Debug.Log("Không đủ nguyên liệu để chế tạo!");
-                return;
-            }
+            Debug.Log("Không đủ nguyên liệu để chế tạo!");
+            return;
         }
+    }
 
+    if (blueprint.craftingType == CraftingType.Immediate)
+    {
+        // Craft ngay lập tức
         foreach (var req in blueprint.requirements)
             inventory.RemoveItem(req.item, req.amount);
 
@@ -244,9 +247,17 @@ public class CraftingManager : MonoBehaviour
         InventoryManager.Instance.RefreshAllUI();
 
         Debug.Log($"Đã chế: {blueprint.resultItem.itemName}");
-
-        CheckCanCraft(); // cập nhật lại UI sau khi craft
     }
+    else if (blueprint.craftingType == CraftingType.NeedResource)
+    {
+        // Chỉ trừ nguyên liệu khi đặt hoàn tất
+        // Gọi hệ thống đặt vật thể (ghost preview)
+        PlacementSystem.Instance.StartPlacement(blueprint,-1);
+    }
+
+        CheckCanCraft();
+    }
+
 
     void OpenToolsCategory()
     {
@@ -307,7 +318,12 @@ public class CraftingManager : MonoBehaviour
                 int have1 = inventory.GetTotalQuantity(blueprint.requirements[0].item);
                 int need1 = blueprint.requirements[0].amount;
                 slot.requiredItemText1.text = $"{blueprint.requirements[0].item.itemName}: {have1} / {need1}";
+                slot.requiredItemText1.gameObject.SetActive(true); // 🔹 bật hiển thị
                 if (have1 < need1) canCraft = false;
+            }
+            else
+            {
+                slot.requiredItemText1.gameObject.SetActive(false); // 🔹 ẩn nếu không có requirement
             }
 
             if (blueprint.requirements.Count > 1)
@@ -315,8 +331,14 @@ public class CraftingManager : MonoBehaviour
                 int have2 = inventory.GetTotalQuantity(blueprint.requirements[1].item);
                 int need2 = blueprint.requirements[1].amount;
                 slot.requiredItemText2.text = $"{blueprint.requirements[1].item.itemName}: {have2} / {need2}";
+                slot.requiredItemText2.gameObject.SetActive(true); // 🔹 bật hiển thị
                 if (have2 < need2) canCraft = false;
             }
+            else
+            {
+                slot.requiredItemText2.gameObject.SetActive(false); // 🔹 ẩn nếu không có requirement thứ 2
+            }
+
 
             slot.craftButton.gameObject.SetActive(canCraft);
         }

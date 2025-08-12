@@ -1,22 +1,28 @@
 ﻿using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class PlayerUIManager : MonoBehaviour
 {
-    [Header("Prompt UI")]
-    public GameObject promptUI;                 
+    [Header("Interact UI")]
+    public GameObject interactUI;                 
     public TextMeshProUGUI nameText;            
     public TextMeshProUGUI itemAmount;   
     public Image iconImage;
 
+    [Header("Crafting UI")]
+    public GameObject craftingUI;
+    public TextMeshProUGUI craftingNameText;
+    public TextMeshProUGUI craftingItemAmount;
+    public Image craftingIconImage;
     /// <summary>
     /// Hiển thị prompt với thông tin từ object
     /// </summary>
     public void ShowPrompt(IInteractableInfo info)
     {
-        if (promptUI != null)
-            promptUI.SetActive(true);
+        if (interactUI != null)
+            interactUI.SetActive(true);
 
         nameText.text = info.GetName();
 
@@ -41,7 +47,36 @@ public class PlayerUIManager : MonoBehaviour
     /// </summary>
     public void HidePrompt()
     {
-        if (promptUI != null)
-            promptUI.SetActive(false);
+        if (interactUI != null)
+            interactUI.SetActive(false);
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="blueprint"></param>
+    /// <param name="buildable"></param>
+    public void ShowCraftingInfo(BlueprintData blueprint, BuildableObject buildable)
+    {
+        if (craftingUI != null)
+            craftingUI.SetActive(true);
+
+        if (blueprint != null)
+            craftingNameText.text = blueprint.name;
+
+        if (buildable != null)
+            craftingItemAmount.text = buildable.GetItemAmount().ToString();
+
+        if (blueprint != null && blueprint.resultItem.itemIcon != null)
+            craftingIconImage.sprite = blueprint.resultItem.itemIcon;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public void HideCraftingInfo()
+    {
+        if (craftingUI != null)
+            craftingUI.SetActive(false);
+    }
+
+
 }

@@ -6,6 +6,8 @@ public class BlueprintData : ScriptableObject
 {
     public ItemClass resultItem;
     public int resultAmount = 1;
+    [Header("Crafting Settings")]
+    public CraftingType craftingType = CraftingType.Immediate;
 
     [System.Serializable]
     public class Requirement

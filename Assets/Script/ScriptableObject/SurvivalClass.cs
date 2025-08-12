@@ -12,8 +12,6 @@ public class SurvivalClass : ItemClass
     public Material invalidMaterial;  
     public Material originalMaterial;
 
-    [Header("Required Items to Build")]
-    public RequiredItem[] requiredItems;
     public override ItemClass GetItem() { return this; }
     public override SurvivalClass GetSurvival() { return this; }
     public override ToolClass GetTool() { return null; }
@@ -22,13 +20,4 @@ public class SurvivalClass : ItemClass
     public override WeaponClass GetWeapon() { return null; }
     public override float GetDurability() => -1f;
 
-
-
-
-    [System.Serializable]
-    public class RequiredItem
-    {
-        public ItemClass item;  // Item cần để xây
-        public int amount;      // Số lượng cần
-    }
 }

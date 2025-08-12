@@ -8,10 +8,9 @@ public class PlacementSystem : MonoBehaviour
     public LayerMask placementCheckMask;
 
     private GameObject previewObject;
-    private ItemClass currentItem;
+    private BlueprintData currentBlueprint;
     private InventoryManager inventoryManager;
 
-    // Material của item hiện tại
     private Material previewMat;
     private Material validMat;
     private Material invalidMat;
@@ -29,16 +28,16 @@ public class PlacementSystem : MonoBehaviour
         inventoryManager = InventoryManager.Instance;
     }
 
-    public void StartPlacement(ItemClass item, int hotkeyIndex)
+    public void StartPlacement(BlueprintData blueprint, int hotkeyIndex)
     {
-        if (item == null) return;
+        if (blueprint == null) return;
 
-        currentItem = item;
+        currentBlueprint = blueprint;
         currentHotkeyIndex = hotkeyIndex;
 
-        // Lấy prefab và material từ SurvivalClass
+        // Lấy prefab và materials nếu là SurvivalClass
         GameObject prefabToUse = null;
-        if (item is SurvivalClass survival && survival.prefabToPlace != null)
+        if (blueprint.resultItem is SurvivalClass survival && survival.prefabToPlace != null)
         {
             prefabToUse = survival.prefabToPlace;
             previewMat = survival.previewMaterial;
@@ -48,13 +47,13 @@ public class PlacementSystem : MonoBehaviour
         }
         else
         {
-            prefabToUse = item.dropPrefab;
+            prefabToUse = blueprint.resultItem.dropPrefab;
             previewMat = validMat = invalidMat = originalMat = null;
         }
 
         if (prefabToUse == null)
         {
-            Debug.LogWarning($"Item {item.itemName} không có prefab để đặt");
+            Debug.LogWarning($"Blueprint {blueprint.name} không có prefab để đặt");
             return;
         }
 
@@ -69,28 +68,30 @@ public class PlacementSystem : MonoBehaviour
     {
         if (previewObject == null) return;
 
-        // Cập nhật vị trí preview
+        // Update vị trí preview
         Vector3 targetPos = playerCamera.position + playerCamera.forward * previewDistance;
         previewObject.transform.position = targetPos;
         previewObject.transform.rotation = Quaternion.LookRotation(playerCamera.forward);
 
-        // Check hợp lệ
         bool canPlace = CanPlaceHere();
-        bool hasAllItems = currentItem is SurvivalClass s && HasAllRequiredItems(s);
+        bool hasAllItems = HasAllRequiredItems();
 
-        // Đổi màu theo trạng thái
         if (!canPlace)
+        {
             SetPreviewMaterial(invalidMat);
-        else if (hasAllItems)
-            SetPreviewMaterial(originalMat);
-        else
+        }
+        else if (canPlace && hasAllItems)
+        {
             SetPreviewMaterial(validMat);
+        }
+        else
+        {
+            SetPreviewMaterial(originalMat);
+        }
 
-        // Chuột trái → đặt
+
         if (Input.GetMouseButtonDown(0) && canPlace)
             PlaceObject();
-
-        // Chuột phải → hủy
         else if (Input.GetMouseButtonDown(1))
             CancelPlacement();
     }
@@ -115,9 +116,9 @@ public class PlacementSystem : MonoBehaviour
         return true;
     }
 
-    private bool HasAllRequiredItems(SurvivalClass itemData)
+    private bool HasAllRequiredItems()
     {
-        foreach (var req in itemData.requiredItems)
+        foreach (var req in currentBlueprint.requirements)
         {
             if (inventoryManager.playerInventory.GetTotalQuantity(req.item) < req.amount)
                 return false;
@@ -127,33 +128,32 @@ public class PlacementSystem : MonoBehaviour
 
     private void PlaceObject()
     {
-        if (currentItem == null || previewObject == null) return;
+        if (currentBlueprint == null || previewObject == null) return;
 
-        if (currentItem is SurvivalClass survival)
+        if (currentBlueprint.resultItem is SurvivalClass survival)
         {
             // Xóa blueprint cũ cùng hotkey nếu chưa build
             var existingBlueprints = FindObjectsOfType<BuildableObject>();
             foreach (var bp in existingBlueprints)
             {
-                if (bp.IsSameBlueprint(survival) &&
+                if (bp.IsSameBlueprint(currentBlueprint) &&
                     bp.LastHotkeyIndex == currentHotkeyIndex &&
                     !bp.IsBuilt)
                 {
                     Destroy(bp.gameObject);
-                    Debug.Log($"Xóa blueprint {survival.itemName} của hotkey {currentHotkeyIndex + 1}");
+                    Debug.Log($"Xóa blueprint {currentBlueprint.name} của hotkey {currentHotkeyIndex + 1}");
                 }
             }
         }
 
-        // Spawn object thật
-        GameObject prefabToPlace = (currentItem is SurvivalClass s && s.prefabToPlace != null)
+        GameObject prefabToPlace = (currentBlueprint.resultItem is SurvivalClass s && s.prefabToPlace != null)
             ? s.prefabToPlace
-            : currentItem.dropPrefab;
+            : currentBlueprint.resultItem.dropPrefab;
 
         GameObject placedObj = Instantiate(prefabToPlace, previewObject.transform.position, previewObject.transform.rotation);
 
-        // Nếu là SurvivalClass → set màu preview ban đầu
-        if (currentItem is SurvivalClass sData && sData.previewMaterial != null)
+        // Set preview material nếu là SurvivalClass
+        if (currentBlueprint.resultItem is SurvivalClass sData && sData.previewMaterial != null)
         {
             foreach (var r in placedObj.GetComponentsInChildren<Renderer>())
                 r.material = sData.previewMaterial;
@@ -161,7 +161,7 @@ public class PlacementSystem : MonoBehaviour
             BuildableObject buildScript = placedObj.GetComponent<BuildableObject>();
             if (buildScript != null)
             {
-                buildScript.Init(sData, inventoryManager.playerInventory);
+                buildScript.Init(currentBlueprint, inventoryManager.playerInventory);
                 buildScript.LastHotkeyIndex = currentHotkeyIndex;
             }
         }
@@ -175,7 +175,7 @@ public class PlacementSystem : MonoBehaviour
             Destroy(previewObject);
 
         previewObject = null;
-        currentItem = null;
+        currentBlueprint = null;
         currentHotkeyIndex = -1;
     }
 

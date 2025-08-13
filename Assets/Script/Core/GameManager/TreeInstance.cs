@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class TreeInstance : MonoBehaviour
+public class TreeInstance : MonoBehaviour, IPoolable
 {
     public TreeClass treeData;
     public bool isChopped = false;
@@ -67,5 +67,27 @@ public class TreeInstance : MonoBehaviour
         return origin; // fallback nếu không có ground
     }
 
+    public void OnSpawned()
+    {
+        if (isChopped)
+        {
+            // Nếu cây đã chặt, tắt cây và spawn gốc
+            gameObject.SetActive(false);
+            //if (!string.IsNullOrEmpty(treeData.stumpPoolID))
+            //{
+            //    ObjectPoolManager.Instance.SpawnFromPool(treeData.stumpPoolID, transform.position, transform.rotation);
+            //}
+        }
+        else
+        {
+            gameObject.SetActive(true);
+        }
+    }
 
+    public void OnReturned()
+    {
+        // Khi trả về pool, luôn tắt object
+        gameObject.SetActive(false);
+    }
 }
+

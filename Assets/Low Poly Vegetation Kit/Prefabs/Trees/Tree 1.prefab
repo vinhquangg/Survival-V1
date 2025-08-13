@@ -570,7 +570,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   treeData: {fileID: 11400000, guid: 7d97cb3d359e3e34bbae95a939d15e00, type: 2}
-  isChopped: 0
+  isChopped: 1
   logDropGO: {fileID: 4370736543054296596, guid: edb158f4ce929cb4e88a8904570b0257,
     type: 3}
 --- !u!114 &512948462825955608
@@ -585,7 +585,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e2a524a3c8c75a44a9de20cfee129ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolID: Tree
+  poolID: Tree1
 --- !u!1 &8785772867368445908
 GameObject:
   m_ObjectHideFlags: 0

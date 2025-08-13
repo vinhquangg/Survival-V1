@@ -157,7 +157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e2a524a3c8c75a44a9de20cfee129ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolID: Tree
+  poolID: Tree3
 --- !u!1 &4529416127168741076
 GameObject:
   m_ObjectHideFlags: 0

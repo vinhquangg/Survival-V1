@@ -18,6 +18,7 @@ TagManager:
   - Stump3
   - Buildable
   - BuildablePart
+  - ChunkContainer
   layers:
   - Default
   - TransparentFX

@@ -10,6 +10,7 @@ public class PlacementSystem : MonoBehaviour
     private GameObject previewObject;
     private BlueprintData currentBlueprint;
     private InventoryManager inventoryManager;
+    private GameObject previewChunk;
 
     private Material previewMat;
     private Material validMat;
@@ -66,12 +67,19 @@ public class PlacementSystem : MonoBehaviour
 
     private void Update()
     {
+
+
         if (previewObject == null) return;
 
         // Update vị trí preview
         Vector3 targetPos = playerCamera.position + playerCamera.forward * previewDistance;
         previewObject.transform.position = targetPos;
         previewObject.transform.rotation = Quaternion.LookRotation(playerCamera.forward);
+
+        if (ChunkManager.Instance != null)
+        {
+            previewChunk = ChunkManager.Instance.GetOrCreateChunk(targetPos);
+        }
 
         bool canPlace = CanPlaceHere();
         bool hasAllItems = HasAllRequiredItems();
@@ -138,7 +146,8 @@ public class PlacementSystem : MonoBehaviour
             {
                 if (bp.IsSameBlueprint(currentBlueprint) &&
                     bp.LastHotkeyIndex == currentHotkeyIndex &&
-                    !bp.IsBuilt)
+                    !bp.IsBuilt &&
+                    !bp.HasAnyMaterials())
                 {
                     Destroy(bp.gameObject);
                     Debug.Log($"Xóa blueprint {currentBlueprint.name} của hotkey {currentHotkeyIndex + 1}");
@@ -158,6 +167,12 @@ public class PlacementSystem : MonoBehaviour
             buildScript.Init(currentBlueprint, inventoryManager.playerInventory);
             buildScript.LastHotkeyIndex = currentHotkeyIndex;
 
+            if (previewChunk != null)
+            {
+                buildScript.currentChunk = previewChunk;
+                placedObj.transform.SetParent(previewChunk.transform);
+            }
+
             // Chỉ đổi material trên defaultObject qua method SetMaterial
             if (currentBlueprint.resultItem is SurvivalClass sData && sData.previewMaterial != null)
             {
@@ -167,7 +182,6 @@ public class PlacementSystem : MonoBehaviour
 
         CancelPlacement();
     }
-
 
     public void CancelPlacement()
     {

@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
+public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo, IPoolable
 {
     private ItemEntity itemEntity;
     private InteractableObject interactableObject;
@@ -9,7 +9,7 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
     [SerializeField] private GameObject tooltipUI;
     private TextMeshProUGUI interactionInfoText;
     private TextMeshProUGUI interactionTypeText;
-
+    private bool isPickedUp = false;
     private void Awake()
     {
         itemEntity = GetComponent<ItemEntity>();
@@ -19,47 +19,23 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
         interactableObject = GetComponent<InteractableObject>();
         if (interactableObject == null)
             Debug.LogError("Missing InteractableObject on ItemPickup");
-
-        //if (tooltipUI == null)
-        //    Debug.LogWarning("Tooltip UI chưa gán cho: " + gameObject.name);
-
-        //interactionInfoText = tooltipUI.transform.Find("interaction_Info")?.GetComponent<TextMeshProUGUI>();
-        //interactionTypeText = tooltipUI.transform.Find("interaction_type")?.GetComponent<TextMeshProUGUI>();
-
-        //if (interactionInfoText != null)
-        //    interactionInfoText.text = interactableObject.GetItemName();
-
-        //if (interactionTypeText != null)
-        //    interactionTypeText.text = interactableObject.GetItemType();
-
-        //HideUI();
     }
 
-    public string GetItemName()
-    {
-        return interactableObject.GetItemName();
-    }
-
-    public string GetItemType()
-    {
-        return interactableObject.GetItemType();
-    }
-
-    //public void Interact(GameObject interactor)
+    //public string GetItemName()
     //{
-    //    var inventory = interactor.GetComponentInChildren<InventoryManager>();
-    //    if (inventory != null)
-    //    {
-    //        inventory.AddItem(itemEntity.GetItemData(), itemEntity.GetQuantity());
-    //        Destroy(gameObject);
-    //    }
+    //    return interactableObject.GetItemName();
+    //}
+
+    //public string GetItemType()
+    //{
+    //    return interactableObject.GetItemType();
     //}
 
     public void Interact(GameObject interactor)
     {
         var inventoryManager = InventoryManager.Instance;
         if (inventoryManager == null) return;
-
+        if (isPickedUp) return;
         var itemData = itemEntity.GetItemData();
 
         if(itemData.itemType == ItemType.Consumable)
@@ -81,6 +57,7 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
         if (added)
         {
             // ✅ Trả về prefab cha có PoolableObject
+            isPickedUp = true;
             GameObject root = gameObject.GetComponent<PoolableObject>() != null ? gameObject : gameObject.transform.root.gameObject;
             ObjectPoolManager.Instance?.ReturnToPool(root);
         }
@@ -92,27 +69,10 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
         return tooltipUI;
     }
 
-    //public void ShowUI()
-    //{
-    //    if (tooltipUI != null)
-    //        tooltipUI.SetActive(true);
-    //}
-
-    //public void HideUI()
-    //{
-    //    if (tooltipUI != null)
-    //        tooltipUI.SetActive(false);
-    //}
-
     public string GetName()
     {
         return interactableObject.GetItemName();
     }
-
-    //public string GetDescription()
-    //{
-    //    throw new System.NotImplementedException();
-    //}
 
     public Sprite GetIcon()
     {
@@ -124,4 +84,15 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo
     }
 
     public InteractionType GetInteractionType() => InteractionType.Pickup;
+
+    public void OnSpawned()
+    {
+        //Debug.Log($"✅ Spawned Item: {itemEntity.GetItemData().name} - SL: {itemEntity.GetQuantity()}");
+        gameObject.SetActive(!isPickedUp);
+    }
+
+    public void OnReturned()
+    {
+        gameObject.SetActive(false);
+    }
 }

@@ -3,17 +3,17 @@ using UnityEngine;
 
 public class VisibilityCullingZone : MonoBehaviour
 {
-    public float chunkSize = 100f;
-    public int visibleRadius = 2;
-    public string chunkTag = "Chunk";
+    [HideInInspector] public float viewSize = 10f;
+    [HideInInspector] public int visibleRadius = 2;
+    //public string chunkTag = "Chunk";
+    [HideInInspector] public Transform player;
+    [HideInInspector] public float checkInterval = 1f;
 
-    private List<GameObject> allChunks = new List<GameObject>();
+    private List<ChunkObjectSpawner> allChunks = new List<ChunkObjectSpawner>();
     private Vector2Int lastPlayerChunkCoord = Vector2Int.zero;
-    public Transform player;
     private Vector3 terrainOrigin = Vector3.zero;
 
     private float checkTimer = 0f;
-    public float checkInterval = 1f;
 
     void Start()
     {
@@ -52,10 +52,16 @@ public class VisibilityCullingZone : MonoBehaviour
 
     public void RefreshChunkList()
     {
-        GameObject[] chunks = GameObject.FindGameObjectsWithTag(chunkTag);
         allChunks.Clear();
-        allChunks.AddRange(chunks);
-        Debug.Log("🔄 Cập nhật danh sách chunk: " + allChunks.Count);
+
+        GameObject[] containers = GameObject.FindGameObjectsWithTag("ChunkContainer");
+        foreach (var container in containers)
+        {
+            ChunkObjectSpawner[] spawners = container.GetComponentsInChildren<ChunkObjectSpawner>();
+            allChunks.AddRange(spawners);
+        }
+
+        Debug.Log("🔄 Cập nhật danh sách chunk spawner: " + allChunks.Count);
         UpdateChunkVisibility(force: true);
     }
 
@@ -63,9 +69,9 @@ public class VisibilityCullingZone : MonoBehaviour
     {
         Vector3 relativePlayerPos = player.position - terrainOrigin;
         Vector2 playerPos2D = new Vector2(relativePlayerPos.x, relativePlayerPos.z);
-        float maxDistance = visibleRadius * chunkSize;
+        float maxDistance = visibleRadius * viewSize;
 
-        foreach (GameObject chunk in allChunks)
+        foreach (ChunkObjectSpawner chunk in allChunks)
         {
             if (chunk == null || chunk.name == "ChunkContainer") continue;
 
@@ -100,8 +106,8 @@ public class VisibilityCullingZone : MonoBehaviour
     {
         Vector3 relativePos = pos - terrainOrigin;
         return new Vector2Int(
-            Mathf.RoundToInt(relativePos.x / chunkSize),
-            Mathf.RoundToInt(relativePos.z / chunkSize)
+            Mathf.RoundToInt(relativePos.x / viewSize),
+            Mathf.RoundToInt(relativePos.z / viewSize)
         );
     }
 
@@ -110,6 +116,6 @@ public class VisibilityCullingZone : MonoBehaviour
     {
         if (player == null) return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(player.position, visibleRadius * chunkSize);
+        Gizmos.DrawWireSphere(player.position, visibleRadius * viewSize);
     }
 }

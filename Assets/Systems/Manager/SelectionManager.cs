@@ -116,6 +116,7 @@ public class SelectionManager : MonoBehaviour
         }
         else
         {
+            uiManager.HidePrompt();
             uiManager.HideCraftingInfo();
         }
     }

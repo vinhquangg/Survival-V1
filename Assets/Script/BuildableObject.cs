@@ -12,7 +12,7 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
     public delegate void OnMaterialChangedHandler();
     public event OnMaterialChangedHandler OnMaterialChanged;
     [SerializeField] private GameObject defaultObject;  // Kéo thả trong Inspector
-
+    [HideInInspector] public GameObject currentChunk;
     public int LastHotkeyIndex { get; set; }
     public bool IsBuilt => isBuilt;
 
@@ -92,7 +92,7 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
     private void CompleteBuild()
     {
         isBuilt = true;
-
+        
         if (bluePrint.resultItem is SurvivalClass survival && survival.originalMaterial != null)
             SetMaterial(survival.originalMaterial);
 
@@ -101,6 +101,20 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
             vfx.gameObject.SetActive(true);
             vfx.Play();
         }
+        OnMaterialChanged?.Invoke();
+    }
+
+    public bool HasAnyMaterials()
+    {
+        if (currentMaterials == null || currentMaterials.Length == 0)
+            return false;
+
+        for (int i = 0; i < currentMaterials.Length; i++)
+        {
+            if (currentMaterials[i] > 0)
+                return true;
+        }
+        return false;
     }
 
     public bool IsSameBlueprint(BlueprintData otherData)

@@ -330,7 +330,7 @@ GameObject:
   - component: {fileID: 690684765702772133}
   - component: {fileID: 1324944307354701078}
   - component: {fileID: 6193587637295946800}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Big Rock 1
   m_TagString: Obstacle
   m_Icon: {fileID: 0}

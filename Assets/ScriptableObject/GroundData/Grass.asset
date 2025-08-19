@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bec86d6a346455c43abc0d0cbff423b4, type: 3}
+  m_Name: Grass
+  m_EditorClassIdentifier: 
+  terrainLayer: {fileID: 8574412962073106934, guid: 6030d4ecea42c4a4a8df94e0e7854f90,
+    type: 2}
+  groundType: 2
+  footstepClips:
+  - {fileID: 8300000, guid: 1394fb5112873734e8858c4e42e2d6d3, type: 3}

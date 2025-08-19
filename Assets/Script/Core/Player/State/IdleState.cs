@@ -1,10 +1,17 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class IdleState : PlayerState
 {
     public IdleState(PlayerStateMachine playerState, PlayerController player) : base(playerState, player) { }
+
+    public override void Enter()
+    {
+        base.Enter();
+        FootStepManager.Instance.AttachToActor(player.transform); // gắn AudioSource vào player
+        FootStepManager.Instance.StopFootstep();                  // dừng footstep khi idle
+    }
 
     public override void Update()
     {

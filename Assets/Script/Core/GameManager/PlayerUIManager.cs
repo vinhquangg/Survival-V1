@@ -51,12 +51,17 @@ public class PlayerUIManager : MonoBehaviour
             case InteractionType.Cook:
                 itemAmount.gameObject.SetActive(true);
                 iconImage.gameObject.SetActive(true);
+<<<<<<< HEAD
                 itemAmount.text = info.GetItemAmount();
                 iconImage.sprite = info.GetIcon();
                 //itemAmount.gameObject.SetActive(true);
                 //iconImage.gameObject.SetActive(true);
                 //itemAmount.text = info.GetItemAmount(); 
                 //iconImage.sprite = info.GetIcon();
+=======
+                itemAmount.text = info.GetItemAmount(); 
+                iconImage.sprite = info.GetIcon();
+>>>>>>> parent of 1f79ee6 (make cooked meat)
                 break;
 
             case InteractionType.TakeCooked:

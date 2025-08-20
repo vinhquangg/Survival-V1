@@ -11,12 +11,15 @@ public class SelectionManager : MonoBehaviour
 
     private PlayerUIManager uiManager;
 
+<<<<<<< HEAD
     public static SelectionManager Instance { get; private set; }
 
     void Awake()
     {
         Instance = this;
     }
+=======
+>>>>>>> parent of 1f79ee6 (make cooked meat)
     void Start()
     {
         uiManager = FindObjectOfType<PlayerUIManager>();
@@ -71,17 +74,17 @@ public class SelectionManager : MonoBehaviour
 
                                 if (buildable.IsBuilt)
                                 {
-                                    var campfire = hit.transform.GetComponent<Campfire>();
-                                    if (campfire != null)
+                                    var cookable = hit.transform.GetComponent<Cookable>();
+                                    if (cookable != null)
                                     {
-                                        currentInteractable = campfire;
-                                        uiManager.ShowPrompt(campfire);
+                                        uiManager.ShowPrompt(cookable);  // Cookable cũng phải implement IInteractableInfo
                                         uiManager.HideCraftingInfo();
                                     }
                                     else
                                     {
                                         uiManager.HidePrompt();
                                         uiManager.HideCraftingInfo();
+<<<<<<< HEAD
                                         var cookable = hit.transform.GetComponent<Cookable>();
                                         if (cookable != null)
                                         {
@@ -94,6 +97,8 @@ public class SelectionManager : MonoBehaviour
                                             uiManager.HidePrompt();
                                             uiManager.HideCraftingInfo();
                                         }
+=======
+>>>>>>> parent of 1f79ee6 (make cooked meat)
                                     }
                                 }
                                 else
@@ -101,8 +106,11 @@ public class SelectionManager : MonoBehaviour
                                     uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
                                     uiManager.HidePrompt();
                                 }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> parent of 1f79ee6 (make cooked meat)
                             }
 
                             else

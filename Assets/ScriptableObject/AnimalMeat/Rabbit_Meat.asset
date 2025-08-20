@@ -16,12 +16,9 @@ MonoBehaviour:
   itemName: Rabbit_Meat
   itemIcon: {fileID: 21300000, guid: b62c89a89b77e0849b53b683e7e2909f, type: 3}
   itemDesc: Rabbit_Meat(Raw)
-  itemFunc: Cant use
+  itemFunc: Use to restore a small hunger
   isStack: 1
-  maxStack: 16
+  maxStack: 32
   dropPrefab: {fileID: 962811512151793139, guid: d995f1daa021d8c4490d0ccc09a3c6f7,
     type: 3}
-  blueprint: {fileID: 0}
-  statAdded: 0
-  isMeat: 1
-  meatState: 1
+  statAdded: 10

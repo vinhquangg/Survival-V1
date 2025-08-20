@@ -9808,8 +9808,11 @@ GameObject:
   - component: {fileID: 2068174784946820526}
   - component: {fileID: 3872476666166749782}
   - component: {fileID: 8066899700742802084}
+<<<<<<< HEAD
   - component: {fileID: 6981001322075571547}
   - component: {fileID: 6862669044284740194}
+=======
+>>>>>>> parent of 7862a86 (make cooked meat)
   m_Layer: 20
   m_Name: Camp fire
   m_TagString: Untagged
@@ -9848,7 +9851,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultObject: {fileID: 6945812555978235470}
-  currentChunk: {fileID: 0}
 --- !u!65 &8066899700742802084
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9870,6 +9872,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!114 &6981001322075571547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9901,3 +9904,5 @@ MonoBehaviour:
   fireVFX: {fileID: 2592380471027649258}
   cookPoint: {fileID: 8182689149750756046}
   maxCookSlots: 3
+=======
+>>>>>>> parent of 7862a86 (make cooked meat)

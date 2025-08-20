@@ -11,7 +11,7 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
     private ParticleSystem[] buildVFX;
     public delegate void OnMaterialChangedHandler();
     public event OnMaterialChangedHandler OnMaterialChanged;
-    [SerializeField] private GameObject defaultObject; 
+    [SerializeField] private GameObject defaultObject;  // Kéo thả trong Inspector
     [HideInInspector] public GameObject currentChunk;
     public int LastHotkeyIndex { get; set; }
     public bool IsBuilt => isBuilt;

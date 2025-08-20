@@ -29,4 +29,8 @@ public abstract class ItemClass:ScriptableObject
     {
         return EquipType.None; // Mặc định nếu không override
     }
+    public virtual AnimalMeat GetAnimalMeat()
+    {
+        return AnimalMeat.None; // Mặc định nếu không override
+    }
 }

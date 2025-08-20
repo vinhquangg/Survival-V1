@@ -1,58 +1,40 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-﻿﻿using UnityEngine;
 ﻿using System;
 using UnityEngine;
-=======
-﻿using UnityEngine;
->>>>>>> parent of 88062a8 (new)
 
 public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
 {
-    public string cookName = "Cooking Station";
-    public Sprite cookIcon;
-<<<<<<< HEAD
     [SerializeField] private Sprite icon;
     [SerializeField] private string cookName = "Campfire";
-=======
-﻿using UnityEngine;
 
-public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
-{
-    public string cookName = "Cooking Station";
-    public Sprite cookIcon;
->>>>>>> parent of 1f79ee6 (make cooked meat)
+    private Campfire campfire;
 
-    public InteractionType GetInteractionType() => InteractionType.Cook;
-    public string GetName() => cookName;
-    public string GetItemAmount() => "";  // có thể return "Raw Meat x1" nếu đang nấu
-<<<<<<< HEAD
-=======
-    public Sprite GetIcon() => cookIcon;
->>>>>>> parent of 1f79ee6 (make cooked meat)
-
-    public void Interact(GameObject player)
+    private void Start()
     {
-        Debug.Log("Start cooking...");
-        // TODO: logic nấu
+        campfire = GetComponent<Campfire>(); // 🔗 tham chiếu Campfire cùng object
     }
-<<<<<<< HEAD
+
+    public Sprite GetIcon() => icon;
+    public string GetName() => cookName;
+    public string GetItemAmount() => "";
+
+    public InteractionType GetInteractionType()
+    {
+        // Chỉ hiển thị Cook khi lửa đang cháy
+        return (campfire != null && campfire.IsBurning) ? InteractionType.Cook : InteractionType.None;
+    }
 
     public void Interact(GameObject interactor)
-=======
-
-    public InteractionType GetInteractionType() => InteractionType.Cook;
-    public string GetName() => cookName;
-    public string GetItemAmount() => "";  // có thể return "Raw Meat x1" nếu đang nấu
-    public Sprite GetIcon() => cookIcon;
-
-    public void Interact(GameObject player)
->>>>>>> parent of 88062a8 (new)
     {
-        Debug.Log("Start cooking...");
-        // TODO: logic nấu
+        if (campfire != null && campfire.IsBurning)
+        {
+            Debug.Log("🍖 Cooking is start!");
+            // TODO: gọi hệ thống cooking (inventory → lấy item → nướng → spawn item chín)
+        }
+        else
+        {
+            Debug.Log("❌ Can't cook, campfire is not burning!");
+        }
     }
-<<<<<<< HEAD
 
     public void Cook(GameObject interactor)
     {
@@ -71,7 +53,6 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
 
         // Tìm raw meat trong hotbar
         SlotClass meatSlot = playerInv.FindRawMeatInHotbar();
-        // // Tìm index raw meat trong hotbar
         int meatIndex = playerInv.FindRawMeatInHotbarIndex();
         if (meatSlot == null || meatIndex < 0)
         {
@@ -105,9 +86,3 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
 
 
 }
-=======
-}
->>>>>>> parent of 1f79ee6 (make cooked meat)
-=======
-}
->>>>>>> parent of 88062a8 (new)

@@ -6,9 +6,9 @@ using Unity.VisualScripting;
 public class PlayerUIManager : MonoBehaviour
 {
     [Header("Interact UI")]
-    public GameObject interactUI;                 
-    public TextMeshProUGUI nameText;            
-    public TextMeshProUGUI itemAmount;   
+    public GameObject interactUI;
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI itemAmount;
     public Image iconImage;
 
     [Header("Crafting UI")]
@@ -17,83 +17,57 @@ public class PlayerUIManager : MonoBehaviour
     public TextMeshProUGUI craftingItemAmount;
     public Image craftingIconImage;
 
+    [Header("Cooked UI")]
+    public GameObject cookedUI;
+    public TextMeshProUGUI cookedNameText;
+    public TextMeshProUGUI cookedItemAmount;
+    public Image cookedIconImage;
+
     public void ShowPrompt(IInteractableInfo info)
     {
-        if (info.GetInteractionType() == InteractionType.Pickup)
+        if (interactUI == null || info == null)
+            return;
+
+        interactUI.SetActive(true);
+
+        // Reset mặc định
+        nameText.text = info.GetName();
+        itemAmount.gameObject.SetActive(false);
+        iconImage.gameObject.SetActive(false);
+
+        switch (info.GetInteractionType())
         {
-            if (interactUI != null)
-                interactUI.SetActive(true);
-
-            nameText.text = info.GetName();
-            itemAmount.gameObject.SetActive(true);
-            iconImage.gameObject.SetActive(true);
-
-            itemAmount.text = info.GetItemAmount();
-            iconImage.sprite = info.GetIcon();
-        }
-        else if(info.GetInteractionType() ==  InteractionType.Chop)
-        {
-            if (interactUI != null)
-                interactUI.SetActive(true);
-
-<<<<<<< HEAD
-            case InteractionType.Cook:
-<<<<<<< HEAD
-=======
+            case InteractionType.Pickup:
                 itemAmount.gameObject.SetActive(true);
                 iconImage.gameObject.SetActive(true);
-                itemAmount.text = info.GetItemAmount(); 
+
+                itemAmount.text = info.GetItemAmount();
                 iconImage.sprite = info.GetIcon();
                 break;
 
-<<<<<<< HEAD
-=======
             case InteractionType.Chop:
                 break;
 
             case InteractionType.Cook:
-                itemAmount.gameObject.SetActive(true);
-                iconImage.gameObject.SetActive(true);
-<<<<<<< HEAD
-<<<<<<< HEAD
-                itemAmount.text = info.GetItemAmount();
-                iconImage.sprite = info.GetIcon();
                 //itemAmount.gameObject.SetActive(true);
                 //iconImage.gameObject.SetActive(true);
                 //itemAmount.text = info.GetItemAmount(); 
                 //iconImage.sprite = info.GetIcon();
-=======
-                itemAmount.text = info.GetItemAmount(); 
-                iconImage.sprite = info.GetIcon();
->>>>>>> parent of 1f79ee6 (make cooked meat)
-=======
-                itemAmount.text = info.GetItemAmount(); 
-                iconImage.sprite = info.GetIcon();
->>>>>>> parent of 88062a8 (new)
                 break;
 
->>>>>>> parent of 1f79ee6 (make cooked meat)
             case InteractionType.TakeCooked:
->>>>>>> parent of 1f79ee6 (make cooked meat)
                 itemAmount.gameObject.SetActive(true);
                 iconImage.gameObject.SetActive(true);
-                itemAmount.text = info.GetItemAmount(); 
+                itemAmount.text = "Cooked Meat Ready";
                 iconImage.sprite = info.GetIcon();
                 break;
-=======
-            nameText.text = info.GetName();
-            itemAmount.gameObject.SetActive(false);
-            iconImage.gameObject.SetActive(false);
->>>>>>> parent of 7862a86 (make cooked meat)
 
-            itemAmount.text = info.GetItemAmount();
-            iconImage.sprite = info.GetIcon();
-        }
-        else
-        {
-            HidePrompt();
+            default:
+                HidePrompt();
+                break;
         }
     }
+
 
     public void ShowCraftingInfo(BlueprintData blueprint, BuildableObject buildable)
     {

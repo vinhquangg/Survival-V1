@@ -1,36 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &258271063773756900
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8182689149750756046}
-  m_Layer: 20
-  m_Name: CookPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8182689149750756046
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 258271063773756900}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.35, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2068174784946820526}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2592380471027649258
 GameObject:
   m_ObjectHideFlags: 0
@@ -9809,10 +9778,15 @@ GameObject:
   - component: {fileID: 3872476666166749782}
   - component: {fileID: 8066899700742802084}
 <<<<<<< HEAD
+<<<<<<< HEAD
   - component: {fileID: 6981001322075571547}
   - component: {fileID: 6862669044284740194}
 =======
 >>>>>>> parent of 7862a86 (make cooked meat)
+=======
+  - component: {fileID: 1721264308188018043}
+  - component: {fileID: -5145028867814248818}
+>>>>>>> parent of 1f79ee6 (make cooked meat)
   m_Layer: 20
   m_Name: Camp fire
   m_TagString: Untagged
@@ -9835,7 +9809,6 @@ Transform:
   m_Children:
   - {fileID: 1884136929962552257}
   - {fileID: 8221954290839675071}
-  - {fileID: 8182689149750756046}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3872476666166749782
@@ -9873,6 +9846,7 @@ BoxCollider:
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 <<<<<<< HEAD
+<<<<<<< HEAD
 --- !u!114 &6981001322075571547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9888,6 +9862,9 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 09f5f32cc860fd64eb54d303816cce87, type: 3}
   cookName: Campfire
 --- !u!114 &6862669044284740194
+=======
+--- !u!114 &1721264308188018043
+>>>>>>> parent of 1f79ee6 (make cooked meat)
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9899,6 +9876,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 283bde07136a5db46be8138f067d114d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
   campfireData: {fileID: 11400000, guid: 5b355f386c769f647ba1df6f09e1bcd0, type: 2}
   icon: {fileID: 21300000, guid: 09f5f32cc860fd64eb54d303816cce87, type: 3}
   fireVFX: {fileID: 2592380471027649258}
@@ -9906,3 +9884,20 @@ MonoBehaviour:
   maxCookSlots: 3
 =======
 >>>>>>> parent of 7862a86 (make cooked meat)
+=======
+  campFire: {fileID: 11400000, guid: 5b355f386c769f647ba1df6f09e1bcd0, type: 2}
+--- !u!114 &-5145028867814248818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7812148314607090011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fa7de6e681d6384489603a2b91f3062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cookName: Cooking Station
+  cookIcon: {fileID: 21300000, guid: af88e637281e9a548aa31d1cb76a0486, type: 3}
+>>>>>>> parent of 1f79ee6 (make cooked meat)

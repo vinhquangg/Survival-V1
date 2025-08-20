@@ -11,12 +11,6 @@ public class SelectionManager : MonoBehaviour
 
     private PlayerUIManager uiManager;
 
-    public static SelectionManager Instance { get; private set; }
-
-    void Awake()
-    {
-        Instance = this; 
-    }
     void Start()
     {
         uiManager = FindObjectOfType<PlayerUIManager>();
@@ -70,38 +64,36 @@ public class SelectionManager : MonoBehaviour
                                     if (!buildable.IsBuilt)
                                         buildable.OnMaterialChanged += OnBuildableMaterialChanged;
                                 }
+
                                 if (buildable.IsBuilt)
                                 {
 <<<<<<< HEAD
+<<<<<<< HEAD
                                     var campfire = hit.transform.GetComponent<Campfire>();
                                     if (campfire != null)
+=======
+                                    var cookable = hit.transform.GetComponent<Cookable>();
+                                    if (cookable != null)
+>>>>>>> parent of 1f79ee6 (make cooked meat)
                                     {
-                                        currentInteractable = campfire;
-                                        uiManager.ShowPrompt(campfire);
+                                        uiManager.ShowPrompt(cookable);  // Cookable cũng phải implement IInteractableInfo
                                         uiManager.HideCraftingInfo();
                                     }
                                     else
                                     {
-                                        var cookable = hit.transform.GetComponent<Cookable>();
-                                        if (cookable != null)
-                                        {
-                                            currentInteractable = cookable;
-                                            uiManager.ShowPrompt(cookable);
-                                            uiManager.HideCraftingInfo();
-                                        }
-                                        else
-                                        {
-                                            uiManager.HidePrompt();
-                                            uiManager.HideCraftingInfo();
-                                        }
+                                        uiManager.HidePrompt();
+                                        uiManager.HideCraftingInfo();
                                     }
 =======
                                     uiManager.HidePrompt();
                                     uiManager.HideCraftingInfo();
 >>>>>>> parent of 7862a86 (make cooked meat)
                                 }
-
-
+                                else
+                                {
+                                    uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
+                                    uiManager.HidePrompt();
+                                }
                             }
 
                             else

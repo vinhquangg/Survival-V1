@@ -1,65 +1,41 @@
-﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
 {
-    [Header("Data & UI")]
-    [SerializeField] private SurvivalClass campfireData;
-    [SerializeField] private Sprite icon;
-
-    [Header("Effects & CookPoint")]
-    [SerializeField] private GameObject fireVFX;
-    [SerializeField] private Transform cookPoint; // vị trí đặt meat
-    [SerializeField] private int maxCookSlots = 3;
-
+    [SerializeField] private SurvivalClass campFire;
+    private float duration;
     private bool isBurning = false;
 
-    public bool IsBurning => isBurning;
-    public Transform CookPoint => cookPoint;
-    public int MaxCookSlots => maxCookSlots;
-
-    private void Update()
+    public Sprite GetIcon()
     {
-        if (isBurning && campfireData.duration > 0)
-        {
-            campfireData.duration -= Time.deltaTime;
-            if (campfireData.duration <= 0f) StopFire();
-        }
+        throw new System.NotImplementedException();
     }
 
-    // IInteractableInfo
-    public Sprite GetIcon() => icon;
-    public string GetName() => "Campfire";
-    public string GetItemAmount() => "";
-    public InteractionType GetInteractionType() => InteractionType.Use;
+    public InteractionType GetInteractionType()
+    {
+        throw new System.NotImplementedException();
+    }
 
-    // IInteractable
+    public string GetItemAmount()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public string GetName()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Init(SurvivalClass survival)
+    {
+        campFire = survival;
+        duration = campFire.duration;
+    }
+
     public void Interact(GameObject interactor)
     {
-        if (!isBurning)
-        {
-            StartFire();
-            return;
-        }
-
-        // Nếu đang cháy, tìm Cookable và gọi Cook
-        Cookable cookable = GetComponent<Cookable>();
-        if (cookable != null)
-        {
-            cookable.Cook(interactor);
-        }
-    }
-
-    public void StartFire()
-    {
-        isBurning = true;
-        if (fireVFX != null) fireVFX.SetActive(true);
-        Debug.Log("🔥 Campfire is burning!");
-    }
-
-    public void StopFire()
-    {
-        isBurning = false;
-        if (fireVFX != null) fireVFX.SetActive(false);
-        Debug.Log("❌ Campfire stopped!");
+        
     }
 }

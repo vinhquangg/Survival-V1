@@ -42,6 +42,7 @@ public class EquipHolder : MonoBehaviour
 
         EquipType type = item.GetEquipType();
 
+        // ✅ Nếu item không có type trang bị (ví dụ: Consumable, Misc...) thì bỏ qua
         if (type == EquipType.None) return;
 
         if (currentEquipped.TryGetValue(type, out var go) && go != null)

@@ -6,9 +6,9 @@ using Unity.VisualScripting;
 public class PlayerUIManager : MonoBehaviour
 {
     [Header("Interact UI")]
-    public GameObject interactUI;                 
-    public TextMeshProUGUI nameText;            
-    public TextMeshProUGUI itemAmount;   
+    public GameObject interactUI;
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI itemAmount;
     public Image iconImage;
 
     [Header("Crafting UI")]
@@ -17,37 +17,57 @@ public class PlayerUIManager : MonoBehaviour
     public TextMeshProUGUI craftingItemAmount;
     public Image craftingIconImage;
 
+    [Header("Cooked UI")]
+    public GameObject cookedUI;
+    public TextMeshProUGUI cookedNameText;
+    public TextMeshProUGUI cookedItemAmount;
+    public Image cookedIconImage;
+
     public void ShowPrompt(IInteractableInfo info)
     {
-        if (info.GetInteractionType() == InteractionType.Pickup)
+        if (interactUI == null || info == null)
+            return;
+
+        interactUI.SetActive(true);
+
+        // Reset mặc định
+        nameText.text = info.GetName();
+        itemAmount.gameObject.SetActive(false);
+        iconImage.gameObject.SetActive(false);
+
+        switch (info.GetInteractionType())
         {
-            if (interactUI != null)
-                interactUI.SetActive(true);
+            case InteractionType.Pickup:
+                itemAmount.gameObject.SetActive(true);
+                iconImage.gameObject.SetActive(true);
 
-            nameText.text = info.GetName();
-            itemAmount.gameObject.SetActive(true);
-            iconImage.gameObject.SetActive(true);
+                itemAmount.text = info.GetItemAmount();
+                iconImage.sprite = info.GetIcon();
+                break;
 
-            itemAmount.text = info.GetItemAmount();
-            iconImage.sprite = info.GetIcon();
-        }
-        else if(info.GetInteractionType() ==  InteractionType.Chop)
-        {
-            if (interactUI != null)
-                interactUI.SetActive(true);
+            case InteractionType.Chop:
+                break;
 
-            nameText.text = info.GetName();
-            itemAmount.gameObject.SetActive(false);
-            iconImage.gameObject.SetActive(false);
+            case InteractionType.Cook:
+                itemAmount.gameObject.SetActive(true);
+                iconImage.gameObject.SetActive(true);
+                itemAmount.text = info.GetItemAmount(); 
+                iconImage.sprite = info.GetIcon();
+                break;
 
-            itemAmount.text = info.GetItemAmount();
-            iconImage.sprite = info.GetIcon();
-        }
-        else
-        {
-            HidePrompt();
+            case InteractionType.TakeCooked:
+                itemAmount.gameObject.SetActive(true);
+                iconImage.gameObject.SetActive(true);
+                itemAmount.text = "Cooked Meat Ready";
+                iconImage.sprite = info.GetIcon();
+                break;
+
+            default:
+                HidePrompt();
+                break;
         }
     }
+
 
     public void ShowCraftingInfo(BlueprintData blueprint, BuildableObject buildable)
     {

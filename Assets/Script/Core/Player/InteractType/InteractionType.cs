@@ -8,4 +8,6 @@ public enum InteractionType
     Open,
     Use,
     Placeable,
+    Cook,
+    TakeCooked,
 }

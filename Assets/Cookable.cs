@@ -44,7 +44,7 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
             return;
         }
 
-        PlayerInventory playerInv = interactor.GetComponent<PlayerInventory>();
+        PlayerInventory playerInv = interactor.GetComponentInChildren<PlayerInventory>();
         if (playerInv == null)
         {
             Debug.LogError("PlayerInventory not found on interactor!");

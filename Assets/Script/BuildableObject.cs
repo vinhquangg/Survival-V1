@@ -92,7 +92,7 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
     private void CompleteBuild()
     {
         isBuilt = true;
-        
+
         if (bluePrint.resultItem is SurvivalClass survival && survival.originalMaterial != null)
             SetMaterial(survival.originalMaterial);
 
@@ -102,7 +102,15 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
             vfx.Play();
         }
         OnMaterialChanged?.Invoke();
+
+        // 🔑 Nếu là Campfire thì tắt lửa ngay khi build xong
+        Campfire campfire = GetComponent<Campfire>();
+        if (campfire != null)
+        {
+            campfire.StopFire();
+        }
     }
+
 
     public bool HasAnyMaterials()
     {

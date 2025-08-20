@@ -11,6 +11,12 @@ public class SelectionManager : MonoBehaviour
 
     private PlayerUIManager uiManager;
 
+    public static SelectionManager Instance { get; private set; }
+
+    void Awake()
+    {
+        Instance = this; 
+    }
     void Start()
     {
         uiManager = FindObjectOfType<PlayerUIManager>();
@@ -62,26 +68,33 @@ public class SelectionManager : MonoBehaviour
                                     if (!buildable.IsBuilt)
                                         buildable.OnMaterialChanged += OnBuildableMaterialChanged;
                                 }
-
                                 if (buildable.IsBuilt)
                                 {
-                                    var cookable = hit.transform.GetComponent<Cookable>();
-                                    if (cookable != null)
+                                    var campfire = hit.transform.GetComponent<Campfire>();
+                                    if (campfire != null)
                                     {
-                                        uiManager.ShowPrompt(cookable);  // Cookable cũng phải implement IInteractableInfo
+                                        currentInteractable = campfire;
+                                        uiManager.ShowPrompt(campfire);
                                         uiManager.HideCraftingInfo();
                                     }
                                     else
                                     {
-                                        uiManager.HidePrompt();
-                                        uiManager.HideCraftingInfo();
+                                        var cookable = hit.transform.GetComponent<Cookable>();
+                                        if (cookable != null)
+                                        {
+                                            currentInteractable = cookable;
+                                            uiManager.ShowPrompt(cookable);
+                                            uiManager.HideCraftingInfo();
+                                        }
+                                        else
+                                        {
+                                            uiManager.HidePrompt();
+                                            uiManager.HideCraftingInfo();
+                                        }
                                     }
                                 }
-                                else
-                                {
-                                    uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
-                                    uiManager.HidePrompt();
-                                }
+
+
                             }
 
                             else

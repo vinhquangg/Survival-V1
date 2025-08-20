@@ -49,10 +49,10 @@ public class PlayerUIManager : MonoBehaviour
                 break;
 
             case InteractionType.Cook:
-                itemAmount.gameObject.SetActive(true);
-                iconImage.gameObject.SetActive(true);
-                itemAmount.text = info.GetItemAmount(); 
-                iconImage.sprite = info.GetIcon();
+                //itemAmount.gameObject.SetActive(true);
+                //iconImage.gameObject.SetActive(true);
+                //itemAmount.text = info.GetItemAmount(); 
+                //iconImage.sprite = info.GetIcon();
                 break;
 
             case InteractionType.TakeCooked:

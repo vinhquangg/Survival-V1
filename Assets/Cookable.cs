@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
@@ -25,62 +27,65 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
 
     public void Interact(GameObject interactor)
     {
-        if (campfire != null && campfire.IsBurning)
-        {
-            Debug.Log("🍖 Cooking is start!");
-            // TODO: gọi hệ thống cooking (inventory → lấy item → nướng → spawn item chín)
-        }
-        else
-        {
-            Debug.Log("❌ Can't cook, campfire is not burning!");
-        }
+        //var playerInv = interactor.GetComponentInChildren<PlayerInventory>();
+        //if (playerInv != null)
+        //    Cook(playerInv); // Gọi luôn hàm cook chung
     }
 
-    public void Cook(GameObject interactor)
+    public void Cook(PlayerInventory playerInv, int quantityToCook = -1)
     {
-        if (campfire == null || !campfire.IsBurning)
+        if (campfire == null || !campfire.IsBurning) return;
+        if (playerInv == null) return;
+
+        List<SlotClass> rawMeatSlots = playerInv.GetAllRawMeatSlots();
+        if (rawMeatSlots.Count == 0) return;
+
+        foreach (var slot in rawMeatSlots)
         {
-            Debug.Log("❌ Can't cook, campfire is not burning!");
-            return;
-        }
+            if (!(slot.GetItem() is Consumable c) || !c.isMeat || c.meatState != AnimalMeat.Raw)
+                continue;
 
-        PlayerInventory playerInv = interactor.GetComponentInChildren<PlayerInventory>();
-        if (playerInv == null)
-        {
-            Debug.LogError("PlayerInventory not found on interactor!");
-            return;
-        }
+            // Lấy số lượng thực từ ItemEntity
+            int qty = slot.GetQuantity();
+            if (quantityToCook > 0) qty = Mathf.Min(qty, quantityToCook);
 
-        // Tìm raw meat trong hotbar
-        SlotClass meatSlot = playerInv.FindRawMeatInHotbar();
-        int meatIndex = playerInv.FindRawMeatInHotbarIndex();
-        if (meatSlot == null || meatIndex < 0)
-        {
-            Debug.Log("❌ No raw meat to cook!");
-            return;
-        }
+            slot.SubQuantity(qty);
+            if (slot.GetQuantity() <= 0) playerInv.ClearSlot(slot);
 
-        // Xác định số lượng cook được
-        int cookQty = Mathf.Min(meatSlot.GetQuantity(), campfire.MaxCookSlots);
-
-        // Trừ raw meat
-        meatSlot.SubQuantity(cookQty);
-        if (meatSlot.GetQuantity() <= 0)
-            playerInv.hotbarItems[meatIndex] = null;
-
-        // Spawn cooked meat lên cookPoint
-        for (int i = 0; i < cookQty; i++)
-        {
-            // Giả sử có prefab của cooked meat
-            GameObject cookedMeatPrefab = meatSlot.GetItem().dropPrefab;
-            if (cookedMeatPrefab != null && campfire.CookPoint != null)
+            // Spawn raw meat prefab với quantity
+            var rawMeatObj = GameObject.Instantiate(c.dropPrefab, campfire.CookPoint.position, Quaternion.identity);
+            var itemEntity = rawMeatObj.GetComponent<ItemEntity>();
+            if (itemEntity != null)
             {
-                Vector3 spawnPos = campfire.CookPoint.position + new Vector3(i * 0.3f, 0, 0);
-                GameObject.Instantiate(cookedMeatPrefab, spawnPos, Quaternion.identity);
+                itemEntity.Initialize(c, qty); // 🔹 quantity lấy từ ItemEntity
+            }
+
+            // Coroutine cook tự động
+            StartCoroutine(CookAfterDelay(rawMeatObj, 10f, c.cookedPrefab, qty));
+        }
+
+        FindObjectOfType<PlayerUIManager>()?.ShowPrompt(this);
+        Debug.Log("🍖 Started cooking raw meat...");
+    }
+
+    private IEnumerator CookAfterDelay(GameObject rawMeatObj, float delay, GameObject cookedPrefab, int qty)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (rawMeatObj != null)
+        {
+            Vector3 pos = rawMeatObj.transform.position;
+            Destroy(rawMeatObj);
+
+            // Spawn cooked meat prefab với quantity = qty
+            var cookedObj = GameObject.Instantiate(cookedPrefab, pos, Quaternion.identity);
+            var itemEntity = cookedObj.GetComponent<ItemEntity>();
+            if (itemEntity != null)
+            {
+                // giữ nguyên số lượng
+                itemEntity.Initialize(itemEntity.GetItemData(), qty);
             }
         }
-
-        Debug.Log($"🍖 Cooked {cookQty} raw meat!");
     }
 
 

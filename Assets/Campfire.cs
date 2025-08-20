@@ -9,13 +9,13 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
     [Header("Effects & CookPoint")]
     [SerializeField] private GameObject fireVFX;
     [SerializeField] private Transform cookPoint; // vị trí đặt meat
-    [SerializeField] private int maxCookSlots = 3;
+    //[SerializeField] private int maxCookSlots = 3;
 
     private bool isBurning = false;
 
     public bool IsBurning => isBurning;
     public Transform CookPoint => cookPoint;
-    public int MaxCookSlots => maxCookSlots;
+    //public int MaxCookSlots => maxCookSlots;
 
     private void Update()
     {
@@ -35,19 +35,13 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
     // IInteractable
     public void Interact(GameObject interactor)
     {
+        // Chỉ bật/tắt lửa, không gọi Cook
         if (!isBurning)
-        {
             StartFire();
-            return;
-        }
-
-        // Nếu đang cháy, tìm Cookable và gọi Cook
-        Cookable cookable = GetComponent<Cookable>();
-        if (cookable != null)
-        {
-            cookable.Cook(interactor);
-        }
+        else
+            StopFire();
     }
+
 
     public void StartFire()
     {

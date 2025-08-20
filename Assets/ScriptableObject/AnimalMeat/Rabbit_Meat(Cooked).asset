@@ -24,4 +24,6 @@ MonoBehaviour:
   blueprint: {fileID: 0}
   statAdded: 10
   isMeat: 1
+  cookedPrefab: {fileID: 1123957515570026819, guid: 80316de23a6edcf4eaa6935ef105324b,
+    type: 3}
   meatState: 2

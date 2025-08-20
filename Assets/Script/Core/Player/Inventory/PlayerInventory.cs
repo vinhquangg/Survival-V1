@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -105,6 +106,25 @@ public class PlayerInventory : MonoBehaviour
         return removed >= amount;
     }
 
+    public List<SlotClass> GetAllRawMeatSlots()
+    {
+        List<SlotClass> result = new();
+        foreach (var slot in hotbarItems)
+            if (slot != null && slot.GetItem() is Consumable c && c.isMeat && c.meatState == AnimalMeat.Raw)
+                result.Add(slot);
+        foreach (var slot in items)
+            if (slot != null && slot.GetItem() is Consumable c && c.isMeat && c.meatState == AnimalMeat.Raw)
+                result.Add(slot);
+        return result;
+    }
+
+    public void ClearSlot(SlotClass slot)
+    {
+        for (int i = 0; i < hotbarItems.Length; i++)
+            if (hotbarItems[i] == slot) hotbarItems[i] = null;
+        for (int i = 0; i < items.Length; i++)
+            if (items[i] == slot) items[i] = null;
+    }
 
 
     public SlotClass Contains(ItemClass item)
@@ -204,35 +224,6 @@ public class PlayerInventory : MonoBehaviour
 
         return false;
     }
-
-    public SlotClass FindRawMeatInHotbar()
-    {
-        foreach (var slot in hotbarItems)
-        {
-            if (slot != null && slot.GetItem() is Consumable consumable)
-            {
-                if (consumable.isMeat && consumable.meatState == AnimalMeat.Raw)
-                {
-                    return slot;
-                }
-            }
-        }
-        return null;
-    }
-
-    public int FindRawMeatInHotbarIndex()
-    {
-        for (int i = 0; i < hotbarItems.Length; i++)
-        {
-            if (hotbarItems[i] != null && hotbarItems[i].GetItem() is Consumable c)
-            {
-                if (c.isMeat && c.meatState == AnimalMeat.Raw)
-                    return i;
-            }
-        }
-        return -1; // không tìm thấy
-    }
-
 
     public void Clear()
     {

@@ -8,6 +8,8 @@ public class Consumable : ItemClass, IUsableItem
 
     [Header("Meat Setting")]
     public bool isMeat;
+    [Header("Cooked Meat Prefab")]
+    public GameObject cookedPrefab;
     public AnimalMeat meatState = AnimalMeat.None;
     public override ItemClass GetItem() { return this; }
     public override ToolClass GetTool() { return null; }

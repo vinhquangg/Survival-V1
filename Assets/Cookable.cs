@@ -71,6 +71,7 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
 
         // Tìm raw meat trong hotbar
         SlotClass meatSlot = playerInv.FindRawMeatInHotbar();
+        // // Tìm index raw meat trong hotbar
         int meatIndex = playerInv.FindRawMeatInHotbarIndex();
         if (meatSlot == null || meatIndex < 0)
         {

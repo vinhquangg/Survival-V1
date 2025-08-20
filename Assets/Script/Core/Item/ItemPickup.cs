@@ -46,7 +46,7 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo, IPool
             {
                 var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
                 if (feedback != null)
-                    feedback.ShowFeedback();
+                    feedback.ShowFeedback(FeedbackType.Full);
                 return;
             }
         }

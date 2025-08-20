@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿﻿using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -203,6 +203,34 @@ public class PlayerInventory : MonoBehaviour
         }
 
         return false;
+    }
+
+    public SlotClass FindRawMeatInHotbar()
+    {
+        foreach (var slot in hotbarItems)
+        {
+            if (slot != null && slot.GetItem() is Consumable consumable)
+            {
+                if (consumable.isMeat && consumable.meatState == AnimalMeat.Raw)
+                {
+                    return slot;
+                }
+            }
+        }
+        return null;
+    }
+
+    public int FindRawMeatInHotbarIndex()
+    {
+        for (int i = 0; i < hotbarItems.Length; i++)
+        {
+            if (hotbarItems[i] != null && hotbarItems[i].GetItem() is Consumable c)
+            {
+                if (c.isMeat && c.meatState == AnimalMeat.Raw)
+                    return i;
+            }
+        }
+        return -1; // không tìm thấy
     }
 
 

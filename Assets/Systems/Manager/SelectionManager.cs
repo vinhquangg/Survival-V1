@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿﻿using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -11,6 +11,12 @@ public class SelectionManager : MonoBehaviour
 
     private PlayerUIManager uiManager;
 
+    public static SelectionManager Instance { get; private set; }
+
+    void Awake()
+    {
+        Instance = this;
+    }
     void Start()
     {
         uiManager = FindObjectOfType<PlayerUIManager>();
@@ -36,7 +42,6 @@ public class SelectionManager : MonoBehaviour
                 {
                     currentInteractable = interactable;
 
-                    // Cập nhật UI dựa vào loại interaction
                     switch (info.GetInteractionType())
                     {
                         case InteractionType.Pickup:
@@ -53,7 +58,6 @@ public class SelectionManager : MonoBehaviour
                             var buildable = hit.transform.GetComponent<BuildableObject>();
                             if (buildable != null)
                             {
-                                // Nếu đã đổi sang buildable khác, bỏ đăng ký sự kiện buildable cũ
                                 if (currentBuildable != buildable)
                                 {
                                     if (currentBuildable != null)
@@ -67,54 +71,38 @@ public class SelectionManager : MonoBehaviour
 
                                 if (buildable.IsBuilt)
                                 {
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
                                     var campfire = hit.transform.GetComponent<Campfire>();
                                     if (campfire != null)
-=======
-                                    var cookable = hit.transform.GetComponent<Cookable>();
-                                    if (cookable != null)
->>>>>>> parent of 1f79ee6 (make cooked meat)
-=======
-                                    var cookable = hit.transform.GetComponent<Cookable>();
-                                    if (cookable != null)
->>>>>>> parent of 1f79ee6 (make cooked meat)
-=======
-                                    var cookable = hit.transform.GetComponent<Cookable>();
-                                    if (cookable != null)
->>>>>>> parent of 1f79ee6 (make cooked meat)
                                     {
-                                        uiManager.ShowPrompt(cookable);  // Cookable cũng phải implement IInteractableInfo
+                                        currentInteractable = campfire;
+                                        uiManager.ShowPrompt(campfire);
                                         uiManager.HideCraftingInfo();
                                     }
                                     else
                                     {
                                         uiManager.HidePrompt();
                                         uiManager.HideCraftingInfo();
+                                        var cookable = hit.transform.GetComponent<Cookable>();
+                                        if (cookable != null)
+                                        {
+                                            currentInteractable = cookable;
+                                            uiManager.ShowPrompt(cookable);
+                                            uiManager.HideCraftingInfo();
+                                        }
+                                        else
+                                        {
+                                            uiManager.HidePrompt();
+                                            uiManager.HideCraftingInfo();
+                                        }
                                     }
-=======
-                                    uiManager.HidePrompt();
-                                    uiManager.HideCraftingInfo();
->>>>>>> parent of 7862a86 (make cooked meat)
                                 }
                                 else
                                 {
                                     uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
                                     uiManager.HidePrompt();
                                 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-                                else
-                                {
-                                    uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
-                                    uiManager.HidePrompt();
-                                }
->>>>>>> parent of 1f79ee6 (make cooked meat)
-=======
->>>>>>> parent of 1f79ee6 (make cooked meat)
+
+
                             }
 
                             else
@@ -136,7 +124,6 @@ public class SelectionManager : MonoBehaviour
             }
         }
 
-        // Không trúng gì → clear
         currentInteractable = null;
         uiManager.HidePrompt();
         uiManager.HideCraftingInfo();
@@ -160,55 +147,4 @@ public class SelectionManager : MonoBehaviour
             uiManager.HideCraftingInfo();
         }
     }
-
-
-    //void Update()
-    //{
-    //    Ray ray = new Ray(cursorTransform.position, cursorTransform.forward);
-    //    RaycastHit hit;
-
-    //    // Thêm bán kính "tương tác" → giúp dễ trúng object nhỏ
-    //    float sphereRadius = 0.3f;
-
-    //    if (Physics.SphereCast(ray, sphereRadius, out hit, interactionDistance, interactableLayer))
-    //    {
-    //        var interactable = hit.transform.GetComponent<IInteractable>();
-    //        var info = hit.transform.GetComponent<IInteractableInfo>();
-
-    //        if (interactable != null && info != null)
-    //        {
-    //            if (currentInteractable != interactable)
-    //            {
-    //                currentInteractable = interactable;
-    //                uiManager.ShowPrompt(info);
-    //            }
-    //            return;
-    //        }
-    //        if (info != null && info.GetInteractionType() == InteractionType.Placeable)
-    //        {
-    //            var buildable = hit.transform.GetComponent<BuildableObject>();
-    //            if (buildable != null)
-    //            {
-    //                // Gọi hiển thị crafting UI qua PlayerUIManager
-    //                uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
-
-    //                // Nếu trước đó có prompt UI thì ẩn đi
-    //                currentInteractable = null;
-    //                uiManager.HidePrompt();
-    //                //uiManager.HideCraftingInfo();
-    //            }
-    //            return;
-    //        }
-    //    }
-
-    //    //// Không trúng gì
-    //    //currentInteractable = null;
-    //    //uiManager.HidePrompt();
-
-
-
-    //    currentInteractable = null;
-    //    uiManager.HidePrompt();
-    //    uiManager.HideCraftingInfo();
-    //}
 }

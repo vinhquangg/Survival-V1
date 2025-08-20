@@ -69,8 +69,13 @@ public class SelectionManager : MonoBehaviour
                                 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                                     var campfire = hit.transform.GetComponent<Campfire>();
                                     if (campfire != null)
+=======
+                                    var cookable = hit.transform.GetComponent<Cookable>();
+                                    if (cookable != null)
+>>>>>>> parent of 1f79ee6 (make cooked meat)
 =======
                                     var cookable = hit.transform.GetComponent<Cookable>();
                                     if (cookable != null)
@@ -94,6 +99,14 @@ public class SelectionManager : MonoBehaviour
                                     uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
                                     uiManager.HidePrompt();
                                 }
+<<<<<<< HEAD
+=======
+                                else
+                                {
+                                    uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
+                                    uiManager.HidePrompt();
+                                }
+>>>>>>> parent of 1f79ee6 (make cooked meat)
                             }
 
                             else

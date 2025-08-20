@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿using System.Collections;
 =======
 using System.Collections;
 >>>>>>> parent of 1f79ee6 (make cooked meat)
+=======
+using System.Collections;
+>>>>>>> parent of 88062a8 (new)
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +14,7 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
 {
     [SerializeField] private SurvivalClass campFire;
     private float duration;
+<<<<<<< HEAD
 <<<<<<< HEAD
     [Header("Data & UI")]
     [SerializeField] private SurvivalClass campfireData;
@@ -20,19 +25,18 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
     [SerializeField] private Transform cookPoint; // vị trí đặt meat
     [SerializeField] private int maxCookSlots = 3;
 
+=======
+>>>>>>> parent of 88062a8 (new)
     private bool isBurning = false;
-    public bool IsBurning => isBurning;
-    public Transform CookPoint => cookPoint;
-    public int MaxCookSlots => maxCookSlots;
 
-    private void Update()
+    public Sprite GetIcon()
     {
         throw new System.NotImplementedException();
-        if (isBurning && campfireData.duration > 0)
-        {
-            campfireData.duration -= Time.deltaTime;
-            if (campfireData.duration <= 0f) StopFire();
-        }
+    }
+
+    public InteractionType GetInteractionType()
+    {
+        throw new System.NotImplementedException();
     }
 
 =======
@@ -53,6 +57,7 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
     {
         throw new System.NotImplementedException();
     }
+<<<<<<< HEAD
 <<<<<<< HEAD
     // IInteractableInfo
     public Sprite GetIcon() => icon;
@@ -108,3 +113,22 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
 >>>>>>> parent of 1f79ee6 (make cooked meat)
     }
 }
+=======
+
+    public string GetName()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Init(SurvivalClass survival)
+    {
+        campFire = survival;
+        duration = campFire.duration;
+    }
+
+    public void Interact(GameObject interactor)
+    {
+        
+    }
+}
+>>>>>>> parent of 88062a8 (new)

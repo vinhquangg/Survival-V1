@@ -5,9 +5,6 @@ using UnityEngine;
 public class Consumable : ItemClass,IUsableItem
 {
     public float statAdded;
-    [Header("Meat Setting")]
-    public bool isMeat;
-    public AnimalMeat meatState = AnimalMeat.None;
     public override ItemClass GetItem() { return this; }
     public override ToolClass GetTool() { return null; }
     public override MiscClass GetMisc() { return null; }
@@ -23,15 +20,7 @@ public class Consumable : ItemClass,IUsableItem
             Debug.LogWarning("❗ PlayerStatus is null when using Consumable.");
             return;
         }
-        if (isMeat && meatState != AnimalMeat.Cooked)
-        {
-            {
-                var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
-                if (feedback != null)
-                    feedback.ShowFeedback(FeedbackType.RawMeat);
-                return;
-            }
-        }
+
         //if (/*status.health.currentValue >= status.health.data.maxValue ||*/ status.hunger.currentValue >= status.hunger.data.maxValue)
         //{
         //    Debug.Log("✅ Máu đã đầy hoặc không còn đói, không thể dùng vật phẩm.");
@@ -44,7 +33,7 @@ public class Consumable : ItemClass,IUsableItem
         {
             var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
             if (feedback != null)
-                feedback.ShowFeedback(FeedbackType.Full);
+                feedback.ShowFeedback();
             return;
         }
 

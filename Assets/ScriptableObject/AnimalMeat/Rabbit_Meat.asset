@@ -19,7 +19,7 @@ MonoBehaviour:
   itemFunc: Cant eat
   isStack: 1
   maxStack: 16
-  dropPrefab: {fileID: 962811512151793139, guid: d995f1daa021d8c4490d0ccc09a3c6f7,
+  dropPrefab: {fileID: 2611009837125580351, guid: d995f1daa021d8c4490d0ccc09a3c6f7,
     type: 3}
   blueprint: {fileID: 0}
   statAdded: 0

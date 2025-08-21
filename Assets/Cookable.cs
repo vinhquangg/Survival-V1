@@ -70,6 +70,12 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
 
     private IEnumerator CookAfterDelay(GameObject rawMeatObj, float delay, GameObject cookedPrefab, int qty)
     {
+        if (rawMeatObj == null) yield break;
+
+        // 🔹 Tắt collider để tránh nhặt
+        Collider col = rawMeatObj.GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+
         yield return new WaitForSeconds(delay);
 
         if (rawMeatObj != null)
@@ -77,16 +83,20 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
             Vector3 pos = rawMeatObj.transform.position;
             Destroy(rawMeatObj);
 
-            // Spawn cooked meat prefab với quantity = qty
+            // Spawn cooked meat prefab
             var cookedObj = GameObject.Instantiate(cookedPrefab, pos, Quaternion.identity);
             var itemEntity = cookedObj.GetComponent<ItemEntity>();
             if (itemEntity != null)
             {
-                // giữ nguyên số lượng
                 itemEntity.Initialize(itemEntity.GetItemData(), qty);
             }
+
+            // 🔹 Bật collider sau khi spawn cooked meat
+            Collider cookedCol = cookedObj.GetComponent<Collider>();
+            if (cookedCol != null) cookedCol.enabled = true;
         }
     }
+
 
 
 

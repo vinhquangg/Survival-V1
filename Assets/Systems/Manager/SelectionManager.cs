@@ -67,7 +67,20 @@ public class SelectionManager : MonoBehaviour
 
                                     if (!buildable.IsBuilt)
                                         buildable.OnMaterialChanged += OnBuildableMaterialChanged;
+
                                 }
+
+                                if (!buildable.IsBuilt)
+                                {
+
+                                    uiManager.ShowCraftingInfo(buildable.GetBlueprint(), buildable);
+                                }
+                                else
+                                {
+
+                                    uiManager.HideCraftingInfo();
+                                }
+
                                 if (buildable.IsBuilt)
                                 {
                                     var campfire = hit.transform.GetComponent<Campfire>();
@@ -93,7 +106,7 @@ public class SelectionManager : MonoBehaviour
                                         }
                                     }
                                 }
-
+                                
 
                             }
 

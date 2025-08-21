@@ -12,7 +12,7 @@ public class DropTableData : ScriptableObject
         public int spawnCount = 1;      // Số prefab spawn (1 hoặc nhiều object)
         public float chance = 1f;
         public Vector3 offset;
-        public int quantity = 1;        // 🟢 Quantity của item nằm trong ItemEntity
+        [HideInInspector]public int quantity;        // 🟢 Quantity của item nằm trong ItemEntity
     }
 
     public DropEntry[] drops;

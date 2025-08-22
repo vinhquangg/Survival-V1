@@ -16,18 +16,22 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    private void Start()
+    {
+        SetCursorLock(true);
+    }
 
     public void SetCursorLock(bool lockCursor)
     {
         if (lockCursor)
         {
-            Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
         else
         {
-            Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
     }
 
@@ -37,8 +41,4 @@ public class GameManager : MonoBehaviour
     }
 
     
-    private void Start()
-    {
-        SetCursorLock(true);
-    }
 }

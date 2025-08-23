@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
 {
     [SerializeField] private Sprite icon;
-    [SerializeField] private string cookName = "Campfire";
-
+    [SerializeField] private string cookName;
     private Campfire campfire;
 
     private void Start()
     {
-        campfire = GetComponent<Campfire>(); // 🔗 tham chiếu Campfire cùng object
+        campfire = GetComponent<Campfire>(); // 🔗 tham chiếu Campfire
     }
 
     public Sprite GetIcon() => icon;
@@ -21,15 +19,17 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
 
     public InteractionType GetInteractionType()
     {
-        // Chỉ hiển thị Cook khi lửa đang cháy
-        return (campfire != null && campfire.IsBurning) ? InteractionType.Cook : InteractionType.None;
+        if (campfire != null && campfire.IsBurning)
+            return InteractionType.Cook;
+        else
+            return InteractionType.None;
     }
 
     public void Interact(GameObject interactor)
     {
-        //var playerInv = interactor.GetComponentInChildren<PlayerInventory>();
-        //if (playerInv != null)
-        //    Cook(playerInv); // Gọi luôn hàm cook chung
+        var playerInv = interactor.GetComponentInChildren<PlayerInventory>();
+        if (playerInv != null)
+            Cook(playerInv);
     }
 
     public void Cook(PlayerInventory playerInv, int quantityToCook = -1)
@@ -45,26 +45,22 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
             if (!(slot.GetItem() is Consumable c) || !c.isMeat || c.meatState != AnimalMeat.Raw)
                 continue;
 
-            // Lấy số lượng thực từ ItemEntity
             int qty = slot.GetQuantity();
             if (quantityToCook > 0) qty = Mathf.Min(qty, quantityToCook);
 
             slot.SubQuantity(qty);
             if (slot.GetQuantity() <= 0) playerInv.ClearSlot(slot);
 
-            // Spawn raw meat prefab với quantity
             var rawMeatObj = GameObject.Instantiate(c.dropPrefab, campfire.CookPoint.position, Quaternion.identity);
             var itemEntity = rawMeatObj.GetComponent<ItemEntity>();
-            if (itemEntity != null)
-            {
-                itemEntity.Initialize(c, qty); // 🔹 quantity lấy từ ItemEntity
-            }
+            if (itemEntity != null) itemEntity.Initialize(c, qty);
 
-            // Coroutine cook tự động
+            // 🔹 Notify campfire bắt đầu nấu
+            campfire.StartCooking(c.GetName());
+
             StartCoroutine(CookAfterDelay(rawMeatObj, 10f, c.cookedPrefab, qty));
         }
 
-        FindObjectOfType<PlayerUIManager>()?.ShowPrompt(this);
         Debug.Log("🍖 Started cooking raw meat...");
     }
 
@@ -72,8 +68,7 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
     {
         if (rawMeatObj == null) yield break;
 
-        // 🔹 Tắt collider để tránh nhặt
-        Collider col = rawMeatObj.GetComponent<Collider>();
+        var col = rawMeatObj.GetComponent<Collider>();
         if (col != null) col.enabled = false;
 
         yield return new WaitForSeconds(delay);
@@ -83,21 +78,15 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
             Vector3 pos = rawMeatObj.transform.position;
             Destroy(rawMeatObj);
 
-            // Spawn cooked meat prefab
             var cookedObj = GameObject.Instantiate(cookedPrefab, pos, Quaternion.identity);
-            var itemEntity = cookedObj.GetComponent<ItemEntity>();
-            if (itemEntity != null)
-            {
-                itemEntity.Initialize(itemEntity.GetItemData(), qty);
-            }
+            var cookedEntity = cookedObj.GetComponent<ItemEntity>();
+            if (cookedEntity != null) cookedEntity.Initialize(cookedEntity.GetItemData(), qty);
 
-            // 🔹 Bật collider sau khi spawn cooked meat
-            Collider cookedCol = cookedObj.GetComponent<Collider>();
+            var cookedCol = cookedObj.GetComponent<Collider>();
             if (cookedCol != null) cookedCol.enabled = true;
+
+            // 🔹 Notify campfire cook xong
+            campfire.FinishCooking();
         }
     }
-
-
-
-
 }

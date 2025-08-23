@@ -67,7 +67,7 @@ public class SelectionManager : MonoBehaviour
 
                                     if (!buildable.IsBuilt)
                                         buildable.OnMaterialChanged += OnBuildableMaterialChanged;
-
+                                     
                                 }
 
                                 if (!buildable.IsBuilt)

@@ -49,10 +49,10 @@ public class PlayerUIManager : MonoBehaviour
                 break;
 
             case InteractionType.Cook:
-                //itemAmount.gameObject.SetActive(true);
-                //iconImage.gameObject.SetActive(true);
-                //itemAmount.text = info.GetItemAmount(); 
-                //iconImage.sprite = info.GetIcon();
+                itemAmount.gameObject.SetActive(true);
+                iconImage.gameObject.SetActive(true);
+                itemAmount.text = info.GetItemAmount();
+                iconImage.sprite = info.GetIcon();
                 break;
 
             case InteractionType.TakeCooked:
@@ -61,6 +61,15 @@ public class PlayerUIManager : MonoBehaviour
                 itemAmount.text = "Cooked Meat Ready";
                 iconImage.sprite = info.GetIcon();
                 break;
+
+            case InteractionType.Toggle:
+                nameText.text = info.GetName(); // Campfire
+                itemAmount.gameObject.SetActive(true);
+                iconImage.gameObject.SetActive(true);
+                itemAmount.text = (info as Campfire).IsBurning ? "Off" : "On"; // hiển thị text
+                iconImage.sprite = info.GetIcon();
+                break;
+
 
             default:
                 HidePrompt();
@@ -83,6 +92,21 @@ public class PlayerUIManager : MonoBehaviour
         if (blueprint != null && blueprint.resultItem.itemIcon != null)
             craftingIconImage.sprite = blueprint.resultItem.itemIcon;
     }
+
+    public void ShowCookingUI(string itemName)
+    {
+        if (cookedUI != null) cookedUI.SetActive(false);
+        if (interactUI != null) interactUI.SetActive(true);
+        nameText.text = $"Cooking: {itemName}";
+    }
+
+    public void ShowCookedUI(string itemName)
+    {
+        if (interactUI != null) interactUI.SetActive(false);
+        if (cookedUI != null) cookedUI.SetActive(true);
+        cookedNameText.text = $"{itemName} Ready!";
+    }
+
 
     public void HidePrompt()
     {

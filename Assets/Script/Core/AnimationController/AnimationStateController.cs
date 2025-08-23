@@ -53,9 +53,10 @@ public class AnimationStateController : MonoBehaviour
     }
     public void TriggerChop()
     {
-        animator.SetBool("isChop", true);
+        if (isChop) return;
         isChop = true;
-        StartCoroutine(ResetChopAfterDelay(6f));
+        animator.SetBool("isChop", true);
+        StartCoroutine(ResetChopAfterDelay(4f));
     }
 
     private IEnumerator ResetChopAfterDelay(float delay)

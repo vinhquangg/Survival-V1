@@ -38,9 +38,14 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         var player = interactor.GetComponent<PlayerController>();
         if (player != null)
         {
+            // 👉 gọi xoay mượt trước khi vào state Chop
+            //player.RotateTowards(transform.position, 8f);
+
+            // 👉 đổi state sau đó
             player.playerStateMachine.ChangeState(new ChopState(player.playerStateMachine, player, this));
         }
     }
+
 
     public void OnChopped()
     {
@@ -66,14 +71,25 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
             // 🪵 Spawn LogDrop từ Pool
             if (!string.IsNullOrEmpty(treeInstance.treeData.logPoolID))
             {
-                Vector3 spawnPos = GetGroundPosition(transform.position + Vector3.up * 3f);
+                // Lấy chiều cao từ collider để dịch object lên trên
+                float offsetY = 0.5f;
+                if (treeInstance.logDropGO != null && treeInstance.logDropGO.TryGetComponent<Collider>(out var logCol))
+                {
+                    offsetY = logCol.bounds.extents.y; // nửa chiều cao của log
+                }
+
+                // 👉 dịch sang phải một chút + dịch lên để không chìm đất
+                Vector3 spawnPos = GetGroundPosition(
+                    transform.position + Vector3.up * 3f,
+                    treeInstance.logDropGO
+                ) + transform.right * 1.5f + Vector3.up * offsetY;
+
                 GameObject logDrop = ObjectPoolManager.Instance.SpawnFromPool(
                     treeInstance.treeData.logPoolID,
                     spawnPos,
                     Quaternion.identity
                 );
 
-                // ⚙️ Nếu có Rigidbody thì cho rơi nhẹ rồi đứng yên
                 if (logDrop != null && logDrop.TryGetComponent<Rigidbody>(out var rb))
                 {
                     rb.isKinematic = false;
@@ -83,6 +99,7 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
                     treeInstance.StartCoroutine(DropAndSettle(rb));
                 }
             }
+
 
             // ⏱ Trả cây về pool sau khi chặt
             StartCoroutine(ReturnToPoolWithDelay(0.6f));
@@ -103,12 +120,20 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         rb.isKinematic = true;
     }
 
-    private Vector3 GetGroundPosition(Vector3 origin)
+    private Vector3 GetGroundPosition(Vector3 origin, GameObject prefab = null)
     {
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 10f, LayerMask.GetMask("Ground")))
         {
-            return hit.point;
+            Vector3 pos = hit.point;
+
+            if (prefab != null && prefab.TryGetComponent<Collider>(out var col))
+            {
+                pos.y += col.bounds.extents.y;
+            }
+
+            return pos;
         }
         return origin;
     }
+
 }

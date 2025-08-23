@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class PlayerController : MonoBehaviour
     public float lookSensitivity = 1f;
     public Transform playerCamera;
     private float xRotation = 0f;
-
+    private Coroutine rotateCoroutine;
     public float gravity = -9.81f;
     public float groundCheckDistance = 0.4f;
     public Transform groundCheck;
@@ -71,6 +72,41 @@ public class PlayerController : MonoBehaviour
             velocity.y = -2f;
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public void RotateTowards(Vector3 targetPos, float rotateSpeed = 10f)
+    {
+        // Ngắt coroutine cũ nếu đang chạy
+        if (rotateCoroutine != null)
+            StopCoroutine(rotateCoroutine);
+
+        Vector3 dir = targetPos - transform.position;
+        dir.y = 0; // chỉ quay ngang
+        if (dir != Vector3.zero)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(dir);
+            rotateCoroutine = StartCoroutine(SmoothRotate(targetRot, rotateSpeed));
+        }
+    }
+
+    private IEnumerator SmoothRotate(Quaternion targetRot, float rotateSpeed)
+    {
+        float angle = Quaternion.Angle(transform.rotation, targetRot);
+
+        // Xoay cho đến khi chênh lệch góc rất nhỏ
+        while (angle > 0.5f)
+        {
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                targetRot,
+                Time.deltaTime * rotateSpeed
+            );
+
+            angle = Quaternion.Angle(transform.rotation, targetRot);
+            yield return null;
+        }
+
+        transform.rotation = targetRot; // fix lệch cuối
     }
 
 }

@@ -31,7 +31,7 @@ public class SelectionManager : MonoBehaviour
 
         float sphereRadius = 0.3f;
 
-        if (Physics.SphereCast(ray, sphereRadius, out hit, interactionDistance, interactableLayer))
+        if (Physics.SphereCast(ray, sphereRadius, out hit, interactionDistance, interactableLayer, QueryTriggerInteraction.Ignore))
         {
             var interactable = hit.transform.GetComponent<IInteractable>();
             var info = hit.transform.GetComponent<IInteractableInfo>();

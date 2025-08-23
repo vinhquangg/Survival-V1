@@ -18,6 +18,11 @@ public class ChopState : PlayerState
         player.inputHandler.DisablePlayerInput();
 
         player.animationController.TriggerChop();
+        // 👉 gọi xoay mượt trước khi vào state Chop
+        if (treeChop != null)
+        {
+            player.RotateTowards(treeChop.transform.position, 8f);
+        }
         isChopping = true;
         chopRoutine = player.StartCoroutine(WaitForChopping());
     }

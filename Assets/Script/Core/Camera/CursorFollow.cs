@@ -8,12 +8,18 @@ public class CursorFollower : MonoBehaviour
 
     void Update()
     {
-        // lấy góc xoay
-        float pitch = cameraTransform.eulerAngles.x;    
-        float yaw = playerTransform.eulerAngles.y;      
+        // lấy hướng ngang (yaw) từ player
+        Quaternion yawRotation = Quaternion.Euler(0f, playerTransform.eulerAngles.y, 0f);
 
-        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+        // lấy hướng dọc (pitch) từ camera
+        Quaternion pitchRotation = Quaternion.Euler(cameraTransform.eulerAngles.x, 0f, 0f);
+
+        // combine lại
+        Quaternion rotation = yawRotation * pitchRotation;
+
+        // vị trí cursor = trước mặt player, xoay theo rotation
         transform.position = playerTransform.position + rotation * Vector3.forward * distance;
         transform.rotation = rotation;
     }
+
 }

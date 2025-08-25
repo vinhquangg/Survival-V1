@@ -19,5 +19,6 @@ MonoBehaviour:
   itemFunc: Use for crafting
   isStack: 1
   maxStack: 64
-  dropPrefab: {fileID: 7958535128054660741, guid: 5affa63adb5a6e44ea78a6528f5b7331,
+  dropPrefab: {fileID: 2080519334133966949, guid: 5affa63adb5a6e44ea78a6528f5b7331,
     type: 3}
+  blueprint: {fileID: 0}

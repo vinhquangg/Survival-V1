@@ -19,7 +19,7 @@ MonoBehaviour:
   itemFunc: Use to restore a small heal
   isStack: 1
   maxStack: 64
-  dropPrefab: {fileID: 4353292526679080624, guid: f9ba43b4d4d826f47aa990da47cf55a1,
+  dropPrefab: {fileID: 5218448634948521944, guid: f9ba43b4d4d826f47aa990da47cf55a1,
     type: 3}
   blueprint: {fileID: 0}
   statAdded: 5

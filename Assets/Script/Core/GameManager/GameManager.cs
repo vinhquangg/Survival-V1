@@ -3,6 +3,7 @@
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public GameState CurrentState { get; private set; }
 
     private void Awake()
     {
@@ -40,5 +41,11 @@ public class GameManager : MonoBehaviour
         return Cursor.lockState == CursorLockMode.Locked;
     }
 
-    
+    public void SetState(GameState newState)
+    {
+        CurrentState = newState;
+
+        Time.timeScale = (newState == GameState.Paused) ? 0 : 1;
+    }
+
 }

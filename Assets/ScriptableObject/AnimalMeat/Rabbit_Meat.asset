@@ -15,7 +15,7 @@ MonoBehaviour:
   itemType: 4
   itemName: Rabbit_Meat
   itemIcon: {fileID: 21300000, guid: b62c89a89b77e0849b53b683e7e2909f, type: 3}
-  itemDesc: Rabbit_Meat(Raw)
+  itemDesc: Raw meat
   itemFunc: Cant eat
   isStack: 1
   maxStack: 16

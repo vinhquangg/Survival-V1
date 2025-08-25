@@ -15,14 +15,14 @@ MonoBehaviour:
   itemType: 4
   itemName: Rabbit_Meat(Cooked)
   itemIcon: {fileID: 21300000, guid: ff0456de63796034c80fc04c56fbb1ea, type: 3}
-  itemDesc: Rabbit_Meat(Cooked)
+  itemDesc: Cooked meat
   itemFunc: Use to restore a small hunger
   isStack: 1
   maxStack: 16
   dropPrefab: {fileID: 1123957515570026819, guid: 80316de23a6edcf4eaa6935ef105324b,
     type: 3}
   blueprint: {fileID: 0}
-  statAdded: 10
+  statAdded: 15
   isMeat: 1
   cookedPrefab: {fileID: 1123957515570026819, guid: 80316de23a6edcf4eaa6935ef105324b,
     type: 3}

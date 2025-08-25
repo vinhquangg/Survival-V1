@@ -6,8 +6,9 @@ public class InventoryUIHandler : MonoBehaviour
     public GameObject slotHolder;
     public InventoryManager inventoryManager;
     private GameObject[] slots;
-
     public InventoryArea area;
+
+    public GameObject[] SlotUIs => slots;
     public GameObject[] Init()
     {
         slots = new GameObject[slotHolder.transform.childCount];

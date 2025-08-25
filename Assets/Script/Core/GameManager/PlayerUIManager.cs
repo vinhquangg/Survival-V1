@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using System.Collections;
 
 public class PlayerUIManager : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class PlayerUIManager : MonoBehaviour
     public TextMeshProUGUI cookedItemAmount;
     public Image cookedIconImage;
 
+
+    private Coroutine cookedUICoroutine;
     public void ShowPrompt(IInteractableInfo info)
     {
         if (interactUI == null || info == null)
@@ -49,10 +52,10 @@ public class PlayerUIManager : MonoBehaviour
                 break;
 
             case InteractionType.Cook:
-                itemAmount.gameObject.SetActive(true);
-                iconImage.gameObject.SetActive(true);
-                itemAmount.text = info.GetItemAmount();
-                iconImage.sprite = info.GetIcon();
+                cookedItemAmount.gameObject.SetActive(true);
+                cookedIconImage.gameObject.SetActive(true);
+                cookedItemAmount.text = info.GetItemAmount();
+                cookedIconImage.sprite = info.GetIcon();
                 break;
 
             case InteractionType.TakeCooked:
@@ -93,18 +96,66 @@ public class PlayerUIManager : MonoBehaviour
             craftingIconImage.sprite = blueprint.resultItem.itemIcon;
     }
 
-    public void ShowCookingUI(string itemName)
+    public void ShowCookingUI(string itemName, Sprite icon, int quantity)
     {
         if (cookedUI != null) cookedUI.SetActive(false);
         if (interactUI != null) interactUI.SetActive(true);
-        nameText.text = $"Cooking: {itemName}";
+
+        nameText.text = $"Cooking";
+        itemAmount.gameObject.SetActive(true);
+        itemAmount.text = "x" + quantity;
+
+        if (iconImage != null && icon != null)
+        {
+            iconImage.gameObject.SetActive(true);
+            iconImage.sprite = icon;
+        }
     }
 
-    public void ShowCookedUI(string itemName)
+
+    //public void ShowCookedUI(string itemName)
+    //{
+    //    if (interactUI != null) interactUI.SetActive(false);
+    //    if (cookedUI != null) cookedUI.SetActive(true);
+    //    cookedNameText.text = $"{itemName} Ready!";
+    //}
+
+    public void ShowCookedUI(string itemName, Sprite icon, int quantity)
     {
         if (interactUI != null) interactUI.SetActive(false);
         if (cookedUI != null) cookedUI.SetActive(true);
+
+        // Tên món ăn
         cookedNameText.text = $"{itemName} Ready!";
+
+        // Số lượng
+        if (cookedItemAmount != null)
+        {
+            cookedItemAmount.gameObject.SetActive(true);
+            cookedItemAmount.text = "x" + quantity;
+        }
+
+        // Icon đúng món đã nấu
+        if (cookedIconImage != null && icon != null)
+        {
+            cookedIconImage.gameObject.SetActive(true);
+            cookedIconImage.sprite = icon;
+        }
+
+        if (cookedUICoroutine != null) StopCoroutine(cookedUICoroutine);
+        cookedUICoroutine = StartCoroutine(HideCookedUIDelay(3f));
+    }
+
+    private IEnumerator HideCookedUIDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        HideCookedUI();
+    }
+
+    public void HideCookedUI()
+    {
+        if (cookedUI != null)
+            cookedUI.SetActive(false);
     }
 
 
@@ -119,7 +170,5 @@ public class PlayerUIManager : MonoBehaviour
         if (craftingUI != null)
             craftingUI.SetActive(false);
     }
-
-
 
 }

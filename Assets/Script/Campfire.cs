@@ -4,8 +4,7 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
 {
     [Header("Data & UI")]
     [SerializeField] private SurvivalClass campfireData;
-    [SerializeField] private Sprite icon;
-    [SerializeField] private PlayerUIManager uiManager; // 🔹 UI manager
+    [SerializeField] private PlayerUIManager uiManager;
 
     [Header("Effects & CookPoint")]
     [SerializeField] private GameObject fireVFX;
@@ -13,9 +12,32 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
 
     private bool isBurning = false;
     private bool isCooking = false;
+
+    // 🔹 Item đang nấu
     private string currentCookingName = "";
+    private int currentCookingQty = 0;
+    private Sprite currentCookingIcon;
+
+    // 🔹 Item đã nấu xong (giữ lại cho player nhìn/nhặt)
+    private string cookedItemName = "";
+    private int cookedItemQty = 0;
+    private Sprite cookedItemIcon;
+
     public bool IsBurning => isBurning;
+    public bool IsCooking => isCooking;
+    public string CurrentCookingName => currentCookingName;
+    public Sprite CurrentCookingIcon => currentCookingIcon;
+    public int CurrentCookingQty => currentCookingQty;
     public Transform CookPoint => cookPoint;
+
+    public string CookedItemName => cookedItemName;
+    public int CookedItemQty => cookedItemQty;
+    public Sprite CookedItemIcon => cookedItemIcon;
+
+    private void Start()
+    {
+        uiManager = FindAnyObjectByType<PlayerUIManager>();
+    }
 
     private void Update()
     {
@@ -26,25 +48,20 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
         }
     }
 
-    public Sprite GetIcon() => icon;
-    public string GetName() => "Campfire";
+    public Sprite GetIcon() => campfireData.itemIcon;
+    public string GetName() => campfireData.itemName;
     public string GetItemAmount() => "";
 
-    public InteractionType GetInteractionType()
-    {
-        return isBurning ? InteractionType.Cook : InteractionType.Toggle;
-    }
+    public InteractionType GetInteractionType() => InteractionType.Toggle;
 
     public void Interact(GameObject interactor)
     {
-        if (!isBurning)
-            StartFire();
-        else
-            StopFire();
+        if (!isBurning) StartFire();
+        else StopFire();
     }
 
     public void StartFire()
-    { 
+    {
         isBurning = true;
         if (fireVFX != null) fireVFX.SetActive(true);
         Debug.Log("🔥 Campfire is burning!");
@@ -57,19 +74,42 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
         Debug.Log("❌ Campfire stopped!");
     }
 
-    // 🔹 Gọi khi Cookable bắt đầu nấu
-    public void StartCooking(string itemName)
+    // 🔹 Bắt đầu nấu
+    public void StartCooking(string itemName, Sprite icon, int qty)
     {
         isCooking = true;
         currentCookingName = itemName;
-        uiManager?.ShowCookingUI(itemName);
+        currentCookingIcon = icon;
+        currentCookingQty = qty;
+
+        uiManager?.ShowCookingUI(itemName, icon, qty);
     }
 
-    // 🔹 Gọi khi Cookable nấu xong
+    // 🔹 Nấu xong
     public void FinishCooking()
     {
         isCooking = false;
-        uiManager?.ShowCookedUI(currentCookingName);
+
+        // Lưu item đã nấu xong
+        cookedItemName = currentCookingName;
+        cookedItemIcon = currentCookingIcon;
+        cookedItemQty = currentCookingQty;
+
+        // Báo cho UI
+        uiManager?.ShowCookedUI(cookedItemName, cookedItemIcon, cookedItemQty);
+
+
+        // Reset slot cooking
         currentCookingName = "";
+        currentCookingIcon = null;
+        currentCookingQty = 0;
+    }
+
+    // 🔹 Khi player nhặt món ăn xong (nếu bạn muốn clear)
+    public void CollectCookedItem()
+    {
+        cookedItemName = "";
+        cookedItemIcon = null;
+        cookedItemQty = 0;
     }
 }

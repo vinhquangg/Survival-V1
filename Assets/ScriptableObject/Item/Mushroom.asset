@@ -21,4 +21,8 @@ MonoBehaviour:
   maxStack: 64
   dropPrefab: {fileID: 4353292526679080624, guid: f9ba43b4d4d826f47aa990da47cf55a1,
     type: 3}
-  statAdded: 10
+  blueprint: {fileID: 0}
+  statAdded: 5
+  isMeat: 0
+  cookedPrefab: {fileID: 0}
+  meatState: 0

@@ -87,7 +87,18 @@ public class SelectionManager : MonoBehaviour
                                     if (campfire != null)
                                     {
                                         currentInteractable = campfire;
-                                        uiManager.ShowPrompt(campfire);
+                                        if (campfire.IsCooking)
+                                        {
+                                            uiManager.ShowCookingUI(
+                                                campfire.CurrentCookingName,
+                                                campfire.CurrentCookingIcon,
+                                                campfire.CurrentCookingQty
+                                            );
+                                        }
+                                        else
+                                        {
+                                            uiManager.ShowPrompt(campfire);
+                                        }
                                         uiManager.HideCraftingInfo();
                                     }
                                     else

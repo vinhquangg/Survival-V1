@@ -56,7 +56,7 @@ public class Cookable : MonoBehaviour, IInteractable, IInteractableInfo
             if (itemEntity != null) itemEntity.Initialize(c, qty);
 
             // 🔹 Notify campfire bắt đầu nấu
-            campfire.StartCooking(c.GetName());
+            campfire.StartCooking(c.GetName(), c.itemIcon, qty);
 
             StartCoroutine(CookAfterDelay(rawMeatObj, 10f, c.cookedPrefab, qty));
         }

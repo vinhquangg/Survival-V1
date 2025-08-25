@@ -9,7 +9,8 @@ public enum FeedbackType
     EatMeat,
     RawMeat,
     InventoryFull,
-    CannotDrink
+    CannotDrink,
+    Cook
 }
 
 public class PlayerFeedbackUI : MonoBehaviour

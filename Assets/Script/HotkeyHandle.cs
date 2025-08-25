@@ -6,7 +6,7 @@ public class HotkeyHandle : MonoBehaviour
 {
     public InventoryManager inventoryManager;
     public EquipManager equipManager;
-
+    public HotbarSelector hotbarSelector;
     private void Update()
     {
         int hotbarSize = inventoryManager.playerInventory.hotbarItems.Length;
@@ -23,6 +23,9 @@ public class HotkeyHandle : MonoBehaviour
 
     private void HandleHotbarSlot(int index)
     {
+        if (hotbarSelector != null)
+            hotbarSelector.SelectSlot(index);
+
         var slot = inventoryManager.playerInventory.hotbarItems[index];
         if (slot == null || slot.IsEmpty() || slot.GetItem() == null) return;
 
@@ -76,14 +79,23 @@ public class HotkeyHandle : MonoBehaviour
 
         if (!(slot.GetItem() is Consumable c) || !c.isMeat || c.meatState != AnimalMeat.Raw) return;
 
-        Campfire campfire = FindNearestBurningCampfire();
+        // 🔹 Lấy object đang được nhìn vào
+        var interactable = SelectionManager.Instance.CurrentInteractable;
+        if (interactable == null)
+        {
+            var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
+            if (feedback != null)
+                feedback.ShowFeedback(FeedbackType.RawMeat); // hoặc tạo FeedbackType.NearCampfire
+            return;
+        }
 
-        // 🔹 Nếu không có campfire gần, hiển thị feedback
+        // 🔹 Kiểm tra có phải campfire không
+        Campfire campfire = (interactable as MonoBehaviour)?.GetComponent<Campfire>();
         if (campfire == null || !campfire.IsBurning)
         {
             var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
             if (feedback != null)
-                feedback.ShowFeedback(FeedbackType.RawMeat); // bạn có thể tạo FeedbackType.NearCampfire hoặc RawMeatHotkey
+                feedback.ShowFeedback(FeedbackType.RawMeat);
             return;
         }
 
@@ -101,6 +113,8 @@ public class HotkeyHandle : MonoBehaviour
 
         inventoryManager.RefreshAllUI();
     }
+
+
 
 
     private Campfire FindNearestBurningCampfire()

@@ -5,7 +5,7 @@ public class FootStepManager : MonoBehaviour
     public static FootStepManager Instance { get; private set; }
     public TerrainGroundDetector terrainGroundDetector;
     private AudioClip currentClip;
-    private AudioSource footstepSource;
+    //private AudioSource footstepSource;
     private Transform actor;
 
     private void Awake()
@@ -13,17 +13,17 @@ public class FootStepManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        footstepSource = gameObject.AddComponent<AudioSource>();
-        footstepSource.loop = true;
-        footstepSource.spatialBlend = 1f;  // 3D sound
-        footstepSource.volume = 1f;
+        //footstepSource = gameObject.AddComponent<AudioSource>();
+        //footstepSource.loop = true;
+        //footstepSource.spatialBlend = 1f;  // 3D sound
+        //footstepSource.volume = 1f;
     }
 
     public void AttachToActor(Transform actorTransform)
     {
         actor = actorTransform;
-        footstepSource.transform.parent = actor;
-        footstepSource.transform.localPosition = Vector3.zero;
+        //footstepSource.transform.parent = actor;
+        //footstepSource.transform.localPosition = Vector3.zero;
     }
 
     public void PlayFootstep(Vector3 position, bool isRunning)
@@ -49,28 +49,28 @@ public class FootStepManager : MonoBehaviour
                 // thêm các loại khác nếu cần
         }
 
-        // Nếu chạy → tăng thêm pitch
-        footstepSource.pitch = isRunning ? basePitch * 1.3f : basePitch;
+        //// Nếu chạy → tăng thêm pitch
+        //footstepSource.pitch = isRunning ? basePitch * 1.3f : basePitch;
 
-        // Chỉ thay clip nếu khác clip hiện tại
-        if (clip != currentClip)
-        {
-            footstepSource.Stop();
-            footstepSource.clip = clip;
-            footstepSource.Play();
-            currentClip = clip;
-        }
-        else if (!footstepSource.isPlaying)
-        {
-            footstepSource.Play();
-        }
+        //// Chỉ thay clip nếu khác clip hiện tại
+        //if (clip != currentClip)
+        //{
+        //    footstepSource.Stop();
+        //    footstepSource.clip = clip;
+        //    footstepSource.Play();
+        //    currentClip = clip;
+        //}
+        //else if (!footstepSource.isPlaying)
+        //{
+        //    footstepSource.Play();
+        //}
     }
 
 
 
-    public void StopFootstep()
-    {
-        if (footstepSource.isPlaying)
-            footstepSource.Stop();
-    }
+    //public void StopFootstep()
+    //{
+    //    if (footstepSource.isPlaying)
+    //        footstepSource.Stop();
+    //}
 }

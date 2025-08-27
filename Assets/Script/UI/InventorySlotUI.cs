@@ -66,6 +66,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (isOutUI && eventData.button == PointerEventData.InputButton.Left)
         {
             inventoryManager.DropItemToWorld(inventoryArea, slotIndex);
+
         }
         else
         {
@@ -83,6 +84,9 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 inventoryArea, slotIndex
             );
         }
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlayDropSound();
     }
 
     public void OnPointerClick(PointerEventData eventData)

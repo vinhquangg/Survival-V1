@@ -23,6 +23,10 @@ public class ObjectScatterer : MonoBehaviour
             Debug.LogError("❌ ChunkManager không tồn tại trong scene!");
             return;
         }
+        if(biomeManager == null)
+        {
+            biomeManager = FindAnyObjectByType<BiomeManager>();
+        }
 
         ScatterObjectsPerBiome();
 

@@ -28,6 +28,9 @@ public class InteractionManager : MonoBehaviour
             // Không cần ép kiểu BuildableObject mà gọi thẳng Interact()
             // vì BuildableObject đã implement Interact()
             SelectionManager.CurrentInteractable.Interact(transform.root.gameObject);
+
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.playPickupItem();
         }
     }
 }

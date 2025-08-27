@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,22 +30,28 @@ public class MenuManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape)&& !isMenuOpen)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            uiCanvas.SetActive(false);
-            menuCanvas.SetActive(true);
-            isMenuOpen= true;
+            if (!isMenuOpen)
+            {
+                uiCanvas.SetActive(false);
+                menuCanvas.SetActive(true);
+                isMenuOpen = true;
 
-            GameManager.instance.SetCursorLock(false);
-            PlayerController.inputHandler.DisablePlayerInput();
-        }
-        else if (Input.GetKeyDown(KeyCode.Escape) && isMenuOpen)
-        {
-            uiCanvas.SetActive(true);
-            menuCanvas.SetActive(false);
-            isMenuOpen = false;
-            GameManager.instance.SetCursorLock(true);
-            PlayerController.inputHandler.EnablePlayerInput();
+                GameManager.instance.SetState(GameState.Paused);
+                GameManager.instance.SetCursorLock(false);
+                PlayerController.inputHandler.DisablePlayerInput();
+            }
+            else
+            {
+                uiCanvas.SetActive(true);
+                menuCanvas.SetActive(false);
+                isMenuOpen = false;
+
+                GameManager.instance.SetState(GameState.Playing);
+                GameManager.instance.SetCursorLock(true);
+                PlayerController.inputHandler.EnablePlayerInput();
+            }
         }
     }
 }

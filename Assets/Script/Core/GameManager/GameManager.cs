@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,35 +18,36 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     private void Start()
     {
-        SetCursorLock(true);
+        SetCursorLock(false); 
+        SceneManager.sceneLoaded += OnSceneLoaded; 
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "GameScene") 
+        {
+            SetState(GameState.Playing);
+            SetCursorLock(true); 
+        }
+        else if (scene.name == "MainMenu") 
+        {
+            SetState(GameState.MainMenu);
+            SetCursorLock(false);
+        }
     }
 
     public void SetCursorLock(bool lockCursor)
     {
-        if (lockCursor)
-        {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
-        }
-        else
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-    }
-
-    public bool IsCursorLocked()
-    {
-        return Cursor.lockState == CursorLockMode.Locked;
+        Cursor.visible = !lockCursor;
+        Cursor.lockState = lockCursor ? CursorLockMode.Locked : CursorLockMode.None;
     }
 
     public void SetState(GameState newState)
     {
         CurrentState = newState;
-
         Time.timeScale = (newState == GameState.Paused) ? 0 : 1;
     }
-
 }

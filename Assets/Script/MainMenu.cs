@@ -9,8 +9,6 @@ public class MainMenu : MonoBehaviour,IMenu
     public void NewGame()
     {
         SceneManager.LoadScene("GameScene");
-        GameManager.instance.SetState(GameState.Playing);
-        GameManager.instance.SetCursorLock(true);   
     }
 
     public void OpenMenu()

@@ -38,6 +38,8 @@ public class ItemDropper : MonoBehaviour
             var entity = obj.GetComponent<ItemEntity>();
             if (entity != null)
                 entity.Initialize(item, quantity, durability);
+
+            SoundManager.Instance.PlayDropSound();
         }
     }
 }

@@ -19,6 +19,8 @@ TagManager:
   - Buildable
   - BuildablePart
   - ChunkContainer
+  - IngameMenu
+  - Hub
   layers:
   - Default
   - TransparentFX

@@ -7,6 +7,8 @@ public class InGameMenu : MonoBehaviour
 {
     public void BackToMainMenu()
     {
+        GameManager.instance.SetState(GameState.MainMenu);
+        GameManager.instance.SetCursorLock(false);
         SceneManager.LoadScene("MainMenu");
     }
 

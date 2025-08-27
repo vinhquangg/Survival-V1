@@ -44,7 +44,7 @@ public class MovementState : PlayerState
     {
         if (isMoving)
             FootStepManager.Instance.PlayFootstep(player.transform.position, false); // đi bộ
-        //else
-        //    FootStepManager.Instance.StopFootstep();
+        else
+            FootStepManager.Instance.StopFootstep();
     }
 }

@@ -18,6 +18,12 @@ public class SoundManager : MonoBehaviour
     public AudioSource animalHitSound;
     public AudioSource inventoryOpenSound;
 
+    [Header("Foot Step Player")]
+    public AudioSource footstepSource;
+
+
+    [Header("Audio Mixer")]
+    public AudioMixer mainMixer;
     private void Awake()
     {
         if(Instance != null && Instance != this)
@@ -61,5 +67,26 @@ public class SoundManager : MonoBehaviour
             noitifySound.Play();
         }
     }
+
+    public void PlayFootstep(AudioClip clip, float pitch = 1f)
+    {
+        if (footstepSource == null) return;
+
+        if (!footstepSource.isPlaying) // <--- chỉ play nếu đang rảnh
+        {
+            footstepSource.clip = clip;
+            footstepSource.pitch = pitch;
+            footstepSource.Play();
+        }
+    }
+
+    public void StopFootstep()
+    {
+        if (footstepSource != null && footstepSource.isPlaying)
+        {
+            footstepSource.Stop();
+        }
+    }
+
 
 }

@@ -14,25 +14,6 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
---- !u!243 &-8801686524548170233
-AudioMixerGroupController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: New Group
-  m_AudioMixer: {fileID: 24100000}
-  m_GroupID: 30eea7b2ea9421347916751400c0397a
-  m_Children: []
-  m_Volume: d2c0bb4d68109ad41af7649ad53a126a
-  m_Pitch: bd4f69d53f2a17640bdf5374670f8d9b
-  m_Send: 00000000000000000000000000000000
-  m_Effects:
-  - {fileID: -6248011561598214534}
-  m_UserColorIndex: 0
-  m_Mute: 0
-  m_Solo: 0
-  m_BypassEffects: 0
 --- !u!243 &-7547883212696048818
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -62,20 +43,6 @@ AudioMixerEffectController:
   m_EffectID: cbbb0549bd1a8a340b395c7fa1e8bcbf
   m_EffectName: Attenuation
   m_MixLevel: d72be308b7820b942a57a4fd2cc09fd6
-  m_Parameters: []
-  m_SendTarget: {fileID: 0}
-  m_EnableWetMix: 0
-  m_Bypass: 0
---- !u!244 &-6248011561598214534
-AudioMixerEffectController:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_EffectID: 21ed3a444f5dc04488192ab37e37e61e
-  m_EffectName: Attenuation
-  m_MixLevel: 681c4385baa3ea341aa98b5981581278
   m_Parameters: []
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
@@ -121,7 +88,6 @@ AudioMixerController:
     - ed634d4d70d101e4da74ad7c3abc22cf
     - 2e042abde49a7f14285234a5c6016f38
     - 64db38ea49390f44eace2041787b1921
-    - 30eea7b2ea9421347916751400c0397a
     name: View
   m_CurrentViewIndex: 0
   m_TargetSnapshot: {fileID: 24500006}
@@ -195,8 +161,7 @@ AudioMixerGroupController:
   m_Name: SFX
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 2e042abde49a7f14285234a5c6016f38
-  m_Children:
-  - {fileID: -8801686524548170233}
+  m_Children: []
   m_Volume: 5b9fc9abcd42e4b44a24414ae4de8c48
   m_Pitch: e733fda218351504cb6230992eb0d563
   m_Send: 00000000000000000000000000000000

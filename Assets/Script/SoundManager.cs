@@ -9,6 +9,15 @@ public class SoundManager : MonoBehaviour
     public AudioSource dropItemSound;
     public AudioSource pickupItemSound;
     public AudioSource noitifySound;
+    public AudioSource backgroundSound;
+    public AudioSource menuSound;
+    public AudioSource equipSound;
+    public AudioSource unequipSound;
+    public AudioSource craftSound;
+    public AudioSource animalDeadSound;
+    public AudioSource animalHitSound;
+    public AudioSource inventoryOpenSound;
+
     private void Awake()
     {
         if(Instance != null && Instance != this)
@@ -27,7 +36,7 @@ public class SoundManager : MonoBehaviour
         {
             dropItemSound.PlayOneShot(dropItemSound.clip);
         }
-    }
+    } 
 
     public void playPickupItem()
     {
@@ -42,6 +51,14 @@ public class SoundManager : MonoBehaviour
         if (noitifySound != null && noitifySound.clip != null)
         {
             noitifySound.PlayOneShot(noitifySound.clip);
+        }
+    }
+
+    public void PlayBackGroundSound()
+    {
+        if (backgroundSound != null && backgroundSound.clip != null)
+        {
+            noitifySound.Play();
         }
     }
     //[Header("Audio Sources (Prefabs)")]

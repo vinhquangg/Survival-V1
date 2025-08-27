@@ -40,15 +40,20 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo, IPool
 
         if(itemData.itemType == ItemType.Consumable)
         {
-            var playerStatus = interactor.GetComponent<PlayerStatus>();
-
-            if(playerStatus != null && playerStatus.hunger.IsFull())
+            var consumable = itemData as Consumable;
+            
+            if (consumable != null && !(consumable.isMeat && consumable.meatState != AnimalMeat.Cooked))
             {
+                var playerStatus = interactor.GetComponent<PlayerStatus>();
                 var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
-                if (feedback != null)
-                    feedback.ShowFeedback(FeedbackType.Full);
-                return;
-            }
+                if (playerStatus != null && playerStatus.hunger.IsFull())
+                {
+                    //var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
+                    if (feedback != null)
+                        feedback.ShowFeedback(FeedbackType.Full);
+                    return;
+                }
+            }            
         }
         Debug.Log($"▶️ Nhặt: {itemEntity.GetItemData().name} - SL: {itemEntity.GetQuantity()}");
 

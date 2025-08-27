@@ -105,8 +105,10 @@
         {
             isInventoryOpen = !isInventoryOpen;
             inventoryPanel.SetActive(isInventoryOpen);
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.inventoryOpenSound);
 
-            PlayerController.inputHandler.DisablePlayerInput(); // <-- tắt input
+        PlayerController.inputHandler.DisablePlayerInput(); // <-- tắt input
             if (!isInventoryOpen)
                 PlayerController.inputHandler.EnablePlayerInput(); // <-- bật lại khi đóng
 

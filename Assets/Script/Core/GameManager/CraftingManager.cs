@@ -183,10 +183,10 @@ public class CraftingSlot
 public class CraftingManager : MonoBehaviour
 {
     public GameObject craftingScreen;
-    public GameObject toolsScreen, survivalScreen;
+    public GameObject weaponsScreen, survivalScreen, toolsScreen;
     [SerializeField] private List<CraftingSlot> craftingSlots = new List<CraftingSlot>();
 
-    public Button toolsBTN, survivalBTN;
+    public Button weaponsBTN, survivalBTN, toolsBTN;
 
     PlayerController PlayerController;
     bool isOpen;
@@ -211,10 +211,12 @@ public class CraftingManager : MonoBehaviour
         isOpen = false;
         PlayerController = FindObjectOfType<PlayerController>();
 
-        toolsBTN = craftingScreen.transform.Find("ToolsButton").GetComponent<Button>();
+        weaponsBTN = craftingScreen.transform.Find("WeaponButton").GetComponent<Button>();
         survivalBTN = craftingScreen.transform.Find("SurvivalButton").GetComponent<Button>();
-        toolsBTN.onClick.AddListener(delegate { OpenToolsCategory(); });
+        toolsBTN = craftingScreen.transform.Find("ToolsButton").GetComponent<Button>();
+        weaponsBTN.onClick.AddListener(delegate { OpenWeaponsCategory(); });
         survivalBTN.onClick.AddListener(delegate { OpenSurvivalCategory(); });
+        toolsBTN.onClick.AddListener(delegate { OpenToolsCategory(); });
 
         InventoryManager.Instance.OnInventoryChanged += CheckCanCraft;
 
@@ -226,51 +228,63 @@ public class CraftingManager : MonoBehaviour
 
     private void CraftItem(BlueprintData blueprint)
     {
-    var inventory = InventoryManager.Instance.playerInventory;
+        var inventory = InventoryManager.Instance.playerInventory;
 
-    foreach (var req in blueprint.requirements)
-    {
-        if (!inventory.HasItem(req.item, req.amount))
-        {
-            Debug.Log("Không đủ nguyên liệu để chế tạo!");
-            return;
-        }
-    }
-
-    if (blueprint.craftingType == CraftingType.Immediate)
-    {
-        // Craft ngay lập tức
         foreach (var req in blueprint.requirements)
-            inventory.RemoveItem(req.item, req.amount);
+        {
+            if (!inventory.HasItem(req.item, req.amount))
+            {
+                Debug.Log("Không đủ nguyên liệu để chế tạo!");
+                return;
+            }
+        }
 
-        InventoryManager.Instance.AddItem(blueprint.resultItem, blueprint.resultAmount);
-        InventoryManager.Instance.RefreshAllUI();
+        if (blueprint.craftingType == CraftingType.Immediate)
+        {
+            // Craft ngay lập tức
+            foreach (var req in blueprint.requirements)
+                inventory.RemoveItem(req.item, req.amount);
 
-        Debug.Log($"Đã chế: {blueprint.resultItem.itemName}");
-    }
-    else if (blueprint.craftingType == CraftingType.NeedResource)
-    {
-        // Chỉ trừ nguyên liệu khi đặt hoàn tất
-        // Gọi hệ thống đặt vật thể (ghost preview)
-        PlacementSystem.Instance.StartPlacement(blueprint,-1);
-    }
+            InventoryManager.Instance.AddItem(blueprint.resultItem, blueprint.resultAmount);
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.craftSound);
+            InventoryManager.Instance.RefreshAllUI();
+
+            Debug.Log($"Đã chế: {blueprint.resultItem.itemName}");
+        }
+        else if (blueprint.craftingType == CraftingType.NeedResource)
+        {
+            // Chỉ trừ nguyên liệu khi đặt hoàn tất
+            // Gọi hệ thống đặt vật thể (ghost preview)
+            PlacementSystem.Instance.StartPlacement(blueprint,-1);
+        }
 
         CheckCanCraft();
     }
 
 
-    void OpenToolsCategory()
+    void OpenWeaponsCategory()
     {
         craftingScreen.SetActive(false);
-        toolsScreen.SetActive(true);
+        weaponsScreen.SetActive(true);
         survivalScreen.SetActive(false);
+        toolsScreen.SetActive(false);
     }
 
     void OpenSurvivalCategory()
     {
         craftingScreen.SetActive(false);
         survivalScreen.SetActive(true);
+        weaponsScreen.SetActive(false);
         toolsScreen.SetActive(false);
+    }
+
+    void OpenToolsCategory()
+    {
+        craftingScreen.SetActive(false);
+        weaponsScreen.SetActive(false);
+        survivalScreen.SetActive(false);
+        toolsScreen.SetActive(true);
     }
 
     void Update()
@@ -291,8 +305,9 @@ public class CraftingManager : MonoBehaviour
         }
 
         craftingScreen.SetActive(isOpen);
-        toolsScreen.SetActive(false);
+        weaponsScreen.SetActive(false);
         survivalScreen.SetActive(false);
+        toolsScreen.SetActive(false);
         PlayerController.inputHandler.DisablePlayerInput();
 
         if (!isOpen)
@@ -318,12 +333,12 @@ public class CraftingManager : MonoBehaviour
                 int have1 = inventory.GetTotalQuantity(blueprint.requirements[0].item);
                 int need1 = blueprint.requirements[0].amount;
                 slot.requiredItemText1.text = $"{blueprint.requirements[0].item.itemName}: {have1} / {need1}";
-                slot.requiredItemText1.gameObject.SetActive(true); // 🔹 bật hiển thị
+                slot.requiredItemText1.gameObject.SetActive(true); 
                 if (have1 < need1) canCraft = false;
             }
             else
             {
-                slot.requiredItemText1.gameObject.SetActive(false); // 🔹 ẩn nếu không có requirement
+                slot.requiredItemText1.gameObject.SetActive(false); 
             }
 
             if (blueprint.requirements.Count > 1)
@@ -331,12 +346,12 @@ public class CraftingManager : MonoBehaviour
                 int have2 = inventory.GetTotalQuantity(blueprint.requirements[1].item);
                 int need2 = blueprint.requirements[1].amount;
                 slot.requiredItemText2.text = $"{blueprint.requirements[1].item.itemName}: {have2} / {need2}";
-                slot.requiredItemText2.gameObject.SetActive(true); // 🔹 bật hiển thị
+                slot.requiredItemText2.gameObject.SetActive(true);
                 if (have2 < need2) canCraft = false;
             }
             else
             {
-                slot.requiredItemText2.gameObject.SetActive(false); // 🔹 ẩn nếu không có requirement thứ 2
+                slot.requiredItemText2.gameObject.SetActive(false); 
             }
 
 

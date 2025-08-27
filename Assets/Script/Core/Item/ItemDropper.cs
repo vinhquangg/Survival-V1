@@ -39,7 +39,8 @@ public class ItemDropper : MonoBehaviour
             if (entity != null)
                 entity.Initialize(item, quantity, durability);
 
-            SoundManager.Instance.PlayDropSound();
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.dropItemSound);
         }
     }
 }

@@ -86,7 +86,7 @@ public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
 
         if (SoundManager.Instance != null)
-            SoundManager.Instance.PlayDropSound();
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.dropItemSound);
     }
 
     public void OnPointerClick(PointerEventData eventData)

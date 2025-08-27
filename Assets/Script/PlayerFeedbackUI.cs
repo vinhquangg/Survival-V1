@@ -52,7 +52,7 @@ public class PlayerFeedbackUI : MonoBehaviour
 
         feedbackRoutine = StartCoroutine(ShowRoutine(type));
         if (SoundManager.Instance != null)
-            SoundManager.Instance.PlayNoitify();
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.noitifySound);
     }
 
     private IEnumerator ShowRoutine(FeedbackType type)

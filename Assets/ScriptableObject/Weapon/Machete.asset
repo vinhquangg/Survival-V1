@@ -19,7 +19,7 @@ MonoBehaviour:
   itemFunc: Deal damgage
   isStack: 0
   maxStack: 1
-  dropPrefab: {fileID: 919132149155446097, guid: 5d2b955dd9e88e741b4e2f37ba027843,
+  dropPrefab: {fileID: 8602440645191339244, guid: 8a66eee63329ae04ea6bc924ec5a2859,
     type: 3}
   blueprint: {fileID: 11400000, guid: 7b3c1ad42c5d1e24a8ff108bfdee4f8e, type: 2}
   weaponType: 1

@@ -8,8 +8,6 @@ public class EquipSystem : MonoBehaviour
     public GameObject quickSlot;
     public List<GameObject> quickSlotItems = new List<GameObject>();
     [SerializeField] private EquipHolder equipHolder;
-
-
     public static EquipSystem instance { get;  set; }
 
     private void Awake()

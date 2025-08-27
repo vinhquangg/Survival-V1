@@ -5,21 +5,22 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
 
-
-    public AudioSource dropItemSound;
-    public AudioSource pickupItemSound;
-    public AudioSource noitifySound;
-    public AudioSource backgroundSound;
-    public AudioSource menuSound;
-    public AudioSource equipSound;
-    public AudioSource unequipSound;
-    public AudioSource craftSound;
-    public AudioSource animalDeadSound;
-    public AudioSource animalHitSound;
-    public AudioSource inventoryOpenSound;
+    public AudioClip dropItemSound;
+    public AudioClip pickupItemSound;
+    public AudioClip noitifySound;
+    public AudioClip backgroundSound;
+    public AudioClip menuSound;
+    public AudioClip equipSound;
+    public AudioClip unequipSound;
+    public AudioClip craftSound;
+    public AudioClip animalDeadSound;
+    public AudioClip animalHitSound;
+    public AudioClip inventoryOpenSound;
 
     [Header("Foot Step Player")]
     public AudioSource footstepSource;
+    public AudioSource sfxSource;
+    public AudioSource backGround;
 
 
     [Header("Audio Mixer")]
@@ -36,43 +37,43 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void PlayDropSound()
-    {
-        if(dropItemSound != null && dropItemSound.clip != null)
-        {
-            dropItemSound.PlayOneShot(dropItemSound.clip);
-        }
-    } 
+    //public void PlayDropSound()
+    //{
+    //    if(dropItemSound != null && dropItemSound.clip != null)
+    //    {
+    //        dropItemSound.PlayOneShot(dropItemSound.clip);
+    //    }
+    //} 
 
-    public void playPickupItem()
-    {
-        if (pickupItemSound != null && pickupItemSound.clip != null)
-        {
-            pickupItemSound.PlayOneShot(pickupItemSound.clip);
-        }
-    }
+    //public void playPickupItem()
+    //{
+    //    if (pickupItemSound != null && pickupItemSound.clip != null)
+    //    {
+    //        pickupItemSound.PlayOneShot(pickupItemSound.clip);
+    //    }
+    //}
 
-    public void PlayNoitify()
-    {
-        if (noitifySound != null && noitifySound.clip != null)
-        {
-            noitifySound.PlayOneShot(noitifySound.clip);
-        }
-    }
+    //public void PlayNoitify()
+    //{
+    //    if (noitifySound != null && noitifySound.clip != null)
+    //    {
+    //        noitifySound.PlayOneShot(noitifySound.clip);
+    //    }
+    //}
 
-    public void PlayBackGroundSound()
-    {
-        if (backgroundSound != null && backgroundSound.clip != null)
-        {
-            noitifySound.Play();
-        }
-    }
+    //public void PlayBackGroundSound()
+    //{
+    //    if (backgroundSound != null && backgroundSound.clip != null)
+    //    {
+    //        noitifySound.Play();
+    //    }
+    //}
 
     public void PlayFootstep(AudioClip clip, float pitch = 1f)
     {
         if (footstepSource == null) return;
 
-        if (!footstepSource.isPlaying) // <--- chỉ play nếu đang rảnh
+        if (!footstepSource.isPlaying) 
         {
             footstepSource.clip = clip;
             footstepSource.pitch = pitch;
@@ -88,5 +89,8 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-
+    public void PlaySFX(AudioClip clip)
+    {
+        sfxSource.PlayOneShot(clip);
+    }
 }

@@ -58,10 +58,14 @@ public class HotkeyHandle : MonoBehaviour
                     return;
 
                 equipManager.UnequipItem(equipType);
+                if (SoundManager.Instance != null)
+                    SoundManager.Instance.PlaySFX(SoundManager.Instance.unequipSound);
             }
             else
             {
                 equipManager.EquipItem(item);
+                if (SoundManager.Instance != null)
+                    SoundManager.Instance.PlaySFX(SoundManager.Instance.equipSound);
             }
         }
         else if (item is IUsableItem usable)

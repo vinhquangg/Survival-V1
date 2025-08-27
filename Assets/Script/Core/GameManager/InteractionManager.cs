@@ -30,7 +30,7 @@ public class InteractionManager : MonoBehaviour
             SelectionManager.CurrentInteractable.Interact(transform.root.gameObject);
 
             if (SoundManager.Instance != null)
-                SoundManager.Instance.playPickupItem();
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.pickupItemSound);
         }
     }
 }

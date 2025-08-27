@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 2
   itemName: Axe
-  itemIcon: {fileID: 21300000, guid: 273800075a011d842980ad838b5e60c3, type: 3}
+  itemIcon: {fileID: 21300000, guid: e2f43450c605b5548a150f9676a81da3, type: 3}
   itemDesc: A stone axe
   itemFunc: Use for chopping
   isStack: 0
   maxStack: 1
-  dropPrefab: {fileID: 919132149155446097, guid: e941505c31a368f4ca682fbac743f7f1,
+  dropPrefab: {fileID: 1556528586587022700, guid: cd9e3c65136379c40829ed358586bb3d,
     type: 3}
   blueprint: {fileID: 11400000, guid: a5076cd0ac2beed43888a9a5f1fb0c2c, type: 2}
   toolType: 2
-  durability: 0
+  durability: 100

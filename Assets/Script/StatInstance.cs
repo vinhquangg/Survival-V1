@@ -25,13 +25,18 @@ public class StatInstance
     }
 
 
-    public void Restore(float amount)
+    public void Restore(float amount, bool resetDecay = true)
     {
         float oldValue = currentValue;
         currentValue = Mathf.Clamp(currentValue + amount, 0, data.maxValue);
         if (Mathf.Abs(currentValue - oldValue) > 0.01f)
         {
             OnStatChanged?.Invoke(currentValue); 
+        }
+
+        if (resetDecay)
+        {
+            decayTimer = 0f; 
         }
     }
 

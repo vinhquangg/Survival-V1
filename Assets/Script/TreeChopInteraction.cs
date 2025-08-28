@@ -38,10 +38,13 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         var player = interactor.GetComponent<PlayerController>();
         if (player != null)
         {
-            // 👉 gọi xoay mượt trước khi vào state Chop
-            //player.RotateTowards(transform.position, 8f);
-
-            // 👉 đổi state sau đó
+            var equipManager = FindObjectOfType<EquipManager>();
+            if (equipManager == null || !equipManager.HasItemEquipped(EquipType.Tool))
+            {
+                // Không có tool → không hiển thị UI
+                //HidePrompt();
+                return;
+            }
             player.playerStateMachine.ChangeState(new ChopState(player.playerStateMachine, player, this));
         }
     }

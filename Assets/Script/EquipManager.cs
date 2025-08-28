@@ -32,11 +32,16 @@ public class EquipManager : MonoBehaviour
 
     public void UnequipItem(EquipType type)
     {
-        if (type == EquipType.Weapon && animController != null && animController.IsAttacking)
-        {
-            Debug.Log("[EquipManager] Đang tấn công, không thể cất vũ khí.");
-            return;
-        }
+        //if (type == EquipType.Weapon && animController != null && animController.IsAttacking)
+        //{
+        //    Debug.Log("[EquipManager] Đang tấn công, không thể cất vũ khí.");
+        //    return;
+        //}
+        //if (type == EquipType.Tool && animController != null && animController.IsChopping)
+        //{
+        //    Debug.Log("[EquipManager] Đang chặt cây, không thể cất tool.");
+        //    return;
+        //}
 
         if (currentEquippedItems.TryGetValue(type, out var item))
         {
@@ -50,6 +55,7 @@ public class EquipManager : MonoBehaviour
             }
         }
     }
+
 
     public ItemClass GetEquippedItem(EquipType type)
     {

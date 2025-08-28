@@ -54,7 +54,7 @@ public class Consumable : ItemClass, IUsableItem
 
 
         Debug.Log($"[Consumable] Hunger: +{statAdded}");
-        status.hunger.Restore(statAdded);
+        status.hunger.Restore(statAdded,true);
         inventory.RemoveItem(this, 1);
     }
 

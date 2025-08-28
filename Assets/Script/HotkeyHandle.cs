@@ -7,11 +7,13 @@ public class HotkeyHandle : MonoBehaviour
     public InventoryManager inventoryManager;
     public EquipManager equipManager;
     public HotbarSelector hotbarSelector;
+
+    private int currentHotkeyIndex = -1;
+
     private void Update()
     {
         int hotbarSize = inventoryManager.playerInventory.hotbarItems.Length;
 
-        // Hotkey cho các slot
         for (int i = 0; i < hotbarSize; i++)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
@@ -23,24 +25,59 @@ public class HotkeyHandle : MonoBehaviour
 
     private void HandleHotbarSlot(int index)
     {
+        if (equipManager.animController != null && (equipManager.animController.IsAttacking ||equipManager.animController.IsChopping))
+        {
+            Debug.Log("[HotkeyHandle] Đang attack → không cho đổi item");
+            return;
+        }
+
+
         if (hotbarSelector != null)
             hotbarSelector.SelectSlot(index);
 
         var slot = inventoryManager.playerInventory.hotbarItems[index];
-        if (slot == null || slot.IsEmpty() || slot.GetItem() == null) return;
+        if (slot == null || slot.IsEmpty() || slot.GetItem() == null)
+        {
+            UnequipAll();
+            currentHotkeyIndex = -1;
+            return;
+        }
 
-        // Nếu là raw meat → cook tại campfire gần nhất
-        if (slot.GetItem() is Consumable c && c.isMeat && c.meatState == AnimalMeat.Raw)
+        var item = slot.GetItem();
+
+        if (currentHotkeyIndex != -1 && index != currentHotkeyIndex)
+        {
+            UnequipAll();
+            currentHotkeyIndex = -1;
+        }
+
+        // 🔹 Nếu slot rỗng
+        if (item == null)
+        {
+            return;
+        }
+
+        // 🔹 Nếu bấm lại cùng hotkey thì toggle off
+        if (index == currentHotkeyIndex)
+        {
+            UnequipAll();
+            currentHotkeyIndex = -1;
+
+            return;
+        }
+
+        // 🔹 Nếu là raw meat thì cook
+        if (item is Consumable c && c.isMeat && c.meatState == AnimalMeat.Raw)
         {
             TryCookFromHotbar(index);
             return;
         }
 
-        // Item có thể đặt
-        var item = slot.GetItem();
+        // 🔹 Nếu là placable
         if (item.itemType == ItemType.Placable && item.blueprint != null)
         {
             PlacementSystem.Instance.StartPlacement(item.blueprint, index);
+            currentHotkeyIndex = index;
             return;
         }
         else if (PlacementSystem.Instance != null)
@@ -48,32 +85,40 @@ public class HotkeyHandle : MonoBehaviour
             PlacementSystem.Instance.CancelPlacement();
         }
 
-        // Equip item nếu có
+        // 🔹 Nếu là item equip
         EquipType equipType = item.GetEquipType();
         if (equipType != EquipType.None)
         {
-            if (equipManager.HasItemEquipped(equipType) && equipManager.GetEquippedItem(equipType) == item)
-            {
-                if (equipType == EquipType.Weapon && equipManager.animController != null && equipManager.animController.IsAttacking)
-                    return;
+            UnequipAll();
 
-                equipManager.UnequipItem(equipType);
-                if (SoundManager.Instance != null)
-                    SoundManager.Instance.PlaySFX(SoundManager.Instance.unequipSound);
-            }
-            else
-            {
-                equipManager.EquipItem(item);
-                if (SoundManager.Instance != null)
-                    SoundManager.Instance.PlaySFX(SoundManager.Instance.equipSound);
-            }
+            equipManager.EquipItem(item);
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlaySFX(SoundManager.Instance.equipSound);
+
+            currentHotkeyIndex = index;
+            return;
         }
-        else if (item is IUsableItem usable)
+
+        // 🔹 Nếu là usable item
+        if (item is IUsableItem usable)
         {
-            // 🔹 Chỉ gọi UseItem với item bình thường, không phải raw meat
             usable.UseItem(PlayerStatus.Instance, inventoryManager.playerInventory);
             inventoryManager.RefreshAllUI();
+            currentHotkeyIndex = -1;
+            return;
         }
+
+        // Nếu không phải gì cả
+        currentHotkeyIndex = -1;
+    }
+
+    private void UnequipAll()
+    {
+        equipManager.UnequipItem(EquipType.Weapon);
+        equipManager.UnequipItem(EquipType.Tool);
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.unequipSound);
     }
 
     private void TryCookFromHotbar(int hotbarIndex)
@@ -83,17 +128,15 @@ public class HotkeyHandle : MonoBehaviour
 
         if (!(slot.GetItem() is Consumable c) || !c.isMeat || c.meatState != AnimalMeat.Raw) return;
 
-        // 🔹 Lấy object đang được nhìn vào
         var interactable = SelectionManager.Instance.CurrentInteractable;
         if (interactable == null)
         {
             var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
             if (feedback != null)
-                feedback.ShowFeedback(FeedbackType.RawMeat); // hoặc tạo FeedbackType.NearCampfire
+                feedback.ShowFeedback(FeedbackType.RawMeat);
             return;
         }
 
-        // 🔹 Kiểm tra có phải campfire không
         Campfire campfire = (interactable as MonoBehaviour)?.GetComponent<Campfire>();
         if (campfire == null || !campfire.IsBurning)
         {
@@ -106,20 +149,15 @@ public class HotkeyHandle : MonoBehaviour
         Cookable cookable = campfire.GetComponent<Cookable>();
         if (cookable == null) return;
 
-        // Cook tất cả số lượng raw meat trong slot
         int cookQty = slot.GetQuantity();
         cookable.Cook(inventoryManager.playerInventory, cookQty);
 
-        // 🔹 Hiển thị prompt cook xong
         var uiManager = FindObjectOfType<PlayerUIManager>();
         if (uiManager != null)
             uiManager.ShowPrompt(cookable);
 
         inventoryManager.RefreshAllUI();
     }
-
-
-
 
     private Campfire FindNearestBurningCampfire()
     {

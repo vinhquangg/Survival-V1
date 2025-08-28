@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 8
   itemName: Log Wood
-  itemIcon: {fileID: 21300000, guid: 86adaa715d8969e48975ca3343ddaedd, type: 3}
+  itemIcon: {fileID: 21300000, guid: e6289d0eb6f0314419f10fb296603c27, type: 3}
   itemDesc: Log wood.
   itemFunc: Use for cafting
   isStack: 1
   maxStack: 64
   dropPrefab: {fileID: 4370736543054296596, guid: edb158f4ce929cb4e88a8904570b0257,
     type: 3}
+  blueprint: {fileID: 0}

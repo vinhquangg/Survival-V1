@@ -9,8 +9,11 @@ public class IdleState : PlayerState
     public override void Enter()
     {
         base.Enter();
-        FootStepManager.Instance.AttachToActor(player.transform); // gắn AudioSource vào player
-        FootStepManager.Instance.StopFootstep();                  // dừng footstep khi idle
+        if (FootStepManager.Instance != null)
+        {
+            FootStepManager.Instance.AttachToActor(player.transform);
+            FootStepManager.Instance.StopFootstep();
+        }
     }
 
     public override void Update()

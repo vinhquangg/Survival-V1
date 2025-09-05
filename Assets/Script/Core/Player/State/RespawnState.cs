@@ -2,7 +2,7 @@
 
 public class RespawnState : PlayerState
 {
-    private Vector3 respawnPoint = Vector3.zero;
+    private Vector3 respawnPoint /*= Vector3.zero*/;
 
     public RespawnState(PlayerStateMachine stateMachine, PlayerController player, Vector3 respawnPoint)
         : base(stateMachine, player)
@@ -20,6 +20,9 @@ public class RespawnState : PlayerState
         PlayerStatus.Instance.thirst.ResetStat();
 
         // Đặt lại vị trí
+        respawnPoint = RespawnManager.Instance.GetRespawnPosition();
+
+        // Đặt lại vị trí player
         player.transform.position = respawnPoint;
 
         // Reset animation death

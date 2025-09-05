@@ -67,49 +67,44 @@ public class FootStepManager : MonoBehaviour
 
     public void PlayFootstep(Vector3 position, bool isRunning)
     {
-        if (terrainGroundDetector == null || actor == null) return;
+        if (terrainGroundDetector == null)
+        {
+            Debug.LogWarning("❌ FootStepManager: terrainGroundDetector chưa gán!");
+            return;
+        }
+        if (actor == null)
+        {
+            Debug.LogWarning("❌ FootStepManager: actor chưa attach!");
+            return;
+        }
+        if (SoundManager.Instance == null)
+        {
+            Debug.LogWarning("❌ FootStepManager: SoundManager chưa tồn tại!");
+            return;
+        }
 
         GroundData gd = terrainGroundDetector.GetGroundData(position);
         if (gd == null || gd.footstepClips.Length == 0) return;
 
         AudioClip clip = gd.footstepClips[Random.Range(0, gd.footstepClips.Length)];
-
         float basePitch = 1f;
         switch (gd.groundType)
         {
-            case GroundType.Sand:
-                basePitch = 1.2f;
-                break;
-            case GroundType.Grass:
-                basePitch = 1f;
-                break;
-                // thêm các loại khác nếu cần
+            case GroundType.Sand: basePitch = 1.2f; break;
+            case GroundType.Grass: basePitch = 1f; break;
         }
 
-            //// Chỉ thay clip nếu khác clip hiện tại
-            //if (clip != currentClip)
-            //{
-            //    footstepSource.Stop();
-            //    footstepSource.clip = clip;
-            //    footstepSource.Play();
-            //    currentClip = clip;
-            //}
-            //else if (!footstepSource.isPlaying)
-            //{
-            //    footstepSource.Play();
-            //}
-
         float finalPitch = isRunning ? basePitch * 1.3f : basePitch;
-
-        // Gọi qua SoundManager
         SoundManager.Instance.PlayFootstep(clip, finalPitch);
     }
 
 
-    public void StopFootstep()  
-    { 
-        SoundManager.Instance.StopFootstep();
+    public void StopFootstep()
+    {
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.StopFootstep();
     }
+
 
     //public void StopFootstep()
     //{

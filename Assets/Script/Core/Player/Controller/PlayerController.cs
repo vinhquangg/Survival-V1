@@ -20,23 +20,28 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 velocity;
     private bool isGrounded;
+    public GameObject camera;
 
     //public float weaponHitRadius;
     //public Transform weaponHitPoint;
     //public int damage;
     //public LayerMask targetMask;
-    public GameObject camera;
     private void Awake()
     {
+        // Lấy camera trong scene
         if (camera == null)
         {
-            camera = Camera.main.gameObject;
+            camera = Camera.main?.gameObject;
+        }
+
+        if (camera != null && playerCamera == null)
+        {
+            playerCamera = camera.transform;
         }
         inputHandler = GetComponent<InputHandler>();
         controller = GetComponent<CharacterController>();
         animationController = GetComponent<AnimationStateController>();
         playerStateMachine = new PlayerStateMachine();
-        playerStateMachine.Initialized(new IdleState(playerStateMachine, this));
     }
 
     private void Start()
@@ -47,7 +52,15 @@ public class PlayerController : MonoBehaviour
             GameManager.instance.SetCursorLock(true);
         }
 
+        // 🔥 Gắn actor cho FootStepManager ngay khi player spawn
+        if (FootStepManager.Instance != null)
+        {
+            FootStepManager.Instance.AttachToActor(transform);
+        }
+
+        playerStateMachine.Initialized(new IdleState(playerStateMachine, this));
     }
+
 
     private void Update()
     {

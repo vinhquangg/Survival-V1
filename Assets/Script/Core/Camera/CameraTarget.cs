@@ -36,7 +36,25 @@ public class CameraTarget : MonoBehaviour
 
     private void Start()
     {
-        pitch = 10f;  
+        pitch = 10f;
+
+        // 🔥 Tìm player khi start (nếu có Player spawn sẵn trong scene)
+        if (PlayerManager.Instance != null && PlayerManager.Instance.GetCurrentPlayer() != null)
+        {
+            AttachToPlayer(PlayerManager.Instance.GetCurrentPlayer().transform);
+        }
+    }
+
+    public void AttachToPlayer(Transform player)
+    {
+        target = player;
+
+        // 🔥 Nếu player có child làm điểm nhìn (ví dụ "Head" hay "CameraTarget")
+        Transform lookPoint = player.Find("CameraPrivot");
+        if (lookPoint != null)
+            lookTarget = lookPoint;
+        else
+            lookTarget = player; // fallback gắn vào player luôn
     }
 
     private void LateUpdate()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HotkeyHandle : MonoBehaviour
+public class HotkeyHandle : MonoBehaviour, IPlayerDependent
 {
     public InventoryManager inventoryManager;
     public EquipManager equipManager;
@@ -179,5 +179,13 @@ public class HotkeyHandle : MonoBehaviour
             }
         }
         return nearest;
+    }
+
+    public void SetPlayer(PlayerController player)
+    {
+        equipManager = player.GetComponent<EquipManager>();
+        if (hotbarSelector == null)
+            hotbarSelector = FindObjectOfType<HotbarSelector>();
+
     }
 }

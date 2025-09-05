@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlacementSystem : MonoBehaviour
+public class PlacementSystem : MonoBehaviour, IPlayerDependent
 {
     public static PlacementSystem Instance;
     public Transform playerCamera;
@@ -102,6 +102,14 @@ public class PlacementSystem : MonoBehaviour
             PlaceObject();
         else if (Input.GetMouseButtonDown(1))
             CancelPlacement();
+    }
+
+    public void SetPlayer(PlayerController player)
+    {
+        if (player != null)
+        {
+            playerCamera = player.transform;
+        }
     }
 
     private bool CanPlaceHere()

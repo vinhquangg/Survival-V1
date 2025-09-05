@@ -180,7 +180,7 @@ public class CraftingSlot
     public TextMeshProUGUI requiredItemText2;
 }
 
-public class CraftingManager : MonoBehaviour
+public class CraftingManager : MonoBehaviour, IPlayerDependent
 {
     public GameObject craftingScreen;
     public GameObject weaponsScreen, survivalScreen, toolsScreen;
@@ -209,7 +209,6 @@ public class CraftingManager : MonoBehaviour
     void Start()
     {
         isOpen = false;
-        PlayerController = FindObjectOfType<PlayerController>();
 
         weaponsBTN = craftingScreen.transform.Find("WeaponButton").GetComponent<Button>();
         survivalBTN = craftingScreen.transform.Find("SurvivalButton").GetComponent<Button>();
@@ -224,6 +223,15 @@ public class CraftingManager : MonoBehaviour
         {
             slot.craftButton.onClick.AddListener(() => CraftItem(slot.blueprint));
         }
+    }
+
+    // bỏ dòng này:
+    // PlayerController = FindObjectOfType<PlayerController>();
+
+
+    public void SetPlayer(PlayerController player)
+    {
+        PlayerController = player;
     }
 
     private void CraftItem(BlueprintData blueprint)
@@ -289,7 +297,7 @@ public class CraftingManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C) )
         {
             ToggleCrafting();
         }
@@ -308,10 +316,18 @@ public class CraftingManager : MonoBehaviour
         weaponsScreen.SetActive(false);
         survivalScreen.SetActive(false);
         toolsScreen.SetActive(false);
-        PlayerController.inputHandler.DisablePlayerInput();
+        //PlayerController.inputHandler.DisablePlayerInput();
 
-        if (!isOpen)
-            PlayerController.inputHandler.EnablePlayerInput();
+        //if (!isOpen)
+        //    PlayerController.inputHandler.EnablePlayerInput();
+
+        if (PlayerController != null && PlayerController.inputHandler != null)
+        {
+            if (isOpen)
+                PlayerController.inputHandler.DisablePlayerInput();
+            else
+                PlayerController.inputHandler.EnablePlayerInput();
+        }
 
         GameManager.instance?.SetCursorLock(!isOpen);
 

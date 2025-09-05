@@ -6,7 +6,7 @@
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class InventoryManager : MonoBehaviour
+    public class InventoryManager : MonoBehaviour, IPlayerDependent
     {
         public GameObject inventoryPanel;
         public InventoryUIHandler inventoryUI;
@@ -32,7 +32,6 @@
 
             inventoryUI.Init();
             hotbarUI.Init();
-            playerInventory.Init(inventoryUI.GetSlotCount(), hotbarUI.GetSlotCount());
 
             if(Instance == null)
             {
@@ -48,9 +47,10 @@
 
         void Start()
         {
+            playerInventory.Init(inventoryUI.GetSlotCount(), hotbarUI.GetSlotCount());
             RefreshAllUI();
-            PlayerController = FindObjectOfType<PlayerController>();
-            dropper.playerTransform = PlayerController.transform;
+            //PlayerController = FindObjectOfType<PlayerController>();
+            //dropper.playerTransform = PlayerController.transform;
         }
 
         void Update()
@@ -61,7 +61,26 @@
             }
         }
 
-        public bool AddItem(ItemClass item, int quantity = 1)
+        public void SetPlayer(PlayerController player)
+        {
+            PlayerController = player;
+
+            if (PlayerController != null)
+            {
+                // luôn lấy Dropper mới từ player
+                dropper = PlayerController.GetComponentInChildren<ItemDropper>();
+                if (dropper != null)
+                    dropper.playerTransform = PlayerController.transform;
+
+                // nếu PlayerInventory cũng nằm trên Player → gán lại
+                var inv = PlayerController.GetComponentInChildren<PlayerInventory>();
+                if (inv != null)
+                    playerInventory = inv;
+            }
+        }
+
+
+    public bool AddItem(ItemClass item, int quantity = 1)
         {
             bool added = playerInventory.AddItem(item, quantity);
             if (added)
@@ -105,12 +124,17 @@
         {
             isInventoryOpen = !isInventoryOpen;
             inventoryPanel.SetActive(isInventoryOpen);
+
             if (SoundManager.Instance != null)
                 SoundManager.Instance.PlaySFX(SoundManager.Instance.inventoryOpenSound);
 
-        PlayerController.inputHandler.DisablePlayerInput(); // <-- tắt input
-            if (!isInventoryOpen)
-                PlayerController.inputHandler.EnablePlayerInput(); // <-- bật lại khi đóng
+            if (PlayerController != null && PlayerController.inputHandler != null)
+            {
+                if (isInventoryOpen)
+                    PlayerController.inputHandler.DisablePlayerInput();
+                else
+                    PlayerController.inputHandler.EnablePlayerInput();
+            }
 
             ItemInfo.Instance.HideInfo();
             GameManager.instance?.SetCursorLock(!isInventoryOpen);
@@ -119,10 +143,9 @@
                 CameraTarget.Instance.allowCameraInput = !isInventoryOpen;
 
             if (isInventoryOpen)
-            {
                 RefreshAllUI();
-            }
         }
+
 
 
         public SlotClass GetSlot(InventoryArea area, int index)

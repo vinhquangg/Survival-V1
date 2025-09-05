@@ -9,11 +9,12 @@ public class VolumeSetting : MonoBehaviour
 {
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private Slider masterSlider;
+    [SerializeField] private Slider sfxSlider;
 
     // Start is called before the first frame update
     void Start()
     {
-        if(PlayerPrefs.HasKey("MasterVolume"))
+        if(PlayerPrefs.HasKey("Master"))
         {
             LoadVolume();
         }
@@ -21,6 +22,12 @@ public class VolumeSetting : MonoBehaviour
         {
             SetMasterVolume();
         }
+
+        // SFX
+        if (PlayerPrefs.HasKey("SFX"))
+            LoadSFXVolume();
+        else
+            SetSFXVolume();
     }
 
     public void SetMasterVolume()
@@ -35,9 +42,16 @@ public class VolumeSetting : MonoBehaviour
         masterSlider.value = savedVolume;
         SoundManager.Instance.SetVolume("Master", savedVolume);
     }
-    // Update is called once per frame
-    void Update()
+    public void SetSFXVolume()
     {
-        
+        float volume = sfxSlider.value;
+        SoundManager.Instance.SetVolume("SFX", volume);
+    }
+
+    public void LoadSFXVolume()
+    {
+        float savedVolume = SoundManager.Instance.GetVolume("SFX", 0.75f);
+        sfxSlider.value = savedVolume;
+        SoundManager.Instance.SetVolume("SFX", savedVolume);
     }
 }

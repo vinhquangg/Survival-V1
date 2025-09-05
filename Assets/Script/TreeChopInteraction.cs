@@ -41,8 +41,6 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
             var equipManager = FindObjectOfType<EquipManager>();
             if (equipManager == null || !equipManager.HasItemEquipped(EquipType.Tool))
             {
-                // Không có tool → không hiển thị UI
-                //HidePrompt();
                 return;
             }
             player.playerStateMachine.ChangeState(new ChopState(player.playerStateMachine, player, this));

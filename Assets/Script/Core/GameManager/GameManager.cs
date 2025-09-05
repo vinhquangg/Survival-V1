@@ -51,3 +51,5 @@ public class GameManager : MonoBehaviour
         Time.timeScale = (newState == GameState.Paused) ? 0 : 1;
     }
 }
+
+

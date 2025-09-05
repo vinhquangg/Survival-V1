@@ -34,6 +34,7 @@ public class SoundManager : MonoBehaviour
         else
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -92,5 +93,16 @@ public class SoundManager : MonoBehaviour
     public void PlaySFX(AudioClip clip)
     {
         sfxSource.PlayOneShot(clip);
+    }
+
+    public void SetVolume(string parameterName, float value)
+    {
+        mainMixer.SetFloat(parameterName, Mathf.Log10(Mathf.Clamp(value, 0.0001f, 1f)) * 20f);
+        PlayerPrefs.SetFloat(parameterName, value);
+    }
+
+    public float GetVolume(string parameterName, float defaultValue = 0.75f)
+    {
+        return PlayerPrefs.GetFloat(parameterName, defaultValue);
     }
 }

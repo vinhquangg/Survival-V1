@@ -17,7 +17,7 @@ public class AnimationStateController : MonoBehaviour
     private int isRunHash;
     public bool IsAttacking => isAttacking;
     public bool IsChopping => isChop;
-
+    public bool IsDead => animator.GetBool("isDead");
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -36,7 +36,7 @@ public class AnimationStateController : MonoBehaviour
 
     public void UpdateAnimationState(Vector2 input, bool isRunning, float currentSpeed)
     {
-        Vector2 targetVelocity = input.normalized * (currentSpeed / playerController.moveSpeed); // scale theo tỉ lệ
+        Vector2 targetVelocity = input.normalized * (currentSpeed / playerController.moveSpeed);
         currentVelocity = Vector2.MoveTowards(currentVelocity, targetVelocity,
                             (isRunning ? acceleration : deceleration) * Time.deltaTime);
 
@@ -58,6 +58,18 @@ public class AnimationStateController : MonoBehaviour
         isChop = true;
         animator.SetBool("isChop", true);
         StartCoroutine(ResetChopAfterDelay(4f));
+    }
+
+    public void TriggerDead()
+    {
+        if (animator.GetBool("isDead")) return;
+
+        animator.SetBool("isDead", true);
+    }
+
+    public void ResetDead()
+    {
+        animator.SetBool("isDead", false);
     }
 
     private IEnumerator ResetChopAfterDelay(float delay)

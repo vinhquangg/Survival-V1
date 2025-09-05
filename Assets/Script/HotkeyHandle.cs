@@ -38,7 +38,10 @@ public class HotkeyHandle : MonoBehaviour
         var slot = inventoryManager.playerInventory.hotbarItems[index];
         if (slot == null || slot.IsEmpty() || slot.GetItem() == null)
         {
-            UnequipAll();
+            if (currentHotkeyIndex != -1)
+            {
+                UnequipAll();
+            }
             currentHotkeyIndex = -1;
             return;
         }

@@ -73,6 +73,16 @@ public class PlayerUIManager : MonoBehaviour
                 iconImage.sprite = info.GetIcon();
                 break;
 
+            case InteractionType.Drink:
+                //// Hiển thị text tên nguồn nước
+                nameText.text = info.GetName();
+                //itemAmount.gameObject.SetActive(true);
+                iconImage.gameObject.SetActive(true);
+
+                //itemAmount.text = info.GetItemAmount(); // ví dụ Clean/Dirty
+                iconImage.sprite = info.GetIcon();
+                break;
+
 
             default:
                 HidePrompt();

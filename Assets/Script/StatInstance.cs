@@ -50,12 +50,12 @@ public class StatInstance
             decayTimer = 0f;
         }
 
-        if (data.regenRate > 0)
+        if (data.regenRate > 0 && data.regenHealthWhenFull)
         {
             Restore(data.regenRate * deltaTime); 
         }
 
-        if (IsFull() && data.healthRegenRateWhenFull > 0)
+        if (IsFull() && data.healthRegenRateWhenFull > 0 && data.regenHealthWhenFull)
         {
             if (!canRegenHealth)
             {
@@ -87,15 +87,10 @@ public class StatInstance
         }
     }
 
-
-
     public bool IsFull()
     {
         return currentValue >= data.maxValue - 0.01f;
     }
-
-
-
 
     public bool IsEmpty()
     {
@@ -106,4 +101,12 @@ public class StatInstance
     {
         return currentValue / data.maxValue;
     }
+
+    public void ResetStat()
+    {
+        currentValue = data.maxValue;
+        data.currentValue = currentValue;
+        OnStatChanged?.Invoke(currentValue);
+    }
+
 }

@@ -11,15 +11,11 @@ public class AttackState : PlayerState
     public override void Enter()
     {
         attackTimer = attackDuration;
-
-        // ✅ Kiểm tra có EquipManager không
         if (player.equipManager == null)
         {
             Debug.LogError("[AttackState] player.equipManager is NULL!");
             return;
         }
-
-        // ✅ Lấy vũ khí đang được trang bị
         var equipped = player.equipManager.GetEquippedItem(EquipType.Weapon);
         Debug.Log($"[AttackState] Equipped Weapon: {(equipped != null ? equipped.itemName : "None")}");
 

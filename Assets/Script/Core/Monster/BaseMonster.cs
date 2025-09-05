@@ -42,6 +42,9 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
     {
         if (player == null) return false;
 
+        PlayerController pc = player.GetComponent<PlayerController>();
+        if (pc != null && pc.animationController.IsDead) return false;
+
         Vector3 directionToPlayer = player.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
 

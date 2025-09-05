@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class PlayerStatus : MonoBehaviour,IDamageable
 {
     public static PlayerStatus Instance { get; private set; }
+    private PlayerController playerControl;
 
     //Player Health
     public StatsData healthData;
@@ -41,7 +43,7 @@ public class PlayerStatus : MonoBehaviour,IDamageable
     // Start is called before the first frame update
     void Start()
     {
-        
+        playerControl = GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -53,13 +55,11 @@ public class PlayerStatus : MonoBehaviour,IDamageable
         thirst.UpdateStat(deltaTime);
         health.UpdateStat(deltaTime);
 
-        if (health.IsEmpty())
-        {
-            Die();
-        }
+        //if (health.IsEmpty())
+        //{
+        //    Die();
+        //}
     }
-
-
 
     public void TakeDamage(float amount)
     {
@@ -74,6 +74,10 @@ public class PlayerStatus : MonoBehaviour,IDamageable
 
     public void Die()
     {
-        Debug.Log("Player is deadth");
+        if (playerControl.animationController.IsDead) return;
+
+        playerControl.playerStateMachine.ChangeState(
+            new DeadState(playerControl.playerStateMachine, playerControl)
+        );
     }
 }

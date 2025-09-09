@@ -8,6 +8,7 @@ public class PlayerCombat : MonoBehaviour
     public Transform weaponHitPoint;
     public int damage;
     public LayerMask targetMask;
+    public WeaponClass.WeaponType currentWeaponType = WeaponClass.WeaponType.Machete; // default
 
     private AnimationStateController animationController;
     private InputHandler inputHandler;
@@ -19,6 +20,14 @@ public class PlayerCombat : MonoBehaviour
     }
     public void HandleAtack()
     {
+        //if (currentWeaponType == WeaponClass.WeaponType.Bow)
+        //{
+        //    // Bow không dùng OverlapSphere mà dùng anim
+        //    animationController.ReleaseBow();
+        //    return;
+        //}
+
+        // melee logic
         Collider[] hitColliders = Physics.OverlapSphere(weaponHitPoint.position, weaponHitRadius, targetMask);
         HashSet<IDamageable> uniqueDamageables = new();
 
@@ -34,6 +43,7 @@ public class PlayerCombat : MonoBehaviour
             }
         }
     }
+
 
 
     private void OnDrawGizmosSelected()

@@ -4,7 +4,7 @@ public abstract class BaseAttackState : PlayerState
 {
     protected float attackDuration = 0.5f;
     protected float attackTimer = 0f;
-
+    protected bool useAttackTimer = true;
     public BaseAttackState(PlayerStateMachine playerState, PlayerController player)
         : base(playerState, player) { }
 
@@ -49,14 +49,18 @@ public abstract class BaseAttackState : PlayerState
 
         player.animationController.UpdateAnimationState(moveInput, isRunning, finalSpeed);
 
-        attackTimer -= Time.deltaTime;
-        if (attackTimer <= 0f)
+        if (useAttackTimer)
         {
-            if (moveInput.magnitude >= 0.1f)
-                playerState.ChangeState(new MovementState(playerState, player));
-            else
-                playerState.ChangeState(new IdleState(playerState, player));
+            attackTimer -= Time.deltaTime;
+            if (attackTimer <= 0f)
+            {
+                if (moveInput.magnitude >= 0.1f)
+                    playerState.ChangeState(new MovementState(playerState, player));
+                else
+                    playerState.ChangeState(new IdleState(playerState, player));
+            }
         }
+
     }
 
     public override void Exit()

@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using static WeaponClass;
 
 public class EquipManager : MonoBehaviour
 {
     [Header("References")]
-    public EquipHolder equipHolder;
+    public EquipHolder equipHolderR;
+    public EquipHolder equipHolderL;
     public Animator playerAnimator;
 
     private Dictionary<EquipType, ItemClass> currentEquippedItems = new Dictionary<EquipType, ItemClass>();
@@ -16,19 +18,33 @@ public class EquipManager : MonoBehaviour
         // Lưu lại item đang cầm
         currentEquippedItems[type] = item;
 
-        equipHolder.DisplayItem(item);
-
+        // Hiển thị item theo tay
         if (type == EquipType.Weapon && item is WeaponClass weapon)
         {
+            if (weapon.weaponType == WeaponType.Bow) // nếu là cung thì tay trái
+            {
+                equipHolderL.DisplayItem(item);
+                equipHolderR.HideItem(null); // ẩn bên tay phải
+            }
+            else
+            {
+                equipHolderR.DisplayItem(item); // mặc định vũ khí cận chiến tay phải
+                equipHolderL.HideItem(null);
+            }
+
             if (playerAnimator != null)
             {
                 playerAnimator.SetInteger("WeaponType", (int)weapon.weaponType);
                 playerAnimator.SetLayerWeight(playerAnimator.GetLayerIndex("UpperLayer"), 1f);
             }
         }
-
-        // Nếu là tool thì bạn có thể xử lý animator tool tại đây nếu có
+        else if (type == EquipType.Tool) // nếu là tool thì có thể vẫn cầm tay phải
+        {
+            equipHolderR.DisplayItem(item);
+            equipHolderL.HideItem(null);
+        }
     }
+
 
     public void UnequipItem(EquipType type)
     {
@@ -45,7 +61,11 @@ public class EquipManager : MonoBehaviour
 
         if (currentEquippedItems.TryGetValue(type, out var item))
         {
-            equipHolder.HideItem(item);
+            if (item is WeaponClass weapon && weapon.weaponType == WeaponType.Bow)
+                equipHolderL.HideItem(item);
+            else
+                equipHolderR.HideItem(item);
+
             currentEquippedItems[type] = null;
 
             if (type == EquipType.Weapon && playerAnimator != null)

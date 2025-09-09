@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 1
   itemName: Weapon
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: 21300000, guid: 58416c0bf046556499e3a7f996199abb, type: 3}
   itemDesc: 
   itemFunc: 
   isStack: 0
-  maxStack: 0
-  dropPrefab: {fileID: 0}
+  maxStack: 1
+  dropPrefab: {fileID: 100054, guid: 0be2ba322dd85494db39a44ee439af41, type: 3}
   blueprint: {fileID: 11400000, guid: a88ecef84b2dc034e96aabff7c04cd41, type: 2}
   weaponType: 3
   durability: 0

@@ -28,11 +28,25 @@ public class RunState : PlayerState
         player.controller.Move(moveDir * player.moveSpeed * Time.deltaTime); // full speed
 
         player.animationController.UpdateAnimationState(moveInput, true, player.moveSpeed);
-
         if (player.inputHandler.IsAttackInputPressed())
         {
-            playerState.ChangeState(new AttackState(playerState, player));
-            return;
+            var weapon = player.equipManager.GetEquippedItem(EquipType.Weapon) as WeaponClass;
+            if (weapon != null)
+            {
+                switch (weapon.weaponType)
+                {
+                    case WeaponClass.WeaponType.Bow:
+                        playerState.ChangeState(new BowAttackState(playerState, player));
+                        break;
+
+                    case WeaponClass.WeaponType.Machete:
+                        playerState.ChangeState(new AttackState(playerState, player));
+                        break;
+                    case WeaponClass.WeaponType.Sword:
+                        break;
+                        // nếu sau này có Tool thì gọi state riêng
+                }
+            }
         }
 
         player.ApplyGravity();

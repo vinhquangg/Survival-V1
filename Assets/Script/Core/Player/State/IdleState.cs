@@ -30,7 +30,23 @@ public class IdleState : PlayerState
 
         if (player.inputHandler.IsAttackInputPressed())
         {
-            playerState.ChangeState(new AttackState(playerState, player));
+            var weapon = player.equipManager.GetEquippedItem(EquipType.Weapon) as WeaponClass;
+            if (weapon != null)
+            {
+                switch (weapon.weaponType)
+                {
+                    case WeaponClass.WeaponType.Bow:
+                        playerState.ChangeState(new BowAttackState(playerState, player));
+                        break;
+
+                    case WeaponClass.WeaponType.Machete:
+                        playerState.ChangeState(new AttackState(playerState, player));
+                        break;
+                    case WeaponClass.WeaponType.Sword:
+                        break;
+                        // nếu sau này có Tool thì gọi state riêng
+                }
+            }
         }
 
         player.ApplyGravity();

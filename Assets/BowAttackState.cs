@@ -2,17 +2,16 @@
 
 public class BowAttackState : BaseAttackState
 {
+    private bool isAiming = false;
+
     public BowAttackState(PlayerStateMachine playerState, PlayerController player)
         : base(playerState, player) { }
-
-    private bool isAiming = false;
 
     public override void Enter()
     {
         base.Enter();
+        useAttackTimer = false;
         isAiming = true;
-
-        // Bắt đầu Aim (loop)
         player.animationController.StartAim();
     }
 
@@ -20,40 +19,31 @@ public class BowAttackState : BaseAttackState
     {
         base.Update();
 
-        // Nếu còn giữ chuột trái → tiếp tục Aim
         if (player.inputHandler.playerAction.Attack.ReadValue<float>() > 0f)
-        {
-            // Có thể add logic "charge lực bắn" ở đây
-            return;
-        }
+            return; // giữ chuột → tiếp tục Aim
 
-        // Nếu thả chuột → bắn
         if (isAiming)
-        {
             ShootArrow();
-            isAiming = false;
-        }
     }
 
     private void ShootArrow()
     {
-        // Anim bắn + recoil
-        player.animationController.ReleaseBow();
+        if (!isAiming) return;
+        isAiming = false;
 
-        // Spawn arrow
+        player.animationController.ReleaseBow(); // fire Recoil Trigger
+
         Debug.Log("[BowAttackState] Shoot Arrow!");
         // TODO: ObjectPool.Spawn(arrowPrefab, bowSocket.position, bowSocket.rotation);
 
-        // Sau khi bắn → Idle
         playerState.ChangeState(new IdleState(playerState, player));
     }
 
     protected override void OnAttackEnter(ItemClass equippedWeapon)
     {
-        Debug.Log("[BowAttackState] Attack with bow.");
+        player.animationController.TriggerAttack(WeaponClass.WeaponType.Bow);
         // Không gọi recoil ở đây nữa, tránh double
     }
-
     public override void Exit()
     {
         base.Exit();

@@ -18,7 +18,8 @@ public class WeaponClass : ItemClass
     {
         None,
         Machete,
-        Sword
+        Sword,
+        Bow,
     }
     public override ItemClass GetItem() { return this; }
     public override ToolClass GetTool() { return null; }

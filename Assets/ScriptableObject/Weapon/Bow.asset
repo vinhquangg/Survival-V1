@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a20e713fb69520429307cfecdd4b949, type: 3}
+  m_Name: Bow
+  m_EditorClassIdentifier: 
+  itemType: 1
+  itemName: Weapon
+  itemIcon: {fileID: 0}
+  itemDesc: 
+  itemFunc: 
+  isStack: 0
+  maxStack: 0
+  dropPrefab: {fileID: 0}
+  blueprint: {fileID: 11400000, guid: a88ecef84b2dc034e96aabff7c04cd41, type: 2}
+  weaponType: 3
+  durability: 0

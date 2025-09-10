@@ -10,9 +10,35 @@ public class BowAttackState : BaseAttackState
     public override void Enter()
     {
         base.Enter();
+         player.inputHandler.playerAction.Move.Disable();
         useAttackTimer = false;
         isAiming = true;
         player.animationController.StartAim();
+
+
+        // Spawn arrow hiển thị khi kéo cung
+        if (player.combat.arrowPrefab != null && player.combat.arrowSpawnPoint != null)
+        {
+            player.combat.currentArrow = GameObject.Instantiate(
+                player.combat.arrowPrefab,
+                player.combat.arrowSpawnPoint.position,
+                player.combat.arrowSpawnPoint.rotation
+            );
+            player.combat.currentArrow.transform.SetParent(player.combat.arrowSpawnPoint);
+
+            Rigidbody rb = player.combat.currentArrow.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = true; // tạm tắt vật lý
+            }
+
+            Collider col = player.combat.currentArrow.GetComponent<Collider>();
+            if (col != null && player.controller != null)
+            {
+                Physics.IgnoreCollision(col, player.controller);
+            }
+        }
+
     }
 
     public override void Update()
@@ -31,9 +57,10 @@ public class BowAttackState : BaseAttackState
         if (!isAiming) return;
         isAiming = false;
 
+        player.combat.ShootArrow();
+
         player.animationController.ReleaseBow(); // fire Recoil Trigger
 
-        Debug.Log("[BowAttackState] Shoot Arrow!");
         // TODO: ObjectPool.Spawn(arrowPrefab, bowSocket.position, bowSocket.rotation);
 
         playerState.ChangeState(new IdleState(playerState, player));
@@ -47,6 +74,7 @@ public class BowAttackState : BaseAttackState
     public override void Exit()
     {
         base.Exit();
+        player.inputHandler.playerAction.Move.Enable();
         isAiming = false;
         player.animationController.StopAimImmediate();
     }

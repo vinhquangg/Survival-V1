@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public CharacterController controller { get; private set; }
     public AnimationStateController animationController { get; private set; }
     public PlayerStateMachine playerStateMachine { get; private set; }
+    public PlayerCombat combat { get; private set; }
     public EquipManager equipManager;
     public float moveSpeed = 5f;
     public float lookSensitivity = 1f;
@@ -41,6 +42,7 @@ public class PlayerController : MonoBehaviour
         inputHandler = GetComponent<InputHandler>();
         controller = GetComponent<CharacterController>();
         animationController = GetComponent<AnimationStateController>();
+        combat = GetComponent<PlayerCombat>();
         playerStateMachine = new PlayerStateMachine();
     }
 

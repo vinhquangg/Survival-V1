@@ -1,11 +1,14 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputHandler : MonoBehaviour
 {
     public PlayerInput InputActions { get; private set; }
     public PlayerInput.PlayerActions playerAction { get; private set; }
+
     private bool CanAttack = true;
+    private bool CanInteract = true;
+    private bool CanCraft = true;
     private void Awake()
     {
         InputActions = new PlayerInput();
@@ -35,7 +38,6 @@ public class InputHandler : MonoBehaviour
     }
 
     //------Interact Controller------
-    private bool CanInteract = true;
 
     public void EnableInteractInput() => CanInteract = true;
     public void DisableInteractInput() => CanInteract = false;
@@ -46,9 +48,9 @@ public class InputHandler : MonoBehaviour
     }
 
     //------Crafting Controller------
-    private bool CanCraft = true;
     public void EnableCraftInput() => CanCraft = true;
     public void DisableCraftInput() => CanCraft = false;
+
 
     public bool IsCraftPressed()
     {

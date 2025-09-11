@@ -1,38 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Arrow : MonoBehaviour
 {
     private Rigidbody rb;
     private int arrowDamage = 25;
 
-    
-    private bool isStuck = false; // Flag to track if the arrow is stuck
+    private bool isStuck = false;
     private bool hasDealtDamage = false;
+
+    private GameObject owner; // người bắn
+
+    public void SetOwner(GameObject shooter)
+    {
+        owner = shooter;
+
+        // Ignore tất cả collider của owner
+        Collider arrowCol = GetComponent<Collider>();
+        if (arrowCol != null && owner != null)
+        {
+            foreach (Collider col in owner.GetComponentsInChildren<Collider>())
+            {
+                Physics.IgnoreCollision(arrowCol, col);
+            }
+        }
+    }
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-
-        Destroy(gameObject, 5f); // Destroy the arrow after 5 seconds if it doesn't hit anything
-
-        Collider arrowCollider = GetComponent<Collider>();
+        Destroy(gameObject, 5f);
     }
 
-    // This method is called when the arrow hits a collider
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("Arrow collided with: " + collision.transform.name);
-        // Check if the arrow is not already stuck
-        if (!isStuck && !collision.transform.CompareTag("Player"))
-        {
-            isStuck = true; // Mark the arrow as stuck
 
-            // Stop the movement by setting the Rigidbody's velocity and angular velocity to zero
+        if (!isStuck && (owner == null || collision.gameObject != owner))
+        {
+            isStuck = true;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-
-            // Optionally, freeze the Rigidbody's movement and rotation completely
             rb.isKinematic = true;
 
             Debug.Log("Arrow stuck! :" + collision.transform.name);

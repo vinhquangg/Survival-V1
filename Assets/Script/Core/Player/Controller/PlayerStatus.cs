@@ -59,6 +59,11 @@ public class PlayerStatus : MonoBehaviour,IDamageable
         //{
         //    Die();
         //}
+
+        if (TemperatureManager.Instance != null)
+        {
+            ApplyTemperatureEffect(TemperatureManager.Instance.currentTemperature, deltaTime);
+        }
     }
 
     public void TakeDamage(float amount)
@@ -79,5 +84,34 @@ public class PlayerStatus : MonoBehaviour,IDamageable
         playerControl.playerStateMachine.ChangeState(
             new DeadState(playerControl.playerStateMachine, playerControl)
         );
+    }
+
+    private void ApplyTemperatureEffect(int currentTemperature, float deltaTime)
+    {
+        // TRỜI LẠNH
+        if (currentTemperature <= 22) // bạn có thể chỉnh ngưỡng
+        {
+            // Tăng tốc độ giảm Hunger
+            hunger.Reduce(1f * deltaTime);
+
+            // Quá lạnh → giảm Health
+            if (currentTemperature <= 5)
+            {
+                health.Reduce(1f * deltaTime);
+            }
+        }
+
+        // TRỜI NÓNG
+        else if (currentTemperature >= 35)
+        {
+            // Tăng tốc giảm Thirst
+            thirst.Reduce(1f * deltaTime);
+
+            // Quá nóng → giảm Health
+            if (currentTemperature >= 40)
+            {
+                health.Reduce(1f * deltaTime);
+            }
+        }
     }
 }

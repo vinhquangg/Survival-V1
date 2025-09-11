@@ -40,11 +40,11 @@ public class MovementState : PlayerState
                 {
                     case WeaponClass.WeaponType.Bow:
                         playerState.ChangeState(new BowAttackState(playerState, player));
-                        break;
+                        return;
 
                     case WeaponClass.WeaponType.Machete:
                         playerState.ChangeState(new AttackState(playerState, player));
-                        break;
+                        return;
                     case WeaponClass.WeaponType.Sword:
                         break;
                         // nếu sau này có Tool thì gọi state riêng

@@ -37,6 +37,16 @@ public class InputHandler : MonoBehaviour
         return CanAttack && playerAction.Attack.triggered;
     }
 
+    public bool IsAttackReleased()
+    {
+        return CanAttack && playerAction.Attack.WasReleasedThisFrame();
+    }
+
+    public bool IsAttackHeld()
+    {
+        return CanAttack && playerAction.Attack.ReadValue<float>() > 0f;
+    }
+
     //------Interact Controller------
 
     public void EnableInteractInput() => CanInteract = true;

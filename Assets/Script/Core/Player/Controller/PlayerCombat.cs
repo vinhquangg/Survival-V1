@@ -12,7 +12,8 @@ public class PlayerCombat : MonoBehaviour
     public Transform arrowSpawnPoint;
     public GameObject arrowPrefab;
     public float arrowSpeed = 40f;
-
+    private float lastShootTime = 0f;
+    [SerializeField] private float shootCooldown = 1f;
     [HideInInspector] public GameObject currentArrow { get; set; } // arrow hiển thị khi kéo
 
     [HideInInspector] public WeaponClass.WeaponType currentWeaponType = WeaponClass.WeaponType.Machete; // default
@@ -44,13 +45,23 @@ public class PlayerCombat : MonoBehaviour
             }
         }
     }
+
+    public bool CanShoot()
+    {
+        return Time.time - lastShootTime >= shootCooldown;
+    }
+
+    public void MarkShootTime()
+    {
+        lastShootTime = Time.time;
+    }
+
     public void ShootArrow()
     {
         if (arrowPrefab == null || arrowSpawnPoint == null) return;
 
         if (currentArrow != null)
         {
-            // bật vật lý và tách khỏi bow
             Rigidbody rb = currentArrow.GetComponent<Rigidbody>();
             if (rb != null)
             {
@@ -58,20 +69,21 @@ public class PlayerCombat : MonoBehaviour
                 rb.velocity = arrowSpawnPoint.forward * arrowSpeed;
             }
 
+            // Gỡ khỏi cung
             currentArrow.transform.SetParent(null);
+
+            // Gán owner cho arrow
+            Arrow arrowComp = currentArrow.GetComponent<Arrow>();
+            if (arrowComp != null)
+            {
+                arrowComp.SetOwner(gameObject); // gameObject ở đây là Player
+            }
+
             currentArrow = null;
         }
-        else
-        {
-            // fallback nếu không có arrow hiển thị
-            GameObject arrowObj = Instantiate(arrowPrefab, arrowSpawnPoint.position + arrowSpawnPoint.forward * 0.5f, arrowSpawnPoint.rotation);
-            Rigidbody rb = arrowObj.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.velocity = arrowSpawnPoint.forward * arrowSpeed;
-            }
-        }
     }
+
+
 
 
     private void OnDrawGizmosSelected()

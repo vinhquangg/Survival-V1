@@ -84,27 +84,18 @@ public class AnimationStateController : MonoBehaviour
         if (isAiming) return;
         isAiming = true;
 
-        animator.SetBool(isAimingHash, true);
+        animator.SetTrigger(isAimingHash);
         if (bowAnimator != null)
-            bowAnimator.SetBool(isAimingHash, true);
+            bowAnimator.SetTrigger(isAimingHash);
     }
 
     public void ReleaseBow()
     {
-        if (!isAiming) return;
-        isAiming = false;
-
-        // Fire Recoil Trigger
         animator.SetTrigger(bowRecoilTriggerHash);
         if (bowAnimator != null)
-        {
-            bowAnimator.SetBool(isAimingHash, false); // tắt Aim loop
             bowAnimator.SetTrigger(bowRecoilTriggerHash);
-        }
-
-        // Debug
-        StartCoroutine(DebugRecoilAfterFrame());
     }
+
 
     private IEnumerator DebugRecoilAfterFrame()
     {
@@ -120,8 +111,6 @@ public class AnimationStateController : MonoBehaviour
         animator.SetBool(isAimingHash, false);
         if (bowAnimator != null)
             bowAnimator.SetBool(isAimingHash, false);
-
-        // Không reset recoil nữa
     }
 
     public void TriggerChop()

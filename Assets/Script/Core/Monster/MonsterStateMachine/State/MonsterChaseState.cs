@@ -15,7 +15,7 @@ public class MonsterChaseState : IInterfaceMonsterState
     public void EnterState()
     {
         enemy.animator.SetBool("isChase", true);
-        enemy.PlayAnimation("Chase_Monster");
+        enemy.baseMonster.PlayAnimation(MonsterAnimState.Chase);
         Debug.Log("Monster is now chasing the player.");
     }
 

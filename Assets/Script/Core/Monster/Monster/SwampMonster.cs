@@ -54,6 +54,18 @@ public class SwampMonster : BaseMonster
         }
     }
 
+    protected override void Die()
+    {
+        if(_stateMachine!= null)
+        {
+            _stateMachine.SwitchState(new MonsterDeadState(_stateMachine));
+        }
+        else
+        {
+            base.Die();
+        }
+    }
+
     //private void OnTriggerEnter(Collider other)
     //{
 

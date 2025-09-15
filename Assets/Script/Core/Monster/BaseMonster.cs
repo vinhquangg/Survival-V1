@@ -23,19 +23,48 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
     public float currentHeal;
     private float graceTimer = 0f;
     private float graceTimeMax = 0.5f;
-    protected virtual void Start()
+
+    [Header("Animation Settings")]
+    public MonsterAnimationData animData;  // SO chứa mapping anim theo enum
+    protected virtual void Awake()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _stateMachine = GetComponent<MonsterStateMachine>();
-        animMonster = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        animMonster = GetComponent<Animator>();
+        if (animMonster == null)
+        {
+            Debug.LogError($"{name}: Animator not found!");
+        }
+    }
+    protected virtual void Start()
+    {
+        //_navMeshAgent = GetComponent<NavMeshAgent>();
+        //_stateMachine = GetComponent<MonsterStateMachine>();
+        //animMonster = GetComponent<Animator>();
+        //_rigidbody = GetComponent<Rigidbody>();
+        player = GetPlayer();
+
 
         combat = GetComponent<MonsterCombat>();
         if (combat != null)
         {
             combat.target = player;
         }
+    }
+
+    protected Transform GetPlayer()
+    {
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                player = playerObj.transform;
+            }
+        }
+        return player;
     }
 
     public virtual bool CanSeePlayer()
@@ -140,6 +169,27 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         Debug.Log($"{gameObject.name} đã chết");
         gameObject.SetActive(false);
     }
+
+    public void PlayAnimation(MonsterAnimState state)
+    {
+        if (animData == null || animData.mappings == null)
+        {
+            Debug.LogWarning($"No animData on {gameObject.name}");
+            return;
+        }
+
+        foreach (var map in animData.mappings)
+        {
+            if (map.state == state)
+            {
+                animMonster.Play(map.animName);
+                return;
+            }
+        }
+
+        Debug.LogWarning($"Animation for {state} not found on {gameObject.name}");
+    }
+
 
 
 }

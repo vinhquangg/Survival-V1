@@ -26,7 +26,7 @@ public class MonsterStateMachine : MonoBehaviour
             { "MonsterPatrolState",() => new MonsterPatrolState(this)},
             { "MonsterChaseState",() => new MonsterChaseState(this)},
             { "MonsterAttackState",() => new MonsterAttackState(this)},
-            //{ "MonsterDeadState",() => new MonsterDeadState(this)}
+            { "MonsterDeadState",() => new MonsterDeadState(this)}
 
         };
         SwitchState(stateFactory["MonsterIdleState"]());
@@ -59,8 +59,8 @@ public class MonsterStateMachine : MonoBehaviour
         }
     }
 
-    public void PlayAnimation(string animationName)
-    {
-        animator.Play(animationName);
-    }
+    //public void PlayAnimation(string animationName)
+    //{
+    //    animator.Play(animationName);
+    //}
 }

@@ -14,7 +14,7 @@ public class MonsterIdleState : IInterfaceMonsterState
     public void EnterState()
     {
         //enemy._rigidbody.velocity = Vector3.zero;
-        enemy.PlayAnimation("Idle_Monster");
+        enemy.baseMonster.PlayAnimation(MonsterAnimState.Idle);
         enemy.baseMonster._navMeshAgent.ResetPath();
         idleTimer = 0f;
     }

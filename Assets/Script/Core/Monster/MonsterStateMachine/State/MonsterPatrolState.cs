@@ -54,7 +54,7 @@ public class MonsterPatrolState : MonsterBaseState
                 waitCounter = 0f;
 
                 stateMachine.animator.SetBool("isPatrol", false);
-                stateMachine.animator.SetBool("isChase",false);
+                stateMachine.animator.SetBool("isChase", false);
                 monster.PlayAnimation(MonsterAnimState.Idle);
             }
             else
@@ -69,7 +69,15 @@ public class MonsterPatrolState : MonsterBaseState
                 }
             }
         }
+        else
+        {
+            if (agent.destination != null)
+            {
+                monster.RotateTowardsPatrolPoint(agent.destination, monster.combat.rotationSpeed);
+            }
+        }
     }
+
 
 
 

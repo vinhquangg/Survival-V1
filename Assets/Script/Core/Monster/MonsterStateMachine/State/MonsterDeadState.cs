@@ -1,45 +1,42 @@
 ﻿using UnityEngine;
 
-public class MonsterDeadState : IInterfaceMonsterState
+public class MonsterDeadState : MonsterBaseState
 {
-    private MonsterStateMachine enemy;
     private bool isDeadHandled = false;
 
-    public MonsterDeadState(MonsterStateMachine enemy)
-    {
-        this.enemy = enemy;
-    }
+    public MonsterDeadState(MonsterStateMachine stateMachine) : base(stateMachine) { }
 
-    public void EnterState()
+
+    public override void EnterState()
     {
         Debug.Log("Monster is Dead.");
-        enemy.animator.SetBool("isDead", true);
+        stateMachine.animator.SetBool("isDead", true);
 
-        if (enemy.baseMonster._navMeshAgent != null)
+        if (monster._navMeshAgent != null)
         {
-            enemy.baseMonster._navMeshAgent.isStopped = true;
-            enemy.baseMonster._navMeshAgent.enabled = false; // disable hẳn
+            monster._navMeshAgent.isStopped = true;
+            monster._navMeshAgent.enabled = false; // disable hẳn
         }
 
         if (!isDeadHandled)
         {
-            enemy.animator.SetBool("isChase", false);
-            enemy.animator.SetBool("isAttack", false);
-            enemy.baseMonster.PlayAnimation(MonsterAnimState.Death);
+            stateMachine.animator.SetBool("isChase", false);
+            stateMachine.animator.SetBool("isAttack", false);
+            monster.PlayAnimation(MonsterAnimState.Death);
             isDeadHandled = true;
         }
 
-        Collider col = enemy.baseMonster.GetComponent<Collider>();
+        Collider col = monster.GetComponent<Collider>();
         if (col != null) col.enabled = false;
     }
 
 
-    public void ExitState()
+    public override void ExitState()
     {
         // Dead thường không có ExitState, nhưng vẫn để trống cho chuẩn
     }
 
-    public void UpdateState()
+    public override void UpdateState()
     {
         // Sau khi anim Die xong thì xử lý logic
         //if (!isDeadHandled && enemy.animator.GetCurrentAnimatorStateInfo(0).IsName("Die_Monster"))
@@ -64,7 +61,7 @@ public class MonsterDeadState : IInterfaceMonsterState
         //}
     }
 
-    public void FixedUpdateState()
+    public override void FixedUpdateState()
     {
         // Dead không cần xử lý vật lý
     }

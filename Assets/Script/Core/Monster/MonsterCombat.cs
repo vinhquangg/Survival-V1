@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ public abstract class MonsterCombat : MonoBehaviour
     [Header("Target")]
     public Transform target; // The target the monster will attack, typically the player
     public Animator animator;
-
+    public float rotationSpeed { get; protected set; } = 5f;
     protected float lastAttackTime = 0f; // Time when the monster last attacked 
 
     public bool CanAttack()
@@ -24,10 +24,25 @@ public abstract class MonsterCombat : MonoBehaviour
         return Time.time >= lastAttackTime && distanceToTarget <= attackRange;
     }
 
+    public void RotateTowardsTarget(float rotationSpeed)
+    {
+        if (target == null) return;
+
+        Vector3 direction = (target.position - transform.position).normalized;
+        direction.y = 0; // Giữ nguyên chiều cao, tránh xoay đầu lên/xuống
+
+        if (direction.magnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+        }
+    }
+
     public void TryAttack()
     {
         if (CanAttack())
         {
+            //RotateTowardsTarget(rotationSpeed);
             Attack();
             LastAttackTime(); // Update the last attack time after a successful attack
         }

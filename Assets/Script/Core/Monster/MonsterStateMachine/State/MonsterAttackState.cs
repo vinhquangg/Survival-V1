@@ -1,59 +1,104 @@
 ﻿using UnityEngine;
 
-public class MonsterAttackState : IInterfaceMonsterState
+public class MonsterAttackState : MonsterBaseState
 {
-    private MonsterStateMachine enemy;
     private float attackCooldown = 1.5f;
     private float cooldownTimer = 0f;
     private bool isAttacking = false;
+    private bool isBite = false;
 
-    public MonsterAttackState(MonsterStateMachine enemy)
+    public MonsterAttackState(MonsterStateMachine stateMachine) : base(stateMachine) { }
+    public override void EnterState()
     {
-        this.enemy = enemy;
-    }
-
-    public void EnterState()
-    {
-        enemy.baseMonster._navMeshAgent.ResetPath(); // Dừng di chuyển
+        monster._navMeshAgent.ResetPath(); // Dừng di chuyển
         cooldownTimer = 0f;
         isAttacking = true;
-        enemy.animator.SetTrigger("isAttack"); // Trigger attack anim
+        stateMachine.animator.SetTrigger("isAttack"); // Trigger attack anim
     }
 
-    public void ExitState()
+    public override void ExitState()
     {
         isAttacking = false;
     }
 
-    public void FixedUpdateState() { }
+    public override void FixedUpdateState() { }
 
-    public void UpdateState()
+    public override void UpdateState()
     {
-        float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.baseMonster.player.position);
+        if (monster.player == null) return;
 
-        // Nếu không còn thấy player → chuyển về Idle
-        if (!enemy.baseMonster.CanSeePlayer())
+        float distanceToPlayer = Vector3.Distance(stateMachine.transform.position, monster.player.position);
+
+        // Nếu không thấy player → về Idle
+        if (!monster.CanSeePlayer())
         {
-            enemy.SwitchState(new MonsterIdleState(enemy));
+            stateMachine.SwitchState(new MonsterIdleState(stateMachine));
             return;
         }
 
-        // Nếu thấy nhưng không đủ gần → quay về Chase
-        if (distanceToPlayer > enemy.baseMonster.combat.attackRange && !isAttacking)
+        // --- RANGE MONSTER ---
+        if (monster.combat is RangeMonsterCombat ranged)
         {
-            enemy.SwitchState(new MonsterChaseState(enemy));
+            // Luôn quay về player nếu đang attack/bite
+            if (isBite || isAttacking)
+                monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
+
+            // Player gần → Bite
+            if (ranged.CanBite())
+            {
+                if (!isBite)
+                {
+                    isBite = true;
+                    isAttacking = false;
+                    cooldownTimer = 0f;
+                    //monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
+                    stateMachine.animator.SetTrigger("isBite");
+                }
+                return; // ưu tiên cắn → không bắn projectile
+            }
+
+            // Player xa nhưng trong attack range → ShootProjectile
+            cooldownTimer += Time.deltaTime;
+            if (!isAttacking && cooldownTimer >= attackCooldown)
+            {
+                isAttacking = true;
+                cooldownTimer = 0f;
+                //monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
+                stateMachine.animator.SetTrigger("isAttack");
+            }
+
             return;
         }
 
-        // Nếu đủ gần và thấy → thực hiện attack logic
-        cooldownTimer += Time.deltaTime;
-        if (!isAttacking && cooldownTimer >= attackCooldown)
+        // --- MELEE MONSTER ---
+        if (monster.combat is MeleeMonsterCombat)
         {
-            isAttacking = true;
-            cooldownTimer = 0f;
-            enemy.animator.SetTrigger("isAttack");
+            if (distanceToPlayer <= monster.combat.attackRange)
+            {
+                // Attack khi gần
+                if (!isAttacking)
+                {
+                    isAttacking = true;
+                    cooldownTimer = 0f;
+                    //monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
+                    stateMachine.animator.SetTrigger("isAttack");
+                }
+                else
+                {
+                    // Luôn quay về player khi đang attack
+                    //monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
+                }
+            }
+            else if (!isAttacking)
+            {
+                // Quá xa → Chase
+                stateMachine.SwitchState(new MonsterChaseState(stateMachine));
+            }
+
+            return;
         }
     }
+
 
 
 
@@ -83,6 +128,7 @@ public class MonsterAttackState : IInterfaceMonsterState
     // Gọi từ Animation Event khi animation kết thúc
     public void OnAttackAnimationFinished()
     {
+        isBite = false;
         isAttacking = false;
     }
 }

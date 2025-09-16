@@ -23,3 +23,5 @@ MonoBehaviour:
     animName: Dragon_Attack
   - state: 5
     animName: Dragon_Dead
+  - state: 5
+    animName: Dragon_Bite

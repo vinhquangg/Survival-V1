@@ -3,49 +3,44 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MonsterPatrolState : IInterfaceMonsterState
+public class MonsterPatrolState : MonsterBaseState
 {
-    private MonsterStateMachine enemy;
     private Transform monsterTransform;
     private float patrolRadius = 10f;
     private float waitTime = 5f;
     private float waitCounter = 0f;
     private bool isWaiting = false;
-    public MonsterPatrolState(MonsterStateMachine enemy)
+    public MonsterPatrolState(MonsterStateMachine stateMachine) : base(stateMachine) { }
+    public override void EnterState()
     {
-        this.enemy = enemy;
-        this.monsterTransform = enemy.transform;
-    }
-    public void EnterState()
-    {
-        enemy.baseMonster._navMeshAgent.isStopped = false;
-        enemy.animator.SetBool("isPatrol", true);
-        enemy.baseMonster.PlayAnimation(MonsterAnimState.Patrol);
-        enemy.baseMonster.SetRandomPatrolDestination(patrolRadius);
+        monster._navMeshAgent.isStopped = false;
+        stateMachine.animator.SetBool("isPatrol", true);
+        monster.PlayAnimation(MonsterAnimState.Patrol);
+        monster.SetRandomPatrolDestination(patrolRadius);
     }
 
-    public void ExitState()
+    public override void ExitState()
     {
-        enemy.baseMonster._navMeshAgent.ResetPath();
+        monster._navMeshAgent.ResetPath();
         isWaiting = false;
         waitCounter = 0f;
-        enemy.animator.SetBool("isPatrol", false);
+        stateMachine.animator.SetBool("isPatrol", false);
     }
 
-    public void FixedUpdateState()
+    public override void FixedUpdateState()
     {
 
     }
 
-    public void UpdateState()
+    public override void UpdateState()
     {
-        if (enemy.baseMonster.CanSeePlayer())
+        if (monster.CanSeePlayer())
         {
-            enemy.SwitchState(new MonsterChaseState(enemy));
+            stateMachine.SwitchState(new MonsterChaseState(stateMachine));
             return;
         }
 
-        NavMeshAgent agent = enemy.baseMonster._navMeshAgent;
+        NavMeshAgent agent = monster._navMeshAgent;
 
         bool arrived = !agent.pathPending &&
                        agent.remainingDistance <= agent.stoppingDistance &&
@@ -58,9 +53,9 @@ public class MonsterPatrolState : IInterfaceMonsterState
                 isWaiting = true;
                 waitCounter = 0f;
 
-                enemy.animator.SetBool("isPatrol", false);
-                enemy.animator.SetBool("isChase",false);
-                enemy.baseMonster.PlayAnimation(MonsterAnimState.Idle);
+                stateMachine.animator.SetBool("isPatrol", false);
+                stateMachine.animator.SetBool("isChase",false);
+                monster.PlayAnimation(MonsterAnimState.Idle);
             }
             else
             {
@@ -68,9 +63,9 @@ public class MonsterPatrolState : IInterfaceMonsterState
                 if (waitCounter >= waitTime)
                 {
                     isWaiting = false;
-                    enemy.animator.SetBool("isPatrol", true);
-                    enemy.baseMonster.PlayAnimation(MonsterAnimState.Patrol);
-                    enemy.baseMonster.SetRandomPatrolDestination(patrolRadius);
+                    stateMachine.animator.SetBool("isPatrol", true);
+                    monster.PlayAnimation(MonsterAnimState.Patrol);
+                    monster.SetRandomPatrolDestination(patrolRadius);
                 }
             }
         }

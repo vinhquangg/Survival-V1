@@ -5,5 +5,6 @@ public enum MonsterAnimState
     Patrol,
     Chase,
     Attack,
+    Bite,
     Death
 }

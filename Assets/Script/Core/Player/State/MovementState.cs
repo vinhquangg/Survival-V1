@@ -16,7 +16,6 @@ public class MovementState : PlayerState
             return;
         }
 
-        // Nếu giữ LeftShift + tiến lên → RunState
         if (Input.GetKey(KeyCode.LeftShift) && moveInput.y > 0f)
         {
             playerState.ChangeState(new RunState(playerState, player));
@@ -24,7 +23,7 @@ public class MovementState : PlayerState
         }
 
         Vector3 moveDir = player.transform.right * moveInput.x + player.transform.forward * moveInput.y;
-        float finalSpeed = player.moveSpeed * 0.5f; // đi bộ
+        float finalSpeed = player.moveSpeed * 0.5f; 
 
         player.controller.Move(moveDir * finalSpeed * Time.deltaTime);
 

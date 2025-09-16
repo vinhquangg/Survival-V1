@@ -2,52 +2,50 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MonsterChaseState : IInterfaceMonsterState
-{
-    public MonsterStateMachine enemy;   
+public class MonsterChaseState : MonsterBaseState
+{ 
     private float chaseSpeed;
 
-    public MonsterChaseState(MonsterStateMachine enemy)
+    public MonsterChaseState(MonsterStateMachine stateMachine): base(stateMachine) { }
+
+    public override void EnterState()
     {
-        this.enemy = enemy;
-        this.chaseSpeed = enemy.baseMonster.moveSpeed/*monsterData.chaseSpeed*/; 
-    }
-    public void EnterState()
-    {
-        enemy.animator.SetBool("isChase", true);
-        enemy.baseMonster.PlayAnimation(MonsterAnimState.Chase);
+        chaseSpeed = monster.moveSpeed;
+        stateMachine.animator.SetBool("isChase", true);
+        monster.PlayAnimation(MonsterAnimState.Chase);
         Debug.Log("Monster is now chasing the player.");
     }
 
-    public void ExitState()
+    public override void ExitState()
     {
-        enemy.animator.SetBool("isChase", false);
+        stateMachine.animator.SetBool("isChase", false);
         Debug.Log($" Enemy stop chase.");
     }
 
-    public void FixedUpdateState()
+    public override void FixedUpdateState()
     {
         
     }
 
-    public void UpdateState()
+    public override void UpdateState()
     {
         // Nếu không còn thấy player → về idle
-        if (!enemy.baseMonster.CanSeePlayer())
+        if (!monster.CanSeePlayer())
         {
-            enemy.SwitchState(new MonsterIdleState(enemy));
+            stateMachine.SwitchState(new MonsterIdleState(stateMachine));
             return;
         }
 
-        float distanceToPlayer = Vector3.Distance(enemy.transform.position, enemy.baseMonster.player.position);
+        float distanceToPlayer = Vector3.Distance(stateMachine.transform.position, monster.player.position);
 
-        if (distanceToPlayer <= enemy.baseMonster.combat.attackRange)
+        if (distanceToPlayer <= monster.combat.attackRange)
         {
-            enemy.SwitchState(new MonsterAttackState(enemy));
+            stateMachine.SwitchState(new MonsterAttackState(stateMachine));
             return;
         }
-        enemy.baseMonster._navMeshAgent.speed = chaseSpeed;
-        enemy.baseMonster._navMeshAgent.SetDestination(enemy.baseMonster.player.position);
+        monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
+        monster._navMeshAgent.speed = chaseSpeed;
+        monster._navMeshAgent.SetDestination(monster.player.position);
     }
 
 }

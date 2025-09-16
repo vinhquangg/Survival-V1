@@ -8,6 +8,8 @@ public class MeleeMonsterCombat : MonsterCombat
     protected override void Attack()
     {
         if(animator == null) return;
+            //animator.SetTrigger("isAttack");
+        DealDamageToTarget();
     }
 
     public void DealDamageToTarget()

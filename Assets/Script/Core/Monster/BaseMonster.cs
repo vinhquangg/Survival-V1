@@ -29,10 +29,10 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
     protected virtual void Awake()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
-        _stateMachine = GetComponent<MonsterStateMachine>();
         _rigidbody = GetComponent<Rigidbody>();
-
         animMonster = GetComponent<Animator>();
+        _stateMachine = GetComponent<MonsterStateMachine>();
+
         if (animMonster == null)
         {
             Debug.LogError($"{name}: Animator not found!");
@@ -52,6 +52,11 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         {
             combat.target = player;
         }
+
+        //if (_navMeshAgent != null)
+        //{
+        //    _navMeshAgent.updateRotation = false;
+        //}
     }
 
     protected Transform GetPlayer()
@@ -143,6 +148,16 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         }
     }
 
+    public void RotateTowardsPatrolPoint(Vector3 patrolPoint, float rotationSpeed)
+    {
+        Vector3 direction = patrolPoint - transform.position;
+        direction.y = 0f; // chỉ quay theo trục Y
+        if (direction.sqrMagnitude < 0.01f) return; // tránh quay khi quá gần
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
     public void OnAttackAnimationFinished()
     {
         if (_stateMachine._currentState is MonsterAttackState attackState)
@@ -150,6 +165,7 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
             attackState.OnAttackAnimationFinished();
         }
     }
+
 
 
     public virtual void TakeDamage(float damage)

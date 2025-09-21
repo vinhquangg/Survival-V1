@@ -6,6 +6,7 @@ using UnityEngine.Playables;
 public class PlayerStatus : MonoBehaviour,IDamageable
 {
     public static PlayerStatus Instance { get; private set; }
+    [SerializeField] private DamageFeedback damageFeedback;
     private PlayerController playerControl;
 
     //Player Health
@@ -37,6 +38,11 @@ public class PlayerStatus : MonoBehaviour,IDamageable
         thirst = new StatInstance(thirstData);
         thirstData.currentValue = thirst.currentValue;
 
+        if (damageFeedback == null)
+        {
+            damageFeedback = FindObjectOfType<DamageFeedback>();
+            damageFeedback?.HideDamage();
+        }
 
     }
 
@@ -70,8 +76,12 @@ public class PlayerStatus : MonoBehaviour,IDamageable
     {
         health.Reduce(amount);
         Debug.Log($"Player take damage {amount} .Have {health.currentValue} left");
+        if (damageFeedback != null)
+        {
+            damageFeedback.ShowDamage();
+        }
 
-        if(health.IsEmpty())
+        if (health.IsEmpty())
         {
             Die();
         }

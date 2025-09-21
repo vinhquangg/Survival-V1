@@ -5,7 +5,7 @@ using UnityEngine;
 public class ToolClass : ItemClass
 {
     public ToolType toolType;
-    public float durability = 1f; 
+    public int durability = 1; 
     public ToolClass()
     {
         itemType = ItemType.Tool;

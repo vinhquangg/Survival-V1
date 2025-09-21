@@ -33,7 +33,14 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         }
 
         // Chuyển state ChopState mới ngay lập tức
+        var toolSlot = equipManager.GetEquippedSlot(EquipType.Tool);
+        if (toolSlot != null && !toolSlot.IsEmpty())
+        {
+            toolSlot.ReduceDurability(0.1f); // trừ 5% durability
+            Debug.Log("Reduced tool durability by 5%");
+        }
         player.playerStateMachine.ChangeState(new ChopState(player.playerStateMachine, player, this));
+        InventoryManager.Instance.RefreshAllUI();
     }
 
     public void SpawnDrops()

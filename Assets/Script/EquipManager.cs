@@ -10,6 +10,8 @@ public class EquipManager : MonoBehaviour
     public Animator playerAnimator;
 
     private Dictionary<EquipType, ItemClass> currentEquippedItems = new Dictionary<EquipType, ItemClass>();
+    private Dictionary<EquipType, SlotClass> equippedSlots = new Dictionary<EquipType, SlotClass>();
+
     public AnimationStateController animController;
     public void EquipItem(ItemClass item)
     {
@@ -45,6 +47,22 @@ public class EquipManager : MonoBehaviour
         }
     }
 
+    public void EquipItem(SlotClass slot)
+    {
+        if (slot == null || slot.IsEmpty()) return;
+
+        ItemClass item = slot.GetItem();
+        if (item == null) return;
+
+        EquipType type = item.GetEquipType();
+
+        // lưu slot runtime
+        equippedSlots[type] = slot;
+
+        // gọi lại hàm cũ để xử lý hiển thị + animation
+        EquipItem(item);
+    }
+
 
     public void UnequipItem(EquipType type)
     {
@@ -58,6 +76,23 @@ public class EquipManager : MonoBehaviour
         //    Debug.Log("[EquipManager] Đang chặt cây, không thể cất tool.");
         //    return;
         //}
+        ///////////
+        //if (currentEquippedItems.TryGetValue(type, out var item))
+        //{
+        //    if (item is WeaponClass weapon && weapon.weaponType == WeaponType.Bow)
+        //        equipHolderL.HideItem(item);
+        //    else
+        //        equipHolderR.HideItem(item);
+
+        //    currentEquippedItems[type] = null;
+
+        //    if (type == EquipType.Weapon && playerAnimator != null)
+        //    {
+        //        playerAnimator.SetInteger("WeaponType", 0);
+        //        playerAnimator.SetLayerWeight(playerAnimator.GetLayerIndex("UpperLayer"), 0f);
+        //    }
+        //}
+
 
         if (currentEquippedItems.TryGetValue(type, out var item))
         {
@@ -67,6 +102,7 @@ public class EquipManager : MonoBehaviour
                 equipHolderR.HideItem(item);
 
             currentEquippedItems[type] = null;
+            equippedSlots[type] = null; // clear slot runtime
 
             if (type == EquipType.Weapon && playerAnimator != null)
             {
@@ -76,6 +112,11 @@ public class EquipManager : MonoBehaviour
         }
     }
 
+    public SlotClass GetEquippedSlot(EquipType type)
+    {
+        equippedSlots.TryGetValue(type, out var slot);
+        return slot;
+    }
 
     public ItemClass GetEquippedItem(EquipType type)
     {

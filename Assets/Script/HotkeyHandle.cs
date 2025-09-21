@@ -92,7 +92,7 @@ public class HotkeyHandle : MonoBehaviour, IPlayerDependent
         {
             UnequipAll();
 
-            equipManager.EquipItem(item);
+            equipManager.EquipItem(slot);
             if (SoundManager.Instance != null)
                 SoundManager.Instance.PlaySFX(SoundManager.Instance.equipSound);
 

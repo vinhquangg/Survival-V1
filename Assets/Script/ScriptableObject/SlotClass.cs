@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 [System.Serializable]
@@ -42,5 +42,17 @@ public class SlotClass
     {
         this.item = newItem;
         this.quantity = quantity;
+    }
+
+    public void ReduceDurability(float percent)
+    {
+        if (durability < 0) return;
+        durability = Mathf.Clamp01(durability - percent);
+
+        if (durability <= 0f)
+        {
+            item = null;
+            quantity = 0;
+        }
     }
 }

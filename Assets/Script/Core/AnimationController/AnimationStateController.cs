@@ -118,7 +118,15 @@ public class AnimationStateController : MonoBehaviour
         animator.SetBool("isChop", false);
     }
 
-    // Animation Event cuối clip Chop gọi hàm này
+    public void OnChopImpact()
+    {
+        if (playerController.playerStateMachine.currentState is ChopState chopState)
+        {
+            chopState.OnChopImpact();
+        }
+    }
+
+        // Animation Event cuối clip Chop gọi hàm này
     public void ChopEnd()
     {
         ResetChop();

@@ -35,6 +35,11 @@ public class ChopState : PlayerState
         }
     }
 
+    public void OnChopImpact()
+    {
+        if (!isChopping) return;
+    }
+
     // Gọi từ Animation Event -> ChopEnd()
     public void OnChopEnd()
     {

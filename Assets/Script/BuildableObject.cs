@@ -109,6 +109,14 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
         {
             campfire.StopFire();
         }
+
+        if (PlayerStatus.Instance != null)
+        {
+            PlayerStatus.Instance.thirst.Reduce(20f);  
+            PlayerStatus.Instance.hunger.Reduce(20f); 
+            Debug.Log("Player mất 5 máu và 10 thức ăn khi build xong!");
+        }
+
     }
 
 

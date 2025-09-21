@@ -10,114 +10,80 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         treeInstance = GetComponent<TreeInstance>();
     }
 
-    public Sprite GetIcon()
-    {
-        return null;
-    }
+    public Sprite GetIcon() => null;
 
-    public InteractionType GetInteractionType()
-    {
-        return InteractionType.Chop;
-    }
+    public InteractionType GetInteractionType() => InteractionType.Chop;
 
-    public string GetItemAmount()
-    {
-        return "";
-    }
+    public string GetItemAmount() => "";
 
-    public string GetName()
-    {
-        if (treeInstance == null)
-            treeInstance = GetComponent<TreeInstance>();
-
-        return "Chop " + (treeInstance?.treeData?.treeName ?? "Unknown");
-    }
+    public string GetName() =>
+        "Chop " + (treeInstance?.treeData?.treeName ?? "Unknown");
 
     public void Interact(GameObject interactor)
     {
         var player = interactor.GetComponent<PlayerController>();
-        if (player != null)
+        if (player == null) return;
+
+        var equipManager = FindObjectOfType<EquipManager>();
+        if (equipManager == null || !equipManager.HasItemEquipped(EquipType.Tool))
         {
-            if (player.playerStateMachine.currentState is ChopState) return;
-
-            var equipManager = FindObjectOfType<EquipManager>();
-            if (equipManager == null || !equipManager.HasItemEquipped(EquipType.Tool))
-            {
-                var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
-                if (feedback != null)
-                    feedback.ShowFeedback(FeedbackType.NeedAxe);
-                return;
-            }
-
-            player.playerStateMachine.ChangeState(new ChopState(player.playerStateMachine, player, this));
+            var feedback = FindObjectOfType<PlayerFeedbackUI>();
+            feedback?.ShowFeedback(FeedbackType.NeedAxe);
+            return;
         }
+
+        // Chuyển state ChopState mới ngay lập tức
+        player.playerStateMachine.ChangeState(new ChopState(player.playerStateMachine, player, this));
     }
 
-    // Gọi tại Animation Event "Impact"
     public void SpawnDrops()
     {
-        Debug.Log("🌳 Spawn gỗ + gốc!");
+        if (treeInstance == null) treeInstance = GetComponent<TreeInstance>();
+        if (treeInstance == null || treeInstance.isChopped) return;
 
-        if (treeInstance == null)
-            treeInstance = GetComponent<TreeInstance>();
+        treeInstance.isChopped = true;
 
-        if (treeInstance != null && !treeInstance.isChopped)
+        // Spawn stump
+        if (!string.IsNullOrEmpty(treeInstance.treeData.stumpPoolID))
+            ObjectPoolManager.Instance.SpawnFromPool(
+                treeInstance.treeData.stumpPoolID,
+                transform.position,
+                transform.rotation
+            );
+
+        // Spawn logs
+        if (!string.IsNullOrEmpty(treeInstance.treeData.logPoolID))
         {
-            treeInstance.isChopped = true;
+            float offsetY = 0.5f;
+            if (treeInstance.logDropGO != null && treeInstance.logDropGO.TryGetComponent<Collider>(out var logCol))
+                offsetY = logCol.bounds.extents.y;
 
-            // 🌱 Spawn gốc
-            if (!string.IsNullOrEmpty(treeInstance.treeData.stumpPoolID))
+            Vector3 testPos = transform.position + transform.right * 1.5f + Vector3.up * 3f;
+            Vector3 groundPos = GetGroundPosition(testPos, treeInstance.logDropGO);
+            Vector3 spawnPos = groundPos + Vector3.up * offsetY;
+
+            GameObject logDrop = ObjectPoolManager.Instance.SpawnFromPool(
+                treeInstance.treeData.logPoolID,
+                spawnPos,
+                Quaternion.identity
+            );
+
+            if (logDrop != null && logDrop.TryGetComponent<Rigidbody>(out var rb))
             {
-                ObjectPoolManager.Instance.SpawnFromPool(
-                    treeInstance.treeData.stumpPoolID,
-                    transform.position,
-                    transform.rotation
-                );
-            }
-
-            // 🪵 Spawn gỗ
-            if (!string.IsNullOrEmpty(treeInstance.treeData.logPoolID))
-            {
-                float offsetY = 0.5f;
-                if (treeInstance.logDropGO != null && treeInstance.logDropGO.TryGetComponent<Collider>(out var logCol))
-                {
-                    offsetY = logCol.bounds.extents.y;
-                }
-
-                // 👉 tạo vị trí spawn thử nghiệm (dịch ngang trước)
-                Vector3 testPos = transform.position + transform.right * 1.5f + Vector3.up * 3f;
-
-                // 👉 raycast từ vị trí này xuống đất
-                Vector3 groundPos = GetGroundPosition(testPos, treeInstance.logDropGO);
-
-                // 👉 cộng thêm offsetY để không bị cắm xuống đất
-                Vector3 spawnPos = groundPos + Vector3.up * offsetY;
-
-                GameObject logDrop = ObjectPoolManager.Instance.SpawnFromPool(
-                    treeInstance.treeData.logPoolID,
-                    spawnPos,
-                    Quaternion.identity
-                );
-
-                if (logDrop != null && logDrop.TryGetComponent<Rigidbody>(out var rb))
-                {
-                    rb.isKinematic = false;
-                    rb.useGravity = true;
-                    rb.velocity = Vector3.down * 1f;
-
-                    treeInstance.StartCoroutine(DropAndSettle(rb));
-                }
+                rb.isKinematic = false;
+                rb.useGravity = true;
+                rb.velocity = Vector3.down * 1f;
+                StartCoroutine(DropAndSettle(rb));
             }
         }
     }
 
-    // Gọi tại Animation Event "End"
-    public void HideTree()
+    public void HideTreeWithDelay(float delay = 0.2f)
     {
-        StartCoroutine(ReturnToPoolWithDelay(0.2f));
+        StartCoroutine(HideTreeRoutine(delay));
     }
 
-    private IEnumerator ReturnToPoolWithDelay(float delay)
+    private IEnumerator HideTreeRoutine(float delay)
     {
         yield return new WaitForSeconds(delay);
         ObjectPoolManager.Instance.ReturnToPool(gameObject);
@@ -133,20 +99,13 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
 
     private Vector3 GetGroundPosition(Vector3 origin, GameObject prefab = null)
     {
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 10f, LayerMask.GetMask("Ground")))
+        if (Physics.Raycast(origin, Vector3.down, out var hit, 10f, LayerMask.GetMask("Ground")))
         {
             Vector3 pos = hit.point;
-
             if (prefab != null && prefab.TryGetComponent<Collider>(out var col))
-            {
                 pos.y += col.bounds.extents.y;
-            }
-
             return pos;
         }
         return origin;
     }
-
-    // Không dùng nữa, chỉ để tham khảo
-    //public void OnChopped() => SpawnDrops();
 }

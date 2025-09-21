@@ -44,7 +44,7 @@ public class AnimationStateController : MonoBehaviour
         moveYHash = Animator.StringToHash("Velocity Y");
         isRunHash = Animator.StringToHash("isRun");
         isAimingHash = Animator.StringToHash("isBowDraw");
-        bowRecoilTriggerHash = Animator.StringToHash("BowRecoil"); // Trigger
+        bowRecoilTriggerHash = Animator.StringToHash("BowRecoil");
     }
 
     // ---------------- Movement ----------------
@@ -72,7 +72,7 @@ public class AnimationStateController : MonoBehaviour
                 break;
             case WeaponClass.WeaponType.Sword:
             case WeaponClass.WeaponType.Bow:
-                StartAim(); // bắt đầu Aim loop
+                StartAim();
                 break;
         }
 
@@ -96,15 +96,6 @@ public class AnimationStateController : MonoBehaviour
             bowAnimator.SetTrigger(bowRecoilTriggerHash);
     }
 
-
-    private IEnumerator DebugRecoilAfterFrame()
-    {
-        yield return null; // chờ 1 frame
-        Debug.Log("Player BowRecoil Trigger fired!");
-        if (bowAnimator != null)
-            Debug.Log("Bow isAiming = " + bowAnimator.GetBool(isAimingHash));
-    }
-
     public void StopAimImmediate()
     {
         isAiming = false;
@@ -113,18 +104,12 @@ public class AnimationStateController : MonoBehaviour
             bowAnimator.SetBool(isAimingHash, false);
     }
 
+    // ---------------- Chop ----------------
     public void TriggerChop()
     {
         if (isChop) return;
         isChop = true;
         animator.SetBool("isChop", true);
-        StartCoroutine(ResetChopAfterDelay(4f));
-    }
-
-    private IEnumerator ResetChopAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        ResetChop();
     }
 
     public void ResetChop()
@@ -133,6 +118,18 @@ public class AnimationStateController : MonoBehaviour
         animator.SetBool("isChop", false);
     }
 
+    // Animation Event cuối clip Chop gọi hàm này
+    public void ChopEnd()
+    {
+        ResetChop();
+
+        if (playerController.playerStateMachine.currentState is ChopState chopState)
+        {
+            chopState.OnChopEnd();
+        }
+    }
+
+    // ---------------- Dead ----------------
     public void TriggerDead()
     {
         if (animator.GetBool("isDead")) return;
@@ -152,7 +149,7 @@ public class AnimationStateController : MonoBehaviour
         if (bowAnimator != null)
         {
             bowAnimator.SetBool(isAimingHash, false);
-            bowAnimator.ResetTrigger(bowRecoilTriggerHash); // nếu còn trigger
+            bowAnimator.ResetTrigger(bowRecoilTriggerHash);
         }
     }
 
@@ -177,24 +174,4 @@ public class AnimationStateController : MonoBehaviour
         yield return new WaitForSeconds(delay);
         animator.SetLayerWeight(1, 0f);
     }
-
-
-    // ---------------- Animation Events ----------------
-    public void OnChopImpact()
-    {
-        // Kiểm tra state hiện tại có phải ChopState không
-        if (playerController.playerStateMachine.currentState is ChopState chopState)
-        {
-            chopState.OnChopImpact();
-        }
-    }
-
-    public void ChopEnd()
-    {
-        if (playerController.playerStateMachine.currentState is ChopState chopState)
-        {
-            chopState.OnChopEnd();
-        }
-    }
-
 }

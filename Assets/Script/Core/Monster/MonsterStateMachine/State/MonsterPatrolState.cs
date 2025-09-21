@@ -65,7 +65,7 @@ public class MonsterPatrolState : MonsterBaseState
                     isWaiting = false;
                     stateMachine.animator.SetBool("isPatrol", true);
                     monster.PlayAnimation(MonsterAnimState.Patrol);
-                    monster.SetRandomPatrolDestination(patrolRadius);
+                    monster. SetRandomPatrolDestination(patrolRadius);
                 }
             }
         }

@@ -147,7 +147,13 @@ public class AnimationStateController : MonoBehaviour
     public void ResetAttack()
     {
         isAttacking = false;
+        isAiming = false;
         SetUpperBodyLayerWeight(0f);
+        if (bowAnimator != null)
+        {
+            bowAnimator.SetBool(isAimingHash, false);
+            bowAnimator.ResetTrigger(bowRecoilTriggerHash); // nếu còn trigger
+        }
     }
 
     public void Attack()
@@ -171,4 +177,24 @@ public class AnimationStateController : MonoBehaviour
         yield return new WaitForSeconds(delay);
         animator.SetLayerWeight(1, 0f);
     }
+
+
+    // ---------------- Animation Events ----------------
+    public void OnChopImpact()
+    {
+        // Kiểm tra state hiện tại có phải ChopState không
+        if (playerController.playerStateMachine.currentState is ChopState chopState)
+        {
+            chopState.OnChopImpact();
+        }
+    }
+
+    public void ChopEnd()
+    {
+        if (playerController.playerStateMachine.currentState is ChopState chopState)
+        {
+            chopState.OnChopEnd();
+        }
+    }
+
 }

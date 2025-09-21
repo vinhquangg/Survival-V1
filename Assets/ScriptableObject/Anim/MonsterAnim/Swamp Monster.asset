@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1761854d630767e4ab1e93fb0be5c6c7, type: 3}
+  m_Name: Swamp Monster
+  m_EditorClassIdentifier: 
+  mappings:
+  - state: 1
+    animName: Idle_Monster
+  - state: 3
+    animName: Chase_Monster
+  - state: 2
+    animName: Patrol_Monster
+  - state: 4
+    animName: Attack_Monster
+  - state: 6
+    animName: Dead_Monster

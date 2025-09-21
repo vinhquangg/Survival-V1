@@ -7,22 +7,42 @@ using UnityEngine;
 public class TemperatureManager : MonoBehaviour
 {
     public static TemperatureManager Instance { get; private set; }
-    //MODIFIER
-    private const int NIGHT_MODIFIER = -15;
-    //private const int Day_MODIFIER = 8;
-    private const int Fire_MODIFIER = 10;
-    //EFFECCT THRESHOLD
-    private const int DANGER_BELOW = 25;
-    private const int DANGER_ABOVE = 50;
 
-    private int baseTemperature = 37;
-    public int currentTemperature { get; private set; }
-    //Modifiers tracking
+    // Base Temperature (°C)
+    [Header("Modifiers (°C)")]
+    [SerializeField] private int baseTemperature = 37;         
+    [SerializeField] private int NIGHT_MODIFIER = -10;         
+    [SerializeField] private int Fire_MODIFIER = 12;           
+
+    //Smoothing speeds (°C per second) 
+    [Header("Smoothing (°C/sec)")]
+    [Tooltip("Tốc độ tăng nhiệt khi vào fire (°C/s)")]
+    [SerializeField] private float heatRate = 8f;              
+    [Tooltip("Tốc độ giảm nhiệt khi rời fire (°C/s)")]
+    [SerializeField] private float coolRate = 2.5f;            
+
+    // Effect Threshold
+    [Header("Thresholds")]
+    [SerializeField] private int DANGER_BELOW = 27;            
+    [SerializeField] private int DANGER_ABOVE = 38;            
+    [Tooltip("Hysteresis margin (°C) to avoid flicker on warnings")]
+    [SerializeField] private float hysteresis = 1.0f;          
+
+    // Internal
+    public float currentTemperature { get; private set; }      
+    private float targetTemperature;
+
+    // Modifiers tracking
     private bool isNight = false;
     private bool isNearFire = false;
-    //UI
+
+    // UI
     public TextMeshProUGUI temperatureText;
     public TextMeshProUGUI temperatureWarningText;
+
+    // Internal for hysteresis state
+    private bool warningColdActive = false;
+    private bool warningHotActive = false;
 
     private void Awake()
     {
@@ -32,53 +52,115 @@ public class TemperatureManager : MonoBehaviour
             return;
         }
         Instance = this;
-    }
 
-    public void RecalculateTemperature()
-    {
+        // Initialize
         currentTemperature = baseTemperature;
-        if(isNight)
-            currentTemperature += NIGHT_MODIFIER;
-        if (isNearFire)
-            currentTemperature += Fire_MODIFIER;
-
-        temperatureText.text = $"Temp: {currentTemperature}ºC" ;
-
-        ApplyEffect();
+        targetTemperature = baseTemperature;
     }
 
-    private void ApplyEffect()
+    private void Start()
     {
-        if(currentTemperature <= DANGER_BELOW)
+        UpdateUIActiveStates();
+        UpdateTemperatureText();
+    }
+
+    private void Update()
+    {
+        
+        ComputeTargetTemperature();
+
+        float rate = (targetTemperature > currentTemperature) ? heatRate : coolRate;
+
+        currentTemperature = Mathf.MoveTowards(currentTemperature, targetTemperature, rate * Time.deltaTime);
+
+        UpdateTemperatureText();
+
+        ApplyEffectWithHysteresis();
+    }
+
+    private void ComputeTargetTemperature()
+    {
+        targetTemperature = baseTemperature;
+        if (isNight) targetTemperature += NIGHT_MODIFIER;
+        if (isNearFire) targetTemperature += Fire_MODIFIER;
+    }
+
+    private void UpdateUIActiveStates()
+    {
+
+        bool shouldShowUI = isNight || isNearFire;
+        if (temperatureText != null) temperatureText.gameObject.SetActive(shouldShowUI);
+        if (temperatureWarningText != null) temperatureWarningText.gameObject.SetActive(shouldShowUI);
+    }
+
+    //public void RecalculateTemperature()
+    //{
+        
+    //    ComputeTargetTemperature();
+    //    UpdateUIActiveStates();
+    //    UpdateTemperatureText();
+    //}
+
+    private void UpdateTemperatureText()
+    {
+        if (temperatureText != null)
         {
+            temperatureText.text = $"Temp: {Mathf.RoundToInt(currentTemperature)}ºC";
+        }
+    }
+
+    private void ApplyEffectWithHysteresis()
+    {
+        if (temperatureWarningText == null) return;
+
+        // cold check (with hysteresis)
+        if (!warningColdActive && currentTemperature <= DANGER_BELOW - hysteresis)
+        {
+            warningColdActive = true;
+            warningHotActive = false;
             temperatureWarningText.text = "Danger! Too Cold";
         }
-        if(currentTemperature >= DANGER_ABOVE)
+        else if (warningColdActive && currentTemperature > DANGER_BELOW + hysteresis)
         {
+            warningColdActive = false;
+            temperatureWarningText.text = "";
+        }
+
+        // hot check (with hysteresis)
+        if (!warningHotActive && currentTemperature >= DANGER_ABOVE + hysteresis)
+        {
+            warningHotActive = true;
+            warningColdActive = false;
             temperatureWarningText.text = "Danger! Too Hot";
+        }
+        else if (warningHotActive && currentTemperature < DANGER_ABOVE - hysteresis)
+        {
+            warningHotActive = false;
+            temperatureWarningText.text = "";
         }
     }
 
     public void SetNight(bool isNightNow)
     {
         isNight = isNightNow;
+        UpdateUIActiveStates();
 
-        // Chỉ hiển thị UI khi night
-        temperatureText.gameObject.SetActive(isNightNow);
-        temperatureWarningText.gameObject.SetActive(isNightNow);
-
-        RecalculateTemperature();
+        ComputeTargetTemperature();
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public void SetNearFire(bool nearFire)
     {
-        
+        isNearFire = nearFire;
+
+        UpdateUIActiveStates();
+
+        ComputeTargetTemperature();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    //public void ForceSetTemperature(float temp)
+    //{
+    //    currentTemperature = temp;
+    //    targetTemperature = temp;
+    //    UpdateTemperatureText();
+    //}
 }

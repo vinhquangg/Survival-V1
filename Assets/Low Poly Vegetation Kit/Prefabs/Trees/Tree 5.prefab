@@ -229,6 +229,7 @@ GameObject:
   - component: {fileID: -4718298317939356557}
   - component: {fileID: -9221922008530997539}
   - component: {fileID: -1322394553380021279}
+  - component: {fileID: -8022615227224492733}
   m_Layer: 14
   m_Name: Tree 5
   m_TagString: Obstacle
@@ -372,6 +373,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolID: Tree5
+--- !u!208 &-8022615227224492733
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956629132283823112}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &3568812898604265704
 GameObject:
   m_ObjectHideFlags: 0

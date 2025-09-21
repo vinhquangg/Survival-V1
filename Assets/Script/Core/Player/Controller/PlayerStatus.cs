@@ -86,7 +86,7 @@ public class PlayerStatus : MonoBehaviour,IDamageable
         );
     }
 
-    private void ApplyTemperatureEffect(int currentTemperature, float deltaTime)
+    private void ApplyTemperatureEffect(float currentTemperature, float deltaTime)
     {
         // TRỜI LẠNH
         if (currentTemperature <= 22) // bạn có thể chỉnh ngưỡng
@@ -105,7 +105,7 @@ public class PlayerStatus : MonoBehaviour,IDamageable
         else if (currentTemperature >= 35)
         {
             // Tăng tốc giảm Thirst
-            thirst.Reduce(1f * deltaTime);
+            thirst.Reduce(0.8f * deltaTime);
 
             // Quá nóng → giảm Health
             if (currentTemperature >= 40)

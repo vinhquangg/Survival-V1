@@ -21,7 +21,7 @@ public class StatInstance
         currentValue = Mathf.Clamp(currentValue - amount, 0, data.maxValue);
         OnStatChanged?.Invoke(currentValue);
 
-        Debug.Log($"[Reduce] {data.statName}: {old:F6} -> {currentValue:F6} (-{amount})");
+        //Debug.Log($"[Reduce] {data.statName}: {old:F6} -> {currentValue:F6} (-{amount})");
     }
 
 

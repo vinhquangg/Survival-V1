@@ -6,5 +6,6 @@ public enum MonsterAnimState
     Chase,
     Attack,
     Bite,
-    Death
+    Death,
+    Claw
 }

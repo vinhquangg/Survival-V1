@@ -119,8 +119,9 @@ public class BowAttackState : BaseAttackState
     {
         base.Exit();
         player.inputHandler.playerAction.Move.Enable();
-        isAiming = false;
         player.animationController.StopAimImmediate();
+        player.animationController.ResetAttack();
+        isAiming = false;
         isShoot = false;
 
     }

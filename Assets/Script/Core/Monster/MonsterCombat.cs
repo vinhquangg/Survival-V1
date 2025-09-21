@@ -4,16 +4,22 @@ using UnityEngine;
 
 public abstract class MonsterCombat : MonoBehaviour
 {
-    [Header("Combat Settings")]
-    public float attackRange = 2.0f; // Range within which the monster can attack
-    public float attackCooldown = 1.0f; // Time between attacks
-    public int attackDamage = 10; // Damage dealt by the monster's attack
+    public float attackRange { get; protected set; }
+    public float attackCooldown { get; protected set; }
+    public int attackDamage { get; protected set; }
 
     [Header("Target")]
     public Transform target; // The target the monster will attack, typically the player
     public Animator animator;
     public float rotationSpeed { get; protected set; } = 5f;
     protected float lastAttackTime = 0f; // Time when the monster last attacked 
+
+    public virtual void SetupFromStats(MonsterStatsSO stats)
+    {
+        attackRange = stats.attackRange;
+        attackCooldown = stats.attackCooldown;
+        attackDamage = stats.attackDamage;
+    }
 
     public bool CanAttack()
     {

@@ -9,20 +9,21 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
     protected Animator animMonster { get; private set; }
     public Rigidbody _rigidbody { get; protected set; }
     public MonsterCombat combat { get; protected set; }
+    public float currentHeal { get; protected set; }
+
+    public System.Action<float, float > OnHealthChanged; // (current, max)
 
     [Header("Monster Settings")]
+    public MonsterStatsSO stats;
+
+    public Transform healthUIPoint;      
+    public GameObject healthUIPrefab;    
+    private EnemyHealthUI healthUI;      
+
     public Transform player;
     public NavMeshAgent _navMeshAgent;
-    public float hitDuration;
-    public float detectedRange;
-    //public float attackRange;
-    public float moveSpeed;
-    public bool isKnockback = false;
-    public float knockbackForce = 5f;
-    public float patrolSpeed = 1f;
-    public float currentHeal;
-    private float graceTimer = 0f;
-    private float graceTimeMax = 0.5f;
+    public PatrolType patrolType = PatrolType.Random;
+
 
     [Header("Animation Settings")]
     public MonsterAnimationData animData;  // SO chứa mapping anim theo enum
@@ -47,12 +48,23 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         player = GetPlayer();
 
 
+
         combat = GetComponent<MonsterCombat>();
         if (combat != null)
         {
             combat.target = player;
+            combat.SetupFromStats(stats);
+        }
+        if (healthUIPrefab != null && healthUIPoint != null)
+        {
+            GameObject uiGO = Instantiate(healthUIPrefab, healthUIPoint.position, Quaternion.identity);
+            healthUI = uiGO.GetComponentInChildren<EnemyHealthUI>();
+            healthUI.Setup(this, healthUIPoint);
         }
 
+        currentHeal = stats.maxHealth;
+
+        OnHealthChanged?.Invoke(currentHeal, stats.maxHealth);
         //if (_navMeshAgent != null)
         //{
         //    _navMeshAgent.updateRotation = false;
@@ -82,24 +94,24 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         Vector3 directionToPlayer = player.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
 
-        if (distanceToPlayer > detectedRange)
+        if (distanceToPlayer > stats.detectedRange)
         {
-            graceTimer = 0f;
+            stats.graceTimer = 0f;
             return false;
         }
 
         Vector3 origin = transform.position + Vector3.up * 1.2f;
-        if (Physics.Raycast(origin, directionToPlayer.normalized, out RaycastHit hit, detectedRange))
+        if (Physics.Raycast(origin, directionToPlayer.normalized, out RaycastHit hit, stats.detectedRange))
         {
             if (hit.transform.CompareTag("Player"))
             {
-                graceTimer = 0f;
+                stats.graceTimer = 0f;
                 return true;
             }
         }
 
-        graceTimer += Time.deltaTime;
-        return graceTimer <= graceTimeMax;
+        stats.graceTimer += Time.deltaTime;
+        return stats.graceTimer <= stats.graceTimeMax;
     }
 
     //public virtual bool CanSeePlayer()
@@ -171,7 +183,11 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
     public virtual void TakeDamage(float damage)
     {
         currentHeal -= damage;
+        currentHeal = Mathf.Clamp(currentHeal, 0, stats.maxHealth);
+
         Debug.Log($"{gameObject.name} bị trúng, còn {currentHeal} máu");
+
+        OnHealthChanged?.Invoke(currentHeal, stats.maxHealth);
 
         if (currentHeal <= 0)
         {

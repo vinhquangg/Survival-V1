@@ -54,13 +54,12 @@ public class HotkeyHandle : MonoBehaviour, IPlayerDependent
             currentHotkeyIndex = -1;
         }
 
-        // 🔹 Nếu slot rỗng
+
         if (item == null)
         {
             return;
         }
 
-        // 🔹 Nếu bấm lại cùng hotkey thì toggle off
         if (index == currentHotkeyIndex)
         {
             UnequipAll();
@@ -69,14 +68,14 @@ public class HotkeyHandle : MonoBehaviour, IPlayerDependent
             return;
         }
 
-        // 🔹 Nếu là raw meat thì cook
+
         if (item is Consumable c && c.isMeat && c.meatState == AnimalMeat.Raw)
         {
             TryCookFromHotbar(index);
             return;
         }
 
-        // 🔹 Nếu là placable
+
         if (item.itemType == ItemType.Placable && item.blueprint != null)
         {
             PlacementSystem.Instance.StartPlacement(item.blueprint, index);
@@ -88,7 +87,6 @@ public class HotkeyHandle : MonoBehaviour, IPlayerDependent
             PlacementSystem.Instance.CancelPlacement();
         }
 
-        // 🔹 Nếu là item equip
         EquipType equipType = item.GetEquipType();
         if (equipType != EquipType.None)
         {
@@ -102,7 +100,6 @@ public class HotkeyHandle : MonoBehaviour, IPlayerDependent
             return;
         }
 
-        // 🔹 Nếu là usable item
         if (item is IUsableItem usable)
         {
             usable.UseItem(PlayerStatus.Instance, inventoryManager.playerInventory);
@@ -111,7 +108,6 @@ public class HotkeyHandle : MonoBehaviour, IPlayerDependent
             return;
         }
 
-        // Nếu không phải gì cả
         currentHotkeyIndex = -1;
     }
 

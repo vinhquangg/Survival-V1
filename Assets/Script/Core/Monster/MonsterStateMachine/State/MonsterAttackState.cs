@@ -6,6 +6,7 @@ public class MonsterAttackState : MonsterBaseState
     private float cooldownTimer = 0f;
     private bool isAttacking = false;
     private bool isBite = false;
+    private bool isClaw = false;
 
     public MonsterAttackState(MonsterStateMachine stateMachine) : base(stateMachine) { }
     public override void EnterState()
@@ -39,32 +40,27 @@ public class MonsterAttackState : MonsterBaseState
         // --- RANGE MONSTER ---
         if (monster.combat is RangeMonsterCombat ranged)
         {
-            // Luôn quay về player nếu đang attack/bite
-            if (isBite || isAttacking)
+            // Luôn quay về player khi đang attack/bite
+            if (isAttacking || isBite)
                 monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
 
-            // Player gần → Bite
-            if (ranged.CanBite())
-            {
-                if (!isBite)
-                {
-                    isBite = true;
-                    isAttacking = false;
-                    cooldownTimer = 0f;
-                    //monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
-                    stateMachine.animator.SetTrigger("isBite");
-                }
-                return; // ưu tiên cắn → không bắn projectile
-            }
-
-            // Player xa nhưng trong attack range → ShootProjectile
+            // --- ƯU TIÊN ATTACK XA ---
             cooldownTimer += Time.deltaTime;
             if (!isAttacking && cooldownTimer >= attackCooldown)
             {
                 isAttacking = true;
                 cooldownTimer = 0f;
-                //monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
-                stateMachine.animator.SetTrigger("isAttack");
+                stateMachine.animator.SetTrigger("isAttack"); // Ưu tiên bắn projectile
+                return;
+            }
+
+            // --- CHỈ BITE KHI PLAYER QUÁ GẦN ---
+            if (ranged.CanBite() && !isBite && !isAttacking)
+            {
+                isBite = true;
+                cooldownTimer = 0f;
+                stateMachine.animator.SetTrigger("isBite");
+                return;
             }
 
             return;
@@ -73,6 +69,9 @@ public class MonsterAttackState : MonsterBaseState
         // --- MELEE MONSTER ---
         if (monster.combat is MeleeMonsterCombat)
         {
+            if (isAttacking)
+                monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
+
             if (distanceToPlayer <= monster.combat.attackRange)
             {
                 // Attack khi gần
@@ -89,14 +88,71 @@ public class MonsterAttackState : MonsterBaseState
                     //monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
                 }
             }
+            else
+            {
+                //// Nếu đang đánh mà player chạy ra xa → hủy attack
+                //if (isAttacking)
+                //{
+                //    stateMachine.animator.ResetTrigger("isAttack");
+                //    isAttacking = false;
+                //}
+
+                // Chuyển sang chase
+                if (!isAttacking)
+                {
+                    stateMachine.SwitchState(new MonsterChaseState(stateMachine));
+                    return;
+                }
+            }
+
+
+            return;
+        }
+
+        if (monster.combat is BearCombat bear)
+        {
+            if (isAttacking)
+                monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
+
+            if (distanceToPlayer <= monster.combat.attackRange)
+            {
+                if (!isAttacking)
+                {
+                    isAttacking = true;
+                    cooldownTimer = 0f;
+
+                    // Ưu tiên chọn skill theo khoảng cách
+                    if (bear.CanBite())
+                    {
+                        isBite = true;
+                        stateMachine.animator.SetTrigger("isAttack");
+                        Debug.Log("Bear: BITE attack");
+                    }
+                    else if (bear.CanClaw())
+                    {
+                        isClaw = true;
+                        stateMachine.animator.SetTrigger("isClaw");
+                        Debug.Log("Bear: CLAW attack");
+                    }
+                    else
+                    {
+                        // Nếu không đủ gần → chase tiếp
+                        isAttacking = false;
+                        stateMachine.SwitchState(new MonsterChaseState(stateMachine));
+                        return;
+                    }
+                }
+            }
             else if (!isAttacking)
             {
-                // Quá xa → Chase
+                // Player quá xa → chase
                 stateMachine.SwitchState(new MonsterChaseState(stateMachine));
+                return;
             }
 
             return;
         }
+
     }
 
 
@@ -130,5 +186,6 @@ public class MonsterAttackState : MonsterBaseState
     {
         isBite = false;
         isAttacking = false;
+        isClaw = false;
     }
 }

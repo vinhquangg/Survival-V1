@@ -4,7 +4,6 @@ using UnityEngine;
 public class ChopState : PlayerState
 {
     private TreeChopInteraction treeChop;
-    private Coroutine chopRoutine;
     private bool isChopping = false;
 
     public ChopState(PlayerStateMachine playerState, PlayerController player, TreeChopInteraction treeChop)
@@ -18,26 +17,38 @@ public class ChopState : PlayerState
         player.inputHandler.DisablePlayerInput();
 
         player.animationController.TriggerChop();
-        // 👉 gọi xoay mượt trước khi vào state Chop
+
+        // 👉 Xoay hướng về cây
         if (treeChop != null)
         {
             player.RotateTowards(treeChop.transform.position, 8f);
         }
+
         isChopping = true;
-        chopRoutine = player.StartCoroutine(WaitForChopping());
     }
 
-    private IEnumerator WaitForChopping()
+    // Gọi từ Animation Event (qua AnimationStateController)
+    // 🪓 Gọi từ Animation Event (frame impact)
+    public void OnChopImpact()
     {
-        yield return new WaitForSeconds(3f);
+        if (!isChopping) return;
+    }
 
-        if (!isChopping) yield break; 
+    // 🏁 Gọi từ Animation Event (frame cuối)
+    public void OnChopEnd()
+    {
+        if (!isChopping) return;
 
-        treeChop.OnChopped();
+        if (treeChop != null)
+        {
+            treeChop.HideTree();
+            treeChop.SpawnDrops();  
+        }
+
         isChopping = false;
         player.inputHandler.EnablePlayerInput();
+        player.animationController.ResetChop();
 
-        player.animationController.ResetChop(); 
         playerState.ChangeState(new IdleState(playerState, player));
     }
 
@@ -46,19 +57,12 @@ public class ChopState : PlayerState
 
     public override void Exit()
     {
-        if (chopRoutine != null)
-        {
-            player.StopCoroutine(chopRoutine);
-            chopRoutine = null;
-        }
-
         if (isChopping)
         {
             isChopping = false;
-            player.animationController.ResetChop(); 
+            player.animationController.ResetChop();
         }
 
         player.inputHandler.EnablePlayerInput();
     }
-
 }

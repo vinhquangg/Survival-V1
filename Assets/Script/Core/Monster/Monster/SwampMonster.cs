@@ -12,11 +12,16 @@ public class SwampMonster : BaseMonster
     protected override void Start()
     {
         base.Start();
+
+        patrolType = PatrolType.Random;
+
         GeneratePatrolPoints();
     }
 
     public override void SetRandomPatrolDestination(float patrolRadius)
     {
+        if(patrolType != PatrolType.Random) return;
+
         if (patrolPoints.Count == 0)
         {
             Debug.LogWarning("SwampMonster: Không có điểm tuần tra.");

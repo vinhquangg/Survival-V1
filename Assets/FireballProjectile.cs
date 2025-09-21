@@ -32,7 +32,7 @@ public class FireballProjectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Environment"))
+        if (other.CompareTag("Player") /*|| other.CompareTag("Environment")*/)
         {
             var damageable = other.GetComponent<IDamageable>();
             if (damageable != null)

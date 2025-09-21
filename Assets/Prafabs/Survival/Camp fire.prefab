@@ -4874,6 +4874,7 @@ GameObject:
   - component: {fileID: 7054587076648774221}
   - component: {fileID: 8125566753242935507}
   - component: {fileID: 5702766922181313813}
+  - component: {fileID: 8048105930852653408}
   m_Layer: 0
   m_Name: default
   m_TagString: Untagged
@@ -4963,10 +4964,31 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 2.8448958, y: 2.0419617, z: 2.910641}
   m_Center: {x: -0.011338949, y: 0.8345642, z: -0.0129544735}
+--- !u!135 &8048105930852653408
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6945812555978235470}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 10.986519
+  m_Center: {x: -0.011339188, y: 1.6192551, z: -0.012954712}
 --- !u!1 &7004948405759970019
 GameObject:
   m_ObjectHideFlags: 0
@@ -9811,6 +9833,7 @@ GameObject:
   - component: {fileID: 6981001322075571547}
   - component: {fileID: 6862669044284740194}
   - component: {fileID: 4072631280406822544}
+  - component: {fileID: 3412096695861027121}
   m_Layer: 20
   m_Name: Camp fire
   m_TagString: Untagged
@@ -9998,3 +10021,30 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!54 &3412096695861027121
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7812148314607090011}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

@@ -10,7 +10,8 @@ public enum FeedbackType
     RawMeat,
     InventoryFull,
     CannotDrink,
-    Cook
+    Cook,
+    NeedAxe,
 }
 
 public class PlayerFeedbackUI : MonoBehaviour
@@ -20,22 +21,23 @@ public class PlayerFeedbackUI : MonoBehaviour
     {
         public FeedbackType type;
         public GameObject feedbackObject;
+        public float duration;
     }
 
     public List<FeedbackEntry> feedbackEntries = new();   
-    private Dictionary<FeedbackType, GameObject> feedbackDict;
-
-    public float displayDuration = 1.5f;
+    private Dictionary<FeedbackType, FeedbackEntry> feedbackDict;
     private Coroutine feedbackRoutine;
+
+    //public float displayDuration = 1.5f;
 
     private void Awake()
     {
 
-        feedbackDict = new Dictionary<FeedbackType, GameObject>();
+        feedbackDict = new Dictionary<FeedbackType, FeedbackEntry>();
         foreach (var entry in feedbackEntries)
         {
             if (!feedbackDict.ContainsKey(entry.type) && entry.feedbackObject != null)
-                feedbackDict.Add(entry.type, entry.feedbackObject);
+                feedbackDict.Add(entry.type, entry);
         }
     }
 
@@ -57,11 +59,11 @@ public class PlayerFeedbackUI : MonoBehaviour
 
     private IEnumerator ShowRoutine(FeedbackType type)
     {
-        GameObject obj = feedbackDict[type];
-        obj.SetActive(true);
+        var entry = feedbackDict[type];
+        entry.feedbackObject.SetActive(true);
 
-        yield return new WaitForSeconds(displayDuration);
+        yield return new WaitForSeconds(entry.duration);
 
-        obj.SetActive(false);
+        entry.feedbackObject.SetActive(false);
     }
 }

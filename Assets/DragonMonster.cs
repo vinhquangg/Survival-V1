@@ -19,6 +19,9 @@ public class DragonMonster : BaseMonster
     protected override void Start()
     {
         base.Start();
+
+        patrolType = PatrolType.Random;
+
         GeneratePatrolPoints();
         //lastAttackTime = -attackCooldown; // cho phép bắn ngay lần đầu
     }
@@ -56,6 +59,8 @@ public class DragonMonster : BaseMonster
 
     public override void SetRandomPatrolDestination(float patrolRadius)
     {
+        if (patrolType != PatrolType.Random) return;
+
         if (patrolPoints.Count == 0)
         {
             Debug.LogWarning("SwampMonster: Không có điểm tuần tra.");

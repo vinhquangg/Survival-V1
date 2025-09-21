@@ -13,16 +13,16 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
     private bool isBurning = false;
     private bool isCooking = false;
 
-    // 🔹 Item đang nấu
+    //Item đang nấu
     private string currentCookingName = "";
     private int currentCookingQty = 0;
     private Sprite currentCookingIcon;
 
-    // 🔹 Item đã nấu xong (giữ lại cho player nhìn/nhặt)
+    //Item đã nấu xong (giữ lại cho player nhìn/nhặt)
     private string cookedItemName = "";
     private int cookedItemQty = 0;
     private Sprite cookedItemIcon;
-
+    private SphereCollider triggerCollider;
     public bool IsBurning => isBurning;
     public bool IsCooking => isCooking;
     public string CurrentCookingName => currentCookingName;
@@ -37,6 +37,12 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
     private void Start()
     {
         uiManager = FindAnyObjectByType<PlayerUIManager>();
+
+        triggerCollider = GetComponentInChildren<SphereCollider>();
+        if (triggerCollider == null || !triggerCollider.isTrigger)
+        {
+            Debug.LogWarning("⚠ Campfire cần SphereCollider dạng Trigger để hoạt động đúng!");
+        }
     }
 
     private void Update()
@@ -64,6 +70,21 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
     {
         isBurning = true;
         if (fireVFX != null) fireVFX.SetActive(true);
+
+        if (triggerCollider != null)
+        {
+            Vector3 worldCenter = triggerCollider.transform.TransformPoint(triggerCollider.center);
+            Collider[] colliders = Physics.OverlapSphere(worldCenter, triggerCollider.radius);
+
+            foreach (var col in colliders)
+            {
+                if (col.CompareTag("Player"))
+                {
+                    TemperatureManager.Instance.SetNearFire(true);
+                }
+            }
+        }
+
         Debug.Log("🔥 Campfire is burning!");
     }
 
@@ -71,10 +92,11 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
     {
         isBurning = false;
         if (fireVFX != null) fireVFX.SetActive(false);
+        TemperatureManager.Instance.SetNearFire(false);
         Debug.Log("❌ Campfire stopped!");
     }
 
-    // 🔹 Bắt đầu nấu
+    //Bắt đầu nấu
     public void StartCooking(string itemName, Sprite icon, int qty)
     {
         isCooking = true;
@@ -85,7 +107,7 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
         uiManager?.ShowCookingUI(itemName, icon, qty);
     }
 
-    // 🔹 Nấu xong
+    //Nấu xong
     public void FinishCooking()
     {
         isCooking = false;
@@ -105,11 +127,29 @@ public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
         currentCookingQty = 0;
     }
 
-    // 🔹 Khi player nhặt món ăn xong (nếu bạn muốn clear)
+    //Khi player nhặt món ăn xong (nếu bạn muốn clear)
     public void CollectCookedItem()
     {
         cookedItemName = "";
         cookedItemIcon = null;
         cookedItemQty = 0;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!isBurning) return;
+
+        if (other.CompareTag("Player"))
+        {
+            TemperatureManager.Instance.SetNearFire(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            TemperatureManager.Instance.SetNearFire(false);
+        }
     }
 }

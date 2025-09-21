@@ -30,7 +30,7 @@ public class RangeMonsterCombat : MonsterCombat
         if (animator != null)
         {
             // Trigger animation ranged attack nếu muốn
-            // animator.SetTrigger("Attack");
+            //animator.SetTrigger("Attack");
         }
 
         ShootProjectile();

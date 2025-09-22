@@ -59,6 +59,15 @@ public class MonsterStateMachine : MonoBehaviour
         }
     }
 
+    public void ResetToIlde()
+    {
+        if(stateFactory != null && stateFactory.ContainsKey("MonsterIdleState"))
+        {
+            SwitchState(stateFactory["MonsterIdleState"]());
+        }
+
+    }
+
     //public void PlayAnimation(string animationName)
     //{
     //    animator.Play(animationName);

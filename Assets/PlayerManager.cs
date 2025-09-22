@@ -62,11 +62,18 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-
-
-
     public GameObject GetCurrentPlayer()
     {
         return currentPlayer;
+    }
+
+    public Transform GetPlayerTransform()
+    {
+        return currentPlayer != null ? currentPlayer.transform : null;
+    }
+
+    public PlayerController GetPlayerController()
+    {
+        return currentPlayer != null ? currentPlayer.GetComponent<PlayerController>() : null;
     }
 }

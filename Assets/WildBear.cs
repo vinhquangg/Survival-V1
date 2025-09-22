@@ -13,6 +13,23 @@ public class WildBear : BaseMonster
 
         patrolType = PatrolType.Waypoint;
 
+        GameObject patrolRoot = GameObject.Find("PatrolPoint");
+        if (patrolRoot != null)
+        {
+            waypointPatrols.Clear();
+
+            foreach (Transform child in patrolRoot.transform)
+            {
+                waypointPatrols.Add(child);
+            }
+
+            Debug.Log($"WildBear: Đã lấy {waypointPatrols.Count} waypoint từ PatrolPoint.");
+        }
+        else
+        {
+            Debug.LogWarning("WildBear: Không tìm thấy PatrolPoint trong scene!");
+        }
+
 
     }
 

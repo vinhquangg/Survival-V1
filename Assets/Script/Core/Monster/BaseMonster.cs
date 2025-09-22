@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public abstract class BaseMonster : MonoBehaviour,IDamageable
+public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
 {
     public MonsterStateMachine _stateMachine { get; protected set; }
     protected Animator animMonster { get; private set; }
@@ -12,6 +12,7 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
     public float currentHeal { get; protected set; }
 
     public System.Action<float, float > OnHealthChanged; // (current, max)
+    public System.Action OnDeath;
 
     [Header("Monster Settings")]
     public MonsterStatsSO stats;
@@ -45,9 +46,7 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         //_stateMachine = GetComponent<MonsterStateMachine>();
         //animMonster = GetComponent<Animator>();
         //_rigidbody = GetComponent<Rigidbody>();
-        player = GetPlayer();
-
-
+        player = PlayerManager.Instance.GetPlayerTransform();
 
         combat = GetComponent<MonsterCombat>();
         if (combat != null)
@@ -69,20 +68,23 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         //{
         //    _navMeshAgent.updateRotation = false;
         //}
+
+        _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+        _navMeshAgent.avoidancePriority = Random.Range(20, 80);
     }
 
-    protected Transform GetPlayer()
-    {
-        if (player == null)
-        {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-            {
-                player = playerObj.transform;
-            }
-        }
-        return player;
-    }
+    //protected Transform GetPlayer()
+    //{
+    //    if (player == null)
+    //    {
+    //        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+    //        if (playerObj != null)
+    //        {
+    //            player = playerObj.transform;
+    //        }
+    //    }
+    //    return player;
+    //}
 
     public virtual bool CanSeePlayer()
     {
@@ -157,6 +159,7 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         if (NavMesh.SamplePosition(randomDirection, out hit, patrolRadius, NavMesh.AllAreas))
         {
             _navMeshAgent.SetDestination(hit.position);
+
         }
     }
 
@@ -199,7 +202,9 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
     protected virtual void Die()
     {
         Debug.Log($"{gameObject.name} đã chết");
-        gameObject.SetActive(false);
+        OnDeath?.Invoke();
+        ObjectPoolManager.Instance.ReturnToPool(gameObject);
+        //gameObject.SetActive(false);
     }
 
     public void PlayAnimation(MonsterAnimState state)
@@ -222,6 +227,30 @@ public abstract class BaseMonster : MonoBehaviour,IDamageable
         Debug.LogWarning($"Animation for {state} not found on {gameObject.name}");
     }
 
+    public void OnSpawned()
+    {
+        currentHeal = stats.maxHealth;
 
+        if (_navMeshAgent != null)
+            _navMeshAgent.enabled = true;
+
+        if (healthUI != null)
+            healthUI.gameObject.SetActive(true);
+
+        gameObject.SetActive(true);
+        _stateMachine.ResetToIlde();
+    }
+
+
+    public void OnReturned()
+    {
+        _navMeshAgent.ResetPath();
+        _navMeshAgent.enabled = false;
+
+        if (healthUI != null)
+        {
+            healthUI.gameObject.SetActive(false);
+        }
+    }
 
 }

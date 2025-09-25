@@ -12,7 +12,8 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
     public float currentHeal { get; protected set; }
 
     public System.Action<float, float > OnHealthChanged; // (current, max)
-    public System.Action OnDeath;
+    public System.Action<BaseMonster> OnDeath;
+    public System.Action<BaseMonster> OnReturnedToPool;
 
     [Header("Monster Settings")]
     public MonsterStatsSO stats;
@@ -25,6 +26,7 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
     public NavMeshAgent _navMeshAgent;
     public PatrolType patrolType = PatrolType.Random;
 
+    public DropTableData dropTable;
 
     [Header("Animation Settings")]
     public MonsterAnimationData animData;  // SO chứa mapping anim theo enum
@@ -59,6 +61,7 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
             GameObject uiGO = Instantiate(healthUIPrefab, healthUIPoint.position, Quaternion.identity);
             healthUI = uiGO.GetComponentInChildren<EnemyHealthUI>();
             healthUI.Setup(this, healthUIPoint);
+            uiGO.transform.SetParent(transform);
         }
 
         currentHeal = stats.maxHealth;
@@ -198,13 +201,49 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
         }
     }
 
+    public virtual void DropItems()
+    {
+        if (dropTable == null) return;
+
+        foreach (var drop in dropTable.drops)
+        {
+            for (int i = 0; i < drop.spawnCount; i++)
+            {
+                if (Random.value <= drop.chance)
+                {
+                    Vector3 pos = transform.position + drop.offset + Random.insideUnitSphere * 0.2f;
+                    GameObject obj = ObjectPoolManager.Instance.SpawnFromPool(drop.poolID, pos, Quaternion.identity);
+
+                    // Thiết lập ItemEntity luôn
+                    ItemEntity itemEntity = obj.GetComponent<ItemEntity>();
+                    if (itemEntity != null && drop.quantity > 0)
+                    {
+                        itemEntity.Initialize(itemEntity.GetItemData(), drop.quantity);
+                    }
+                }
+            }
+
+        }
+    }
 
     protected virtual void Die()
     {
+        //DropItems();
+        // Chuyển sang DeadState để chạy animation và pool
+        Debug.Log($"{name} DIE() called, invoking OnDeath");
+        OnDeath?.Invoke(this);
+
+        if (_stateMachine != null)
+        {
+            _stateMachine.SwitchState(new MonsterDeadState(_stateMachine));
+        }
+        else
+        {
+            // fallback nếu không có stateMachine
+            ReturnPool();
+        }
         Debug.Log($"{gameObject.name} đã chết");
-        OnDeath?.Invoke();
-        ObjectPoolManager.Instance.ReturnToPool(gameObject);
-        //gameObject.SetActive(false);
+        //healthUIPrefab.SetActive(false);
     }
 
     public void PlayAnimation(MonsterAnimState state)
@@ -238,19 +277,66 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
             healthUI.gameObject.SetActive(true);
 
         gameObject.SetActive(true);
-        _stateMachine.ResetToIlde();
+        _stateMachine?.ResetToIlde();
     }
-
 
     public void OnReturned()
     {
-        _navMeshAgent.ResetPath();
-        _navMeshAgent.enabled = false;
-
-        if (healthUI != null)
-        {
-            healthUI.gameObject.SetActive(false);
-        }
+        OnDeath = null;
     }
+
+    public void ReturnPool()
+    {
+        Debug.Log($"{name} DIE() called, invoking OnDeath");
+        OnDeath?.Invoke(this);
+
+        if (_navMeshAgent != null)
+        {
+            if (_navMeshAgent.enabled && _navMeshAgent.isOnNavMesh)
+            {
+                _navMeshAgent.ResetPath();
+            }
+            _navMeshAgent.enabled = false;
+        }
+
+
+        // 2️⃣ Tắt Collider
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+        foreach (var childCol in GetComponentsInChildren<Collider>())
+            childCol.enabled = false;
+
+        // 3️⃣ Tắt Rigidbody / reset velocity
+        if (_rigidbody != null)
+        {
+            _rigidbody.isKinematic = true;
+        }
+
+        // 4️⃣ Tắt Animator để giảm update
+        if (animMonster != null)
+        {
+            animMonster.Rebind();       // reset tất cả parameter
+            animMonster.Update(0f);
+            animMonster.enabled = false;
+        }
+
+        // 5️⃣ Pool Health UI
+        if (healthUI != null)
+            healthUI.gameObject.SetActive(false);
+
+        // 6️⃣ Tắt tất cả Renderer
+        foreach (var renderer in GetComponentsInChildren<Renderer>())
+            renderer.enabled = false;
+
+        // 7️⃣ Reset các biến state
+        OnDeath = null;
+        currentHeal = stats.maxHealth;
+
+        // 8️⃣ Return object về pool
+        ObjectPoolManager.Instance.ReturnToPool(gameObject);
+
+
+    }
+
 
 }

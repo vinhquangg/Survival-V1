@@ -7,5 +7,6 @@ public enum MonsterAnimState
     Attack,
     Bite,
     Death,
-    Claw
+    Claw,
+    CastSpell
 }

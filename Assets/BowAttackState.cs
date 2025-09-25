@@ -22,10 +22,58 @@ public class BowAttackState : BaseAttackState
 
         player.inputHandler.playerAction.Move.Disable();
         useAttackTimer = false;
-        isAiming = true;
         aimStartTime = Time.time;
-        player.animationController.StartAim();
+        //isAiming = true;
+        //player.animationController.StartAim();
+        SpawnArrow();
 
+    }
+
+
+    public override void Update()
+    {
+        base.Update();
+
+        // Nếu đang giữ chuột
+        if (player.inputHandler.IsAttackHeld())
+        {
+            float holdTime = Time.time - aimStartTime;
+
+            // Đủ thời gian mới bắt đầu Aim
+            if (!isAiming && holdTime >= minAimTime)
+            {
+                isAiming = true;
+                player.animationController.StartAim();
+                SpawnArrow();
+            }
+            //playerState.ChangeState(new IdleState(playerState, player));
+            return; // vẫn đang giữ thì chưa bắn
+        }
+
+
+        // Nếu buông chuột
+        if (isAiming && !isShoot && player.inputHandler.IsAttackReleased())
+        {
+            float holdTime = Time.time - aimStartTime;
+
+            if (holdTime < minAimTime)
+            {
+                // Bỏ qua, không bắn cũng không recoil
+                isAiming = false;
+                //player.animationController.ResetAttack();
+                playerState.ChangeState(new IdleState(playerState, player));
+                return;
+            }
+
+            // Nếu giữ đủ lâu → bắn
+            isShoot = true;
+            ShootArrow();
+        }
+
+    }
+
+    private void SpawnArrow()
+    {
         // Spawn arrow hiển thị khi kéo cung
         if (player.combat.arrowPrefab != null && player.combat.arrowSpawnPoint != null)
         {
@@ -48,36 +96,6 @@ public class BowAttackState : BaseAttackState
                 Physics.IgnoreCollision(col, player.controller);
             }
         }
-    }
-
-
-    public override void Update()
-    {
-        base.Update();
-
-        // Nếu vẫn đang giữ chuột → tiếp tục Aim
-        if (player.inputHandler.IsAttackHeld())
-            return;
-
-        // Nếu buông chuột
-        if (isAiming && !isShoot && player.inputHandler.IsAttackReleased())
-        {
-            float holdTime = Time.time - aimStartTime;
-
-            if (holdTime < minAimTime)
-            {
-                // Bỏ qua, không bắn cũng không recoil
-                isAiming = false;
-                //player.animationController.ResetAttack();
-                playerState.ChangeState(new IdleState(playerState, player));
-                return;
-            }
-
-            // Nếu giữ đủ lâu → bắn
-            isShoot = true;
-            ShootArrow();
-        }
-
     }
 
     // Coroutine ép quay lại Idle sau 1 delay ngắn

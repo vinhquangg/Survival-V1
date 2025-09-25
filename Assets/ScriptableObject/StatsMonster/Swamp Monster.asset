@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1b9880e889ecec458ba8eb2f85e93d8, type: 3}
   m_Name: Swamp Monster
   m_EditorClassIdentifier: 
+  monsterAttackType: 0
   monsterType: 0
   monsterName: Swamp Monster
   maxHealth: 100

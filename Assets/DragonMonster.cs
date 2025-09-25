@@ -14,6 +14,7 @@ public class DragonMonster : BaseMonster
     public int patrolPointCount = 6;
     public List<Vector3> patrolPoints = new List<Vector3>();
     private int currentPatrolIndex = 0;
+    public bool isBoss = false;
    // private float lastAttackTime;
 
     protected override void Start()
@@ -68,7 +69,7 @@ public class DragonMonster : BaseMonster
         }
 
         _navMeshAgent.SetDestination(patrolPoints[currentPatrolIndex]);
-        Debug.Log("SwampMonster patrol to point: " + patrolPoints[currentPatrolIndex]);
+        //Debug.Log("SwampMonster patrol to point: " + patrolPoints[currentPatrolIndex]);
 
         currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Count;
     }
@@ -99,14 +100,8 @@ public class DragonMonster : BaseMonster
     }
     protected override void Die()
     {
-        Debug.Log($"{gameObject.name} đã chết - chuyển sang DeadState");
-        if (_stateMachine != null)
-        {
-            _stateMachine.SwitchState(new MonsterDeadState(_stateMachine));
-        }
-        else
-        {
-            base.Die();
-        }
+
+       base.Die();
+        
     }
 }

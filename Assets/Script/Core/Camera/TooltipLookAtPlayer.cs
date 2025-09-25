@@ -4,16 +4,12 @@ public class TooltipLookAtPlayer : MonoBehaviour
 {
     [SerializeField] private Transform playerTransform;
 
-    void Start()
+    void Awake()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
             playerTransform = playerObj.transform;
-        }
-        else
-        {
-            Debug.LogWarning("Không tìm thấy GameObject có tag 'Player'");
         }
     }
 

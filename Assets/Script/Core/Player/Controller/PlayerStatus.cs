@@ -57,20 +57,24 @@ public class PlayerStatus : MonoBehaviour,IDamageable
     {
         float deltaTime = Time.deltaTime;
 
+        // Cập nhật stat theo thời gian
         hunger.UpdateStat(deltaTime);
         thirst.UpdateStat(deltaTime);
         health.UpdateStat(deltaTime);
 
-        //if (health.IsEmpty())
-        //{
-        //    Die();
-        //}
-
+        // Ảnh hưởng nhiệt độ (có thể trừ máu ở đây)
         if (TemperatureManager.Instance != null)
         {
             ApplyTemperatureEffect(TemperatureManager.Instance.currentTemperature, deltaTime);
         }
+
+        // ❗ Check sau cùng: nếu máu về 0 thì chết
+        if (health.IsEmpty())
+        {
+            Die();
+        }
     }
+
 
     public void TakeDamage(float amount)
     {

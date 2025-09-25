@@ -48,7 +48,7 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo, IPool
                 var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
                 if (playerStatus != null && playerStatus.hunger.IsFull())
                 {
-                    //var feedback = GameObject.FindObjectOfType<PlayerFeedbackUI>();
+
                     if (feedback != null)
                         feedback.ShowFeedback(FeedbackType.Full);
                     return;
@@ -61,7 +61,6 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo, IPool
 
         if (added)
         {
-            // ✅ Trả về prefab cha có PoolableObject
             isPickedUp = true;
             GameObject root = gameObject.GetComponent<PoolableObject>() != null ? gameObject : gameObject.transform.root.gameObject;
             ObjectPoolManager.Instance?.ReturnToPool(root);
@@ -92,7 +91,6 @@ public class ItemPickup : MonoBehaviour, IInteractable, IInteractableInfo, IPool
 
     public void OnSpawned()
     {
-        //Debug.Log($"✅ Spawned Item: {itemEntity.GetItemData().name} - SL: {itemEntity.GetQuantity()}");
         gameObject.SetActive(!isPickedUp);
     }
 

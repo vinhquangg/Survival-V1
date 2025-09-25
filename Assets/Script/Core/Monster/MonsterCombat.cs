@@ -11,8 +11,14 @@ public abstract class MonsterCombat : MonoBehaviour
     [Header("Target")]
     public Transform target; // The target the monster will attack, typically the player
     public Animator animator;
+    protected BaseMonster monster;
     public float rotationSpeed { get; protected set; } = 5f;
     protected float lastAttackTime = 0f; // Time when the monster last attacked 
+
+    protected virtual void Start()
+    {
+        monster = GetComponent<BaseMonster>();
+    }
 
     public virtual void SetupFromStats(MonsterStatsSO stats)
     {

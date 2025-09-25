@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum MonsterType
+public enum MonsterAttackType
 {
     Melee,
     Ranged
@@ -10,7 +10,7 @@ public enum MonsterType
 public class MonsterStatsSO : ScriptableObject
 {
     [Header("General Stats")]
-    public MonsterType monsterType;
+    public MonsterAttackType monsterType;
     public string monsterName;
     public float maxHealth = 100f;
     public float moveSpeed = 3.5f;

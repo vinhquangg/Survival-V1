@@ -25,3 +25,5 @@ MonoBehaviour:
     animName: Dragon_Dead
   - state: 5
     animName: Dragon_Bite
+  - state: 8
+    animName: CastSpell

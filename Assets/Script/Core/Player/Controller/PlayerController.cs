@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 velocity;
     private bool isGrounded;
-    public GameObject camera;
+    public GameObject mainCamera;
 
     //public float weaponHitRadius;
     //public Transform weaponHitPoint;
@@ -30,14 +30,14 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         // Lấy camera trong scene
-        if (camera == null)
+        if (mainCamera == null)
         {
-            camera = Camera.main?.gameObject;
+            mainCamera = Camera.main?.gameObject;
         }
 
-        if (camera != null && playerCamera == null)
+        if (mainCamera != null && playerCamera == null)
         {
-            playerCamera = camera.transform;
+            playerCamera = mainCamera.transform;
         }
         inputHandler = GetComponent<InputHandler>();
         controller = GetComponent<CharacterController>();

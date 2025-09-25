@@ -10,6 +10,12 @@ public class RangeMonsterCombat : MonsterCombat
     [Header("Bite Settings")]
     [SerializeField] private float maxBiteDistance = 3f; // khoảng cách tối đa bite
 
+    [Header("Boss Skill Settings")]
+    public GameObject shockwavePrefab;     // prefab shockwave (vfx + damage)
+    public float fireballSpreadAngle = 15f; // độ lệch của 3 fireball
+    public float skillCooldown = 8f;
+    private float skillTimer = 0f;
+    public bool IsBoss => (monster is DragonMonster dragon) && dragon.isBoss;
     // Property để AttackState check
     public float biteRange
     {
@@ -25,16 +31,35 @@ public class RangeMonsterCombat : MonsterCombat
         }
     }
 
+    private void Update()
+    {
+        if (!IsBoss) return;
+
+        //skillTimer -= Time.deltaTime;
+
+        //if (skillTimer <= 0f && target != null)
+        //{
+        //    CastFireballSpread();
+        //    skillTimer = skillCooldown;
+        //}
+    }
+
     protected override void Attack()
     {
-        if (animator != null)
-        {
-            // Trigger animation ranged attack nếu muốn
-            //animator.SetTrigger("Attack");
-        }
+        Debug.Log($"Attack() called - IsBoss = {IsBoss}");
 
-        ShootProjectile();
+        if (IsBoss)
+        {
+            Debug.Log("Boss fireball spread!");
+            CastFireballSpread();
+        }
+        else
+        {
+            Debug.Log("Normal enemy single shot");
+            ShootProjectile();
+        }
     }
+
 
     private void ShootProjectile()
     {
@@ -49,6 +74,55 @@ public class RangeMonsterCombat : MonsterCombat
         {
             fireball.Launch(dir, projectileSpeed);
         }
+    }
+
+    private void SpawnProjectile(Vector3 dir)
+    {
+        Vector3 spawnPos = firePoint.position + Vector3.up * 0.5f;
+        GameObject proj = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(dir));
+
+        if (proj.TryGetComponent<FireballProjectile>(out var fireball))
+        {
+            fireball.Launch(dir, projectileSpeed);
+        }
+    }
+
+    private void CastFireballSpread()
+    {
+        if (firePoint == null || projectilePrefab == null) return;
+
+        Vector3 baseDir = (target != null)
+            ? (target.position - firePoint.position).normalized
+            : firePoint.forward;
+
+        for (int i = -1; i <= 1; i++)
+        {
+            Quaternion spreadRot = Quaternion.Euler(0, i * fireballSpreadAngle, 0);
+            Vector3 spreadDir = spreadRot * baseDir;
+
+            SpawnProjectile(spreadDir);
+        }
+
+        Debug.Log("Boss cast Fireball Spread (cone)!");
+    }
+
+
+    private void CastShockwave()
+    {
+        if (shockwavePrefab != null)
+        {
+            Instantiate(shockwavePrefab, transform.position, Quaternion.identity);
+        }
+
+        GameObject shockwave = Instantiate(shockwavePrefab, transform.position, Quaternion.identity);
+
+        // nếu muốn truyền damage và radius từ boss sang shockwave
+        if (shockwave.TryGetComponent<ShockwaveVFX>(out var shock))
+        {
+            shock.damage = attackDamage * 2;   // gấp đôi damage thường
+        }
+
+        Debug.Log("Boss cast Shockwave!");
     }
 
     public bool CanBite()

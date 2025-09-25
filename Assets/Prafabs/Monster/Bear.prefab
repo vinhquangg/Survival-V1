@@ -2326,6 +2326,7 @@ MonoBehaviour:
   player: {fileID: 0}
   _navMeshAgent: {fileID: 3297240161220348703}
   patrolType: 2
+  dropTable: {fileID: 11400000, guid: 129377d024e796f40b575d75db9fce3a, type: 2}
   animData: {fileID: 11400000, guid: 5731832c9fbb92943a7553d3563e86ce, type: 2}
   waypointPatrols:
   - {fileID: 0}
@@ -2409,8 +2410,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   animator: {fileID: 5935894307058793313}
-  biteRange: 2
-  clawRange: 3
+  biteRange: 1
+  clawRange: 2
   roarRange: 0
 --- !u!114 &3724033682948881783
 MonoBehaviour:

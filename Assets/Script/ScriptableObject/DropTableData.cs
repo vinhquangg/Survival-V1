@@ -8,11 +8,11 @@ public class DropTableData : ScriptableObject
     [System.Serializable]
     public class DropEntry
     {
-        public string poolID;           // "RawMeat"
-        public int spawnCount = 1;      // Số prefab spawn (1 hoặc nhiều object)
+        public string poolID;           
+        public int spawnCount = 1;      
         public float chance = 1f;
         public Vector3 offset;
-        [HideInInspector]public int quantity;        // 🟢 Quantity của item nằm trong ItemEntity
+        [HideInInspector]public int quantity;        
     }
 
     public DropEntry[] drops;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MeleeMonsterCombat : MonsterCombat
 {
-    private bool isAttacking = false;
+    //private bool isAttacking = false;
     protected override void Attack()
     {
         if(animator == null) return;

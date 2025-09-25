@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c82664061c1498f429a9290d7007dcfa, type: 3}
+  m_Name: Bear_Meat
+  m_EditorClassIdentifier: 
+  itemType: 4
+  itemName: Bear_Meat
+  itemIcon: {fileID: 21300000, guid: b62c89a89b77e0849b53b683e7e2909f, type: 3}
+  itemDesc: Raw meat
+  itemFunc: Cant eat
+  isStack: 1
+  maxStack: 16
+  dropPrefab: {fileID: 2605346620403464953, guid: 4a6f2af3009b57d4c801db22811b2fac,
+    type: 3}
+  blueprint: {fileID: 0}
+  statAdded: 0
+  isMeat: 1
+  cookedPrefab: {fileID: 9064535373171854668, guid: 0bf7a501fc643504585d6e102b3de316,
+    type: 3}
+  meatState: 1

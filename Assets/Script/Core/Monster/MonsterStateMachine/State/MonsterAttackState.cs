@@ -6,7 +6,10 @@ public class MonsterAttackState : MonsterBaseState
     private float cooldownTimer = 0f;
     private bool isAttacking = false;
     private bool isBite = false;
-    private bool isClaw = false;
+
+    private bool isCast = false;  
+    private float castCooldown = 10f;
+    private float castTimer = 0f;
 
     public MonsterAttackState(MonsterStateMachine stateMachine) : base(stateMachine) { }
     public override void EnterState()
@@ -14,6 +17,7 @@ public class MonsterAttackState : MonsterBaseState
         monster._navMeshAgent.ResetPath(); // Dừng di chuyển
         cooldownTimer = 0f;
         isAttacking = true;
+        isCast = false;
         stateMachine.animator.SetTrigger("isAttack"); // Trigger attack anim
     }
 
@@ -43,6 +47,17 @@ public class MonsterAttackState : MonsterBaseState
             // Luôn quay về player khi đang attack/bite
             if (isAttacking || isBite)
                 monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
+
+            castTimer -= Time.deltaTime;
+            if (ranged.IsBoss && !isCast && castTimer <= 0f)
+            {
+                // Boss sẽ cast spell (shockwave)
+                isCast = true;
+                castTimer = castCooldown;
+
+                stateMachine.animator.SetTrigger("isCast"); // trigger anim cast spell
+                return; // ưu tiên cast spell, không attack thông thường
+            }
 
             // --- ƯU TIÊN ATTACK XA ---
             cooldownTimer += Time.deltaTime;
@@ -130,7 +145,7 @@ public class MonsterAttackState : MonsterBaseState
                     }
                     else if (bear.CanClaw())
                     {
-                        isClaw = true;
+
                         stateMachine.animator.SetTrigger("isClaw");
                         Debug.Log("Bear: CLAW attack");
                     }
@@ -186,6 +201,6 @@ public class MonsterAttackState : MonsterBaseState
     {
         isBite = false;
         isAttacking = false;
-        isClaw = false;
+        isCast = false;
     }
 }

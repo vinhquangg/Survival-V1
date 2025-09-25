@@ -21,6 +21,7 @@ TagManager:
   - ChunkContainer
   - IngameMenu
   - Hub
+  - DragonSpawn
   layers:
   - Default
   - TransparentFX

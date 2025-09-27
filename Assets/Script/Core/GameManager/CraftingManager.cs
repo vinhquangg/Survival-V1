@@ -190,6 +190,7 @@ public class CraftingManager : MonoBehaviour, IPlayerDependent
 
     PlayerController PlayerController;
     bool isOpen;
+    public bool IsOpen() => isOpen;
 
     public static CraftingManager instance { get; set; }
 
@@ -303,37 +304,36 @@ public class CraftingManager : MonoBehaviour, IPlayerDependent
         }
     }
 
-    private void ToggleCrafting()
+    public void ToggleCrafting()
     {
+        var feedbackUI = FindObjectOfType<PlayerFeedbackUI>();
+
+        if (feedbackUI != null && !feedbackUI.firstItemPicked)
+        {
+            if (feedbackUI != null)
+                feedbackUI.ShowFeedback(FeedbackType.CollectItemFirstTime);
+            return;
+        }
+
+
         isOpen = !isOpen;
 
         if (isOpen)
-        {
             CheckCanCraft();
-        }
 
         craftingScreen.SetActive(isOpen);
         weaponsScreen.SetActive(false);
         survivalScreen.SetActive(false);
         toolsScreen.SetActive(false);
-        //PlayerController.inputHandler.DisablePlayerInput();
 
-        //if (!isOpen)
-        //    PlayerController.inputHandler.EnablePlayerInput();
-
-        if (PlayerController != null && PlayerController.inputHandler != null)
-        {
-            if (isOpen)
-                PlayerController.inputHandler.DisablePlayerInput();
-            else
-                PlayerController.inputHandler.EnablePlayerInput();
-        }
+        PlayerController?.UpdatePlayerInputState(); // <-- thay đổi ở đây
 
         GameManager.instance?.SetCursorLock(!isOpen);
 
         if (CameraTarget.Instance != null)
             CameraTarget.Instance.allowCameraInput = !isOpen;
     }
+
 
     private void CheckCanCraft()
     {

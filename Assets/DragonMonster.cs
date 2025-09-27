@@ -64,7 +64,7 @@ public class DragonMonster : BaseMonster
 
         if (patrolPoints.Count == 0)
         {
-            Debug.LogWarning("SwampMonster: Không có điểm tuần tra.");
+            Debug.LogWarning("DragonMonster: Không có điểm tuần tra.");
             return;
         }
 

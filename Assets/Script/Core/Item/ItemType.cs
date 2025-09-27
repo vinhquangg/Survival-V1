@@ -11,4 +11,5 @@ public enum ItemType
     Item = 8,
     Survivals = 9,
     Placable = 10,
+    Ammo = 11,
 }

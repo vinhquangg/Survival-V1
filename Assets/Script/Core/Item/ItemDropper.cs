@@ -9,6 +9,10 @@ public class ItemDropper : MonoBehaviour
     {
         if (item.dropPrefab == null) return;
 
+        //// --- Kiểm tra loại item
+        //if (item.itemType == ItemType.Weapon || item.itemType == ItemType.Tool)
+        //    return; // Nếu là Weapon hoặc Tool thì không drop
+
         Vector3 origin = playerTransform.position + playerTransform.forward * 1.5f + Vector3.up * 5f;
 
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 10f, groundLayer))

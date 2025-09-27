@@ -1,282 +1,333 @@
-﻿    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using TMPro;
-    using Unity.VisualScripting;
-    using UnityEngine;
-    using UnityEngine.UI;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.UI;
 
-    public class InventoryManager : MonoBehaviour, IPlayerDependent
+public class InventoryManager : MonoBehaviour, IPlayerDependent
+{
+    public GameObject inventoryPanel;
+    public InventoryUIHandler inventoryUI;
+    public InventoryUIHandler hotbarUI;
+    public ItemDropper dropper;
+    public event Action OnInventoryChanged;
+    public PlayerInventory playerInventory;
+    public GameObject pickupNotification; 
+    public TextMeshProUGUI pickupText;
+    public Image pickupImage;
+    public float notifyDuration = 5f;
+    //public WeaponHolder weaponHolder;
+    private Coroutine notifyCoroutine;
+    private PlayerController PlayerController;
+    private bool isInventoryOpen = false;
+    public bool IsOpen() => isInventoryOpen;
+
+    public static InventoryManager Instance { get; private set; }
+
+    void Awake()
     {
-        public GameObject inventoryPanel;
-        public InventoryUIHandler inventoryUI;
-        public InventoryUIHandler hotbarUI;
-        public ItemDropper dropper;
-        public event Action OnInventoryChanged;
-        public PlayerInventory playerInventory;
-        public GameObject pickupNotification; 
-        public TextMeshProUGUI pickupText;
-        public Image pickupImage;
-        public float notifyDuration = 5f;
-        //public WeaponHolder weaponHolder;
-        private Coroutine notifyCoroutine;
-        private PlayerController PlayerController;
-        private bool isInventoryOpen = false;
+        inventoryUI.inventoryManager = this;
+        hotbarUI.inventoryManager = this;
 
-        public static InventoryManager Instance { get; private set; }
+        inventoryUI.Init();
+        hotbarUI.Init();
 
-        void Awake()
+        if(Instance == null)
         {
-            inventoryUI.inventoryManager = this;
-            hotbarUI.inventoryManager = this;
-
-            inventoryUI.Init();
-            hotbarUI.Init();
-
-            if(Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Debug.LogWarning("Multiple InventoryManager instances found! Using the first one.");
-                Destroy(gameObject);
-            }
-
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogWarning("Multiple InventoryManager instances found! Using the first one.");
+            Destroy(gameObject);
         }
 
-        void Start()
-        {
-            playerInventory.Init(inventoryUI.GetSlotCount(), hotbarUI.GetSlotCount());
-            RefreshAllUI();
-            //PlayerController = FindObjectOfType<PlayerController>();
-            //dropper.playerTransform = PlayerController.transform;
-        }
+    }
 
-        void Update()
+    void Start()
+    {
+        playerInventory.Init(inventoryUI.GetSlotCount(), hotbarUI.GetSlotCount());
+        RefreshAllUI();
+        //PlayerController = FindObjectOfType<PlayerController>();
+        //dropper.playerTransform = PlayerController.transform;
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
         {
-            if (Input.GetKeyDown(KeyCode.I))
+
+            var feedbackUI = FindObjectOfType<PlayerFeedbackUI>();
+
+            // Kiểm tra player đã nhặt item chưa
+            if (feedbackUI != null && !feedbackUI.firstItemPicked)
             {
-                ToggleInventory();
+                if (feedbackUI != null)
+                    feedbackUI.ShowFeedback(FeedbackType.CollectItemFirstTime);
+                return; // chưa nhặt item -> không mở
             }
+            ToggleInventory();
         }
+    }
 
-        public void SetPlayer(PlayerController player)
+    public void SetPlayer(PlayerController player)
+    {
+        PlayerController = player;
+
+        if (PlayerController != null)
         {
-            PlayerController = player;
+            // luôn lấy Dropper mới từ player
+            dropper = PlayerController.GetComponentInChildren<ItemDropper>();
+            if (dropper != null)
+                dropper.playerTransform = PlayerController.transform;
 
-            if (PlayerController != null)
-            {
-                // luôn lấy Dropper mới từ player
-                dropper = PlayerController.GetComponentInChildren<ItemDropper>();
-                if (dropper != null)
-                    dropper.playerTransform = PlayerController.transform;
-
-                // nếu PlayerInventory cũng nằm trên Player → gán lại
-                var inv = PlayerController.GetComponentInChildren<PlayerInventory>();
-                if (inv != null)
-                    playerInventory = inv;
-            }
+            // nếu PlayerInventory cũng nằm trên Player → gán lại
+            var inv = PlayerController.GetComponentInChildren<PlayerInventory>();
+            if (inv != null)
+                playerInventory = inv;
         }
+    }
+
 
 
     public bool AddItem(ItemClass item, int quantity = 1)
+    {
+        bool added = playerInventory.AddItem(item, quantity);
+        if (added)
         {
-            bool added = playerInventory.AddItem(item, quantity);
-            if (added)
-            {
-                RefreshAllUI();
-                ShowPickupNotification($"+{quantity} {item.itemName}",item);
-            }
-            return added;
-        }
-
-
-        private void ShowPickupNotification(string message, ItemClass item)
-        {
-            if (pickupNotification == null || pickupText == null || pickupImage == null) return;
-
-            if (notifyCoroutine != null)
-                StopCoroutine(notifyCoroutine);
-
-            pickupText.text = message;
-            if (item != null && item.itemIcon != null)
-                pickupImage.sprite = item.itemIcon;
-            notifyCoroutine = StartCoroutine(ShowAndHideNotification());
-        }
-
-        private IEnumerator ShowAndHideNotification()
-        {
-            pickupNotification.SetActive(true);
-            yield return new WaitForSeconds(notifyDuration);
-            pickupNotification.SetActive(false);
-        }
-
-
-        //public bool RemoveItem(ItemClass item)
-        //{
-        //    bool removed = playerInventory.RemoveItem(item);
-        //    if (removed) RefreshAllUI();
-        //    return removed;
-        //}
-
-        private void ToggleInventory()
-        {
-            isInventoryOpen = !isInventoryOpen;
-            inventoryPanel.SetActive(isInventoryOpen);
-
-            if (SoundManager.Instance != null)
-                SoundManager.Instance.PlaySFX(SoundManager.Instance.inventoryOpenSound);
-
-            if (PlayerController != null && PlayerController.inputHandler != null)
-            {
-                if (isInventoryOpen)
-                    PlayerController.inputHandler.DisablePlayerInput();
-                else
-                    PlayerController.inputHandler.EnablePlayerInput();
-            }
-
-            ItemInfo.Instance.HideInfo();
-            GameManager.instance?.SetCursorLock(!isInventoryOpen);
-
-            if (CameraTarget.Instance != null)
-                CameraTarget.Instance.allowCameraInput = !isInventoryOpen;
-
-            if (isInventoryOpen)
-                RefreshAllUI();
-        }
-
-
-
-        public SlotClass GetSlot(InventoryArea area, int index)
-        {
-            var container = area == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
-            if (index >= 0 && index < container.Length)
-                return container[index];
-            return null;
-        }
-
-        public void TryMergeOrSwap(InventoryArea fromArea, int fromIndex, InventoryArea toArea, int toIndex)
-        {
-            var fromContainer = fromArea == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
-            var toContainer = toArea == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
-
-            var fromSlot = fromContainer[fromIndex];
-            var toSlot = toContainer[toIndex];
-
-            if (fromSlot == null || fromSlot.IsEmpty()) return;
-
-            if (toSlot != null && !toSlot.IsEmpty()
-                && fromSlot.GetItem() == toSlot.GetItem()
-                && fromSlot.GetItem().isStack)
-            {
-                int currentTo = toSlot.GetQuantity();
-                int currentFrom = fromSlot.GetQuantity();
-                int max = fromSlot.GetItem().maxStack;
-                int spaceLeft = max - currentTo;
-
-                if (spaceLeft > 0)
-                {
-                    int amountToMove = Mathf.Min(spaceLeft, currentFrom);
-                    toSlot.AddQuantity(amountToMove);
-                    fromSlot.SubQuantity(amountToMove);
-
-                    if (fromSlot.GetQuantity() <= 0)
-                        fromContainer[fromIndex] = null;
-
-                    RefreshAllUI();
-                    return;
-                }
-            }
-
-            // swap items if they are not stackable or no space left
-            var temp = fromContainer[fromIndex];
-            fromContainer[fromIndex] = toContainer[toIndex];
-            toContainer[toIndex] = temp;
-
             RefreshAllUI();
-        }
+            ShowPickupNotification($"+{quantity} {item.itemName}",item);
 
-        public void SplitItem(InventoryArea area, int fromIndex)
-        {
-            var container = area == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
-            var fromSlot = container[fromIndex];
-
-            if (fromSlot == null || fromSlot.IsEmpty()) return;
-            if (!fromSlot.GetItem().isStack || fromSlot.GetQuantity() <= 1) return;
-
-            for (int i = 0; i < container.Length; i++)
+            PlayerFeedbackUI feedbackUI = FindObjectOfType<PlayerFeedbackUI>();
+            if (feedbackUI != null && !feedbackUI.firstItemPicked)
             {
-                if (container[i] == null || container[i].IsEmpty())
-                {
-                    int half = fromSlot.GetQuantity() / 2;
-                    fromSlot.SubQuantity(half);
-                    container[i] = new SlotClass(fromSlot.GetItem(), half);
-                    RefreshAllUI();
-                    Debug.Log($"Split {half} items from slot {fromIndex} to slot {i} in {area}");
-                    return;
-                }
+                feedbackUI.firstItemPicked = true;
+                feedbackUI.waitingForInventoryOpen = true;
+                feedbackUI.ShowFeedbackUntilKeyPress(FeedbackType.OpenInventory, KeyCode.I);
             }
-
-            Debug.LogWarning("No empty slot to split item!");
         }
-
-        public void DropItemToWorld(InventoryArea area, int index)
-        {
-            var container = area == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
-            if (container == null || index < 0 || index >= container.Length) return;
-
-            var slot = container[index];
-            if (slot == null || slot.IsEmpty()) return;
-
-            dropper.Drop(slot.GetItem(), slot.GetQuantity(), slot.GetDurability());
-            container[index] = null;
-            RefreshAllUI();
-        }
-
-        //public void UpdateWeaponFromHotbar()
-        //{
-        //    for(int i= 0;i<playerInventory.hotbarItems.Length;i++)
-        //    {
-        //        var slot = playerInventory.hotbarItems[i];
-        //        if(slot != null && !slot.IsEmpty())
-        //        {
-        //            var item = slot.GetItem();
-        //            if(item != null && item.itemType == ItemType.Weapon)
-        //            {
-        //                weaponHolder?.DisplayWeapon(item);
-        //                return;
-        //            }
-        //        }
-        //    }
-        //    //weaponHolder?.ClearWeapon();
-        //}
-
-        //public void UseItemFromSlot(InventoryArea area, int slotIndex)
-        //{
-        //    var slot = GetSlot(area, slotIndex);
-        //    if (slot == null || slot.IsEmpty()) return;
-
-        //    var item = slot.GetItem();
-
-        //    if (item is IUsableItem usable)
-        //    {
-        //        usable.UseItem(PlayerStatus.Instance, playerInventory);
-        //        RefreshAllUI();
-        //    }
-        //    else
-        //    {
-        //        Debug.Log($"Item {item.itemName} is not usable.");
-        //    }
-        //}
-
-
-        public void RefreshAllUI()
-        {
-            inventoryUI.RefreshUI(playerInventory.items);
-            hotbarUI.RefreshUI(playerInventory.hotbarItems);
-            OnInventoryChanged?.Invoke();
-
-            //UpdateWeaponFromHotbar();
-        }
+        return added;
     }
+
+
+    private void ShowPickupNotification(string message, ItemClass item)
+    {
+        if (pickupNotification == null || pickupText == null || pickupImage == null) return;
+
+        if (notifyCoroutine != null)
+            StopCoroutine(notifyCoroutine);
+
+        pickupText.text = message;
+        if (item != null && item.itemIcon != null)
+            pickupImage.sprite = item.itemIcon;
+        notifyCoroutine = StartCoroutine(ShowAndHideNotification());
+    }
+
+    private IEnumerator ShowAndHideNotification()
+    {
+        pickupNotification.SetActive(true);
+        yield return new WaitForSeconds(notifyDuration);
+        pickupNotification.SetActive(false);
+    }
+
+
+    //public bool RemoveItem(ItemClass item)
+    //{
+    //    bool removed = playerInventory.RemoveItem(item);
+    //    if (removed) RefreshAllUI();
+    //    return removed;
+    //}
+
+    private void ToggleInventory()
+    {
+        isInventoryOpen = !isInventoryOpen;
+        inventoryPanel.SetActive(isInventoryOpen);
+
+        var feedbackUI = FindObjectOfType<PlayerFeedbackUI>();
+
+        // Hiển thị feedback I chỉ lần đầu
+        if (isInventoryOpen && feedbackUI != null && !feedbackUI.firstInventoryFeedbackShown)
+        {
+            feedbackUI.firstInventoryFeedbackShown = true;
+            feedbackUI.ShowFeedbackUntilKeyPress(FeedbackType.OpenInventory, KeyCode.I);
+        }
+
+        // Hiển thị feedback C chỉ lần đầu, nhưng chỉ khi inventory mở lần đầu
+        if (isInventoryOpen && feedbackUI != null && feedbackUI.firstInventoryFeedbackShown
+            && !feedbackUI.firstCraftFeedbackShown)
+        {
+            feedbackUI.firstCraftFeedbackShown = true;
+            feedbackUI.ShowFeedbackUntilKeyPress(FeedbackType.OpenCrafting, KeyCode.C);
+        }
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.inventoryOpenSound);
+
+        if (PlayerController != null && PlayerController.inputHandler != null)
+        {
+            if (isInventoryOpen)
+                PlayerController.inputHandler.DisablePlayerInput();
+            else
+                PlayerController.inputHandler.EnablePlayerInput();
+        }
+
+        ItemInfo.Instance.HideInfo();
+        GameManager.instance?.SetCursorLock(!isInventoryOpen);
+
+        if (CameraTarget.Instance != null)
+            CameraTarget.Instance.allowCameraInput = !isInventoryOpen;
+
+        if (isInventoryOpen)
+            RefreshAllUI();
+
+        PlayerController?.UpdatePlayerInputState();
+    }
+
+
+
+
+    public SlotClass GetSlot(InventoryArea area, int index)
+    {
+        var container = area == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
+        if (index >= 0 && index < container.Length)
+            return container[index];
+        return null;
+    }
+
+    public void TryMergeOrSwap(InventoryArea fromArea, int fromIndex, InventoryArea toArea, int toIndex)
+    {
+        var fromContainer = fromArea == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
+        var toContainer = toArea == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
+
+        var fromSlot = fromContainer[fromIndex];
+        var toSlot = toContainer[toIndex];
+
+        if (fromSlot == null || fromSlot.IsEmpty()) return;
+
+        if (toSlot != null && !toSlot.IsEmpty()
+            && fromSlot.GetItem() == toSlot.GetItem()
+            && fromSlot.GetItem().isStack)
+        {
+            int currentTo = toSlot.GetQuantity();
+            int currentFrom = fromSlot.GetQuantity();
+            int max = fromSlot.GetItem().maxStack;
+            int spaceLeft = max - currentTo;
+
+            if (spaceLeft > 0)
+            {
+                int amountToMove = Mathf.Min(spaceLeft, currentFrom);
+                toSlot.AddQuantity(amountToMove);
+                fromSlot.SubQuantity(amountToMove);
+
+                if (fromSlot.GetQuantity() <= 0)
+                    fromContainer[fromIndex] = null;
+
+                RefreshAllUI();
+                return;
+            }
+        }
+
+        // swap items if they are not stackable or no space left
+        var temp = fromContainer[fromIndex];
+        fromContainer[fromIndex] = toContainer[toIndex];
+        toContainer[toIndex] = temp;
+
+        RefreshAllUI();
+    }
+
+    public void SplitItem(InventoryArea area, int fromIndex)
+    {
+        var container = area == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
+        var fromSlot = container[fromIndex];
+
+        if (fromSlot == null || fromSlot.IsEmpty()) return;
+        if (!fromSlot.GetItem().isStack || fromSlot.GetQuantity() <= 1) return;
+
+        for (int i = 0; i < container.Length; i++)
+        {
+            if (container[i] == null || container[i].IsEmpty())
+            {
+                int half = fromSlot.GetQuantity() / 2;
+                fromSlot.SubQuantity(half);
+                container[i] = new SlotClass(fromSlot.GetItem(), half);
+                RefreshAllUI();
+                Debug.Log($"Split {half} items from slot {fromIndex} to slot {i} in {area}");
+                return;
+            }
+        }
+
+        Debug.LogWarning("No empty slot to split item!");
+    }
+
+    public void DropItemToWorld(InventoryArea area, int index)
+    {
+        var container = area == InventoryArea.Hotbar ? playerInventory.hotbarItems : playerInventory.items;
+        if (container == null || index < 0 || index >= container.Length) return;
+
+        var slot = container[index];
+        if (slot == null || slot.IsEmpty()) return;
+
+        var item = slot.GetItem();
+
+        if (item.itemType == ItemType.Weapon || item.itemType == ItemType.Tool)
+        {
+        // Không drop, có thể thông báo UI ở đây nếu muốn
+            RefreshAllUI();
+            return;
+        }
+
+        dropper.Drop(slot.GetItem(), slot.GetQuantity(), slot.GetDurability());
+
+        container[index] = null;
+        RefreshAllUI();
+    }
+
+    //public void UpdateWeaponFromHotbar()
+    //{
+    //    for(int i= 0;i<playerInventory.hotbarItems.Length;i++)
+    //    {
+    //        var slot = playerInventory.hotbarItems[i];
+    //        if(slot != null && !slot.IsEmpty())
+    //        {
+    //            var item = slot.GetItem();
+    //            if(item != null && item.itemType == ItemType.Weapon)
+    //            {
+    //                weaponHolder?.DisplayWeapon(item);
+    //                return;
+    //            }
+    //        }
+    //    }
+    //    //weaponHolder?.ClearWeapon();
+    //}
+
+    //public void UseItemFromSlot(InventoryArea area, int slotIndex)
+    //{
+    //    var slot = GetSlot(area, slotIndex);
+    //    if (slot == null || slot.IsEmpty()) return;
+
+    //    var item = slot.GetItem();
+
+    //    if (item is IUsableItem usable)
+    //    {
+    //        usable.UseItem(PlayerStatus.Instance, playerInventory);
+    //        RefreshAllUI();
+    //    }
+    //    else
+    //    {
+    //        Debug.Log($"Item {item.itemName} is not usable.");
+    //    }
+    //}
+
+
+    public void RefreshAllUI()
+    {
+        inventoryUI.RefreshUI(playerInventory.items);
+        hotbarUI.RefreshUI(playerInventory.hotbarItems);
+        OnInventoryChanged?.Invoke();
+
+        //UpdateWeaponFromHotbar();
+    }
+}
+

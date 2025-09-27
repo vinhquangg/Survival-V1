@@ -4873,7 +4873,6 @@ GameObject:
   - component: {fileID: 1884136929962552257}
   - component: {fileID: 7054587076648774221}
   - component: {fileID: 8125566753242935507}
-  - component: {fileID: 5702766922181313813}
   - component: {fileID: 8048105930852653408}
   m_Layer: 0
   m_Name: default
@@ -4947,27 +4946,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5702766922181313813
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6945812555978235470}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 2.8448958, y: 2.0419617, z: 2.910641}
-  m_Center: {x: -0.011338949, y: 0.8345642, z: -0.0129544735}
 --- !u!135 &8048105930852653408
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -9873,6 +9851,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultObject: {fileID: 6945812555978235470}
   currentChunk: {fileID: 0}
+  sceneBlueprint: {fileID: 0}
 --- !u!65 &8066899700742802084
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9892,8 +9871,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.43645477, z: 1}
-  m_Center: {x: 0, y: 0.16401291, z: 0}
+  m_Size: {x: 1.3858643, y: 0.43645477, z: 1.3026123}
+  m_Center: {x: 0.00018310547, y: 0.16401291, z: 0.018005371}
 --- !u!114 &6981001322075571547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10047,4 +10026,4 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1

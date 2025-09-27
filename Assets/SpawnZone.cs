@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class SpawnZone : MonoBehaviour
 {
@@ -178,24 +179,42 @@ public class SpawnZone : MonoBehaviour
 
     private Vector3 GetRandomSpawnPosition()
     {
-        for (int i = 0; i < 10; i++)
+        Vector3 spawnPos = transform.position;
+
+        int maxTries = 50; // thử 50 lần
+        for (int i = 0; i < maxTries; i++)
         {
             Vector3 randomPos = transform.position + Random.insideUnitSphere * spawnRadius;
             randomPos.y = transform.position.y + 20f;
 
             if (Physics.Raycast(randomPos, Vector3.down, out RaycastHit hit, 50f, groundLayer))
             {
-                if (forbiddenTags.Contains(hit.collider.tag))
+                bool blocked = false;
+
+                // Kiểm tra trên đường từ randomPos xuống hit.point có vật cản nào trong forbiddenTags không
+                Vector3 dir = hit.point - randomPos;
+                if (Physics.Raycast(randomPos, dir.normalized, out RaycastHit obstacleHit, dir.magnitude))
                 {
-                    continue;
+                    if (forbiddenTags.Contains(obstacleHit.collider.tag))
+                    {
+                        blocked = true;
+                    }
                 }
 
-                return hit.point;
+                if (blocked) continue; // vị trí không hợp lệ, thử lần khác
+
+                if (!forbiddenTags.Contains(hit.collider.tag))
+                {
+                    spawnPos = hit.point;
+                    break; // tìm được vị trí hợp lệ
+                }
             }
         }
 
-        return transform.position;
+        return spawnPos; // nếu không tìm được sau maxTries, trả về transform.position
     }
+
+
 
     private void OnDrawGizmosSelected()
     {

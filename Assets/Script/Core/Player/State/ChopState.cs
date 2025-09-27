@@ -15,6 +15,7 @@ public class ChopState : PlayerState
     public override void Enter()
     {
         player.inputHandler.DisablePlayerInput();
+        player.inputHandler.DisableInteractInput();
         player.animationController.TriggerChop();
 
         if (treeChop != null)
@@ -32,6 +33,7 @@ public class ChopState : PlayerState
             isChopping = false;
             player.animationController.ResetChop();
             player.inputHandler.EnablePlayerInput();
+            player.inputHandler.EnableInteractInput();
         }
     }
 
@@ -53,6 +55,7 @@ public class ChopState : PlayerState
 
         isChopping = false;
         player.inputHandler.EnablePlayerInput();
+        player.inputHandler.EnableInteractInput();
         player.animationController.ResetChop();
 
         playerState.ChangeState(new IdleState(playerState, player));

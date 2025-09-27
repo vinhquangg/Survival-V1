@@ -14,7 +14,7 @@ public class RangeMonsterCombat : MonsterCombat
     public GameObject shockwavePrefab;     // prefab shockwave (vfx + damage)
     public float fireballSpreadAngle = 15f; // độ lệch của 3 fireball
     public float skillCooldown = 8f;
-    private float skillTimer = 0f;
+    //private float skillTimer = 0f;
     public bool IsBoss => (monster is DragonMonster dragon) && dragon.isBoss;
     // Property để AttackState check
     public float biteRange

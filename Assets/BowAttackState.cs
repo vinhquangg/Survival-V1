@@ -25,7 +25,7 @@ public class BowAttackState : BaseAttackState
         aimStartTime = Time.time;
         //isAiming = true;
         //player.animationController.StartAim();
-        SpawnArrow();
+        //SpawnArrow();
 
     }
 

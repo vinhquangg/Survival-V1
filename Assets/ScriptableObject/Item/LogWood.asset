@@ -19,6 +19,6 @@ MonoBehaviour:
   itemFunc: Use for cafting
   isStack: 1
   maxStack: 64
-  dropPrefab: {fileID: 4370736543054296596, guid: edb158f4ce929cb4e88a8904570b0257,
+  dropPrefab: {fileID: 6668178401099976028, guid: edb158f4ce929cb4e88a8904570b0257,
     type: 3}
   blueprint: {fileID: 0}

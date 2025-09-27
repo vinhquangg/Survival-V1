@@ -3,7 +3,7 @@
 public class Campfire : MonoBehaviour, IInteractable, IInteractableInfo
 {
     [Header("Data & UI")]
-    [SerializeField] private SurvivalClass campfireData;
+    [HideInInspector] public SurvivalClass campfireData;
     [SerializeField] private PlayerUIManager uiManager;
 
     [Header("Effects & CookPoint")]

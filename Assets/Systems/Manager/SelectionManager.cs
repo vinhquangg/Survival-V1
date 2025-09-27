@@ -279,6 +279,28 @@ public class SelectionManager : MonoBehaviour
                             }
                             break;
 
+                        case InteractionType.Boat:
+                            var boat = hit.transform.GetComponent<BoatInteractable>();
+                            if (boat != null)
+                            {
+                                currentInteractable = boat;
+
+                                if (currentBuildable != null)
+                                    currentBuildable.OnMaterialChanged -= OnBuildableMaterialChanged;
+
+                                currentBuildable = boat.GetComponent<BuildableObject>();
+                                if (currentBuildable != null)
+                                    currentBuildable.OnMaterialChanged += OnBuildableMaterialChanged;
+
+                                // Hiển thị UI lần đầu
+                                if (currentBuildable != null)
+                                    uiManager.ShowCraftingInfo(currentBuildable.GetBlueprint(), currentBuildable);
+                            }
+                            break;
+
+
+
+
                         default:
                             uiManager.HidePrompt();
                             uiManager.HideCraftingInfo();

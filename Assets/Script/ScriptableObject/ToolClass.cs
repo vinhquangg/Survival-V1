@@ -23,6 +23,7 @@ public class ToolClass : ItemClass
         Shovel = 4,
         FishingRod = 5,
         Campfire = 6,
+        Boat = 7,
     }
     public override ItemClass GetItem() { return this; }
     public override ToolClass GetTool() { return this; }

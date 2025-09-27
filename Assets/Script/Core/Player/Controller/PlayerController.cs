@@ -81,6 +81,19 @@ public class PlayerController : MonoBehaviour
         transform.Rotate(Vector3.up * look.x);
     }
 
+    public void UpdatePlayerInputState()
+    {
+        // Chỉ cho phép input nếu cả Inventory và Crafting đóng
+        bool inventoryOpen = InventoryManager.Instance != null && InventoryManager.Instance.IsOpen();
+        bool craftingOpen = CraftingManager.instance != null && CraftingManager.instance.IsOpen();
+
+        if (inventoryOpen || craftingOpen)
+            inputHandler.DisablePlayerInput();
+        else
+            inputHandler.EnablePlayerInput();
+    }
+
+
     public void ApplyGravity()
     {
         if (isGrounded && velocity.y < 0)

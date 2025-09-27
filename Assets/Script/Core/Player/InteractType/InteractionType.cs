@@ -12,5 +12,6 @@ public enum InteractionType
     Cook,
     TakeCooked,
     Toggle,
-    Drink
+    Drink,
+    Boat
 }

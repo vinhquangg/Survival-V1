@@ -99,12 +99,29 @@ public class PlayerUIManager : MonoBehaviour
         if (blueprint != null)
             craftingNameText.text = blueprint.name;
 
+        // fix NullReference
         if (buildable != null)
+        {
             craftingItemAmount.text = buildable.GetItemAmount();
+        }
+        else if (blueprint != null)
+        {
+            // Show số lượng 0/required nếu buildable chưa có
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            for (int i = 0; i < blueprint.requirements.Count; i++)
+            {
+                var req = blueprint.requirements[i];
+                sb.Append($"0/{req.amount} {req.item.itemName}");
+                if (i < blueprint.requirements.Count - 1)
+                    sb.Append("\n");
+            }
+            craftingItemAmount.text = sb.ToString();
+        }
 
         if (blueprint != null && blueprint.resultItem.itemIcon != null)
             craftingIconImage.sprite = blueprint.resultItem.itemIcon;
     }
+
 
     public void ShowCookingUI(string itemName, Sprite icon, int quantity)
     {

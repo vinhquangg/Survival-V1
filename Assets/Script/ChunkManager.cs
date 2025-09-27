@@ -47,12 +47,12 @@ public class ChunkManager : MonoBehaviour
         return chunk;
     }
 
-    public GameObject GetChunkByWorldPosition(Vector3 worldPos)
-    {
-        int chunkX = Mathf.FloorToInt((worldPos.x - terrainOrigin.x) / chunkSize);
-        int chunkZ = Mathf.FloorToInt((worldPos.z - terrainOrigin.z) / chunkSize);
-        string name = $"Chunk_{chunkX}_{chunkZ}";
-        chunkMap.TryGetValue(name, out GameObject chunk);
-        return chunk;
-    }
+    //public GameObject GetChunkByWorldPosition(Vector3 worldPos)
+    //{
+    //    int chunkX = Mathf.FloorToInt((worldPos.x - terrainOrigin.x) / chunkSize);
+    //    int chunkZ = Mathf.FloorToInt((worldPos.z - terrainOrigin.z) / chunkSize);
+    //    string name = $"Chunk_{chunkX}_{chunkZ}";
+    //    chunkMap.TryGetValue(name, out GameObject chunk);
+    //    return chunk;
+    //}
 }

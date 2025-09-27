@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, IInteractable
@@ -13,8 +14,62 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
     public event OnMaterialChangedHandler OnMaterialChanged;
     [SerializeField] private GameObject defaultObject; 
     [HideInInspector] public GameObject currentChunk;
+    public BlueprintData sceneBlueprint;
     public int LastHotkeyIndex { get; set; }
     public bool IsBuilt => isBuilt;
+
+    void Awake()
+    {
+        if (sceneBlueprint != null)
+            TryInit();
+    }
+
+    private void TryInit()
+    {
+        if (bluePrint != null && playerInventory != null)
+            return;
+
+        if (sceneBlueprint == null)
+        {
+            Debug.LogWarning($"{name} chưa có sceneBlueprint!");
+            return;
+        }
+
+        playerInventory = FindObjectOfType<PlayerInventory>();
+        if (playerInventory == null)
+        {
+            StartCoroutine(DelayedInit()); // chờ PlayerInventory xuất hiện
+        }
+        else
+        {
+            Init(sceneBlueprint, playerInventory);
+        }
+    }
+
+    IEnumerator DelayedInit()
+    {
+        while (FindObjectOfType<PlayerInventory>() == null)
+            yield return null;
+
+        playerInventory = FindObjectOfType<PlayerInventory>();
+        Init(sceneBlueprint, playerInventory);
+    }
+
+
+    //void Start()
+    //{
+    //    if (bluePrint == null && sceneBlueprint != null)
+    //    {
+    //        if (playerInventory == null)
+    //            playerInventory = FindObjectOfType<PlayerInventory>();
+
+    //        if (playerInventory != null)
+    //            Init(sceneBlueprint, playerInventory);
+    //        else
+    //            Debug.LogWarning($"BuildableObject {name} chưa có PlayerInventory để Init!");
+    //    }
+    //}
+
 
     public void Init(BlueprintData blueprintData, PlayerInventory inventory)
     {
@@ -50,6 +105,18 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
 
     private void TryAddMaterial()
     {
+        if (bluePrint == null)
+        {
+            Debug.LogWarning($"BuildableObject {name} chưa có blueprint!");
+            return;
+        }
+
+        if (playerInventory == null)
+        {
+            Debug.LogWarning($"BuildableObject {name} chưa gán playerInventory!");
+            return;
+        }
+
         bool anyAdded = false;
         bool allComplete = true;
 
@@ -68,26 +135,35 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
                 allComplete = false;
         }
 
-        if (anyAdded)
+        if (!anyAdded)
         {
-            InventoryManager.Instance.RefreshAllUI();
-
-            OnMaterialChanged?.Invoke();
-
-            if (bluePrint.resultItem is SurvivalClass survival && survival.previewMaterial != null)
+            // 🔹 Nếu là Tools/khác Survival → log luôn
+            if (!(bluePrint.resultItem is SurvivalClass))
             {
-                SetMaterial(allComplete ? survival.originalMaterial : survival.validMaterial);
+                Debug.Log($"BuildableObject {name}: thiếu nguyên liệu để thêm!");
             }
-
-            if (allComplete)
-                CompleteBuild();
-        }
-        else
-        {
-            if (bluePrint.resultItem is SurvivalClass survival && survival.invalidMaterial != null)
+            // 🔹 Nếu là Survival → đổi sang invalidMaterial nếu có
+            else if (bluePrint.resultItem is SurvivalClass survival && survival.invalidMaterial != null)
+            {
                 SetMaterial(survival.invalidMaterial);
+            }
+            return;
         }
+
+        InventoryManager.Instance.RefreshAllUI();
+        OnMaterialChanged?.Invoke();
+
+        // 🔹 Nếu là Survival → đổi preview/valid/original
+        if (bluePrint.resultItem is SurvivalClass survivalMat && survivalMat.previewMaterial != null)
+        {
+            SetMaterial(allComplete ? survivalMat.originalMaterial : survivalMat.validMaterial);
+        }
+
+        if (allComplete)
+            CompleteBuild();
     }
+
+
 
     private void CompleteBuild()
     {
@@ -188,6 +264,6 @@ public class BuildableObject : MonoBehaviour, IInteractableInfo, IHasBlueprint, 
 
     public void Interact(GameObject interactor)
     {
-        AddMaterialByPlayerInput();
+         AddMaterialByPlayerInput();
     }
 }

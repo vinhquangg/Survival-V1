@@ -43,11 +43,11 @@ public class InventoryManager : MonoBehaviour, IPlayerDependent
             Debug.LogWarning("Multiple InventoryManager instances found! Using the first one.");
             Destroy(gameObject);
         }
-
     }
 
     void Start()
     {
+       
         playerInventory.Init(inventoryUI.GetSlotCount(), hotbarUI.GetSlotCount());
         RefreshAllUI();
         //PlayerController = FindObjectOfType<PlayerController>();

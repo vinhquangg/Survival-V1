@@ -3,9 +3,9 @@
 public class BearCombat : MonsterCombat
 {
     [Header("Bear Attack Settings")]
-    public float biteRange = 2.5f;   // Cắn gần
-    public float clawRange = 3.5f;   // Vung vuốt xa hơn 1 chút
-    public float roarRange = 6f;     // Hú dọa, gây hiệu ứng
+    public float biteRange;   // Cắn gần
+    public float clawRange;   // Vung vuốt xa hơn 1 chút
+    public float roarRange;     // Hú dọa, gây hiệu ứng
 
     // Kiểm tra có thể cắn không
     public bool CanBite()
@@ -22,11 +22,11 @@ public class BearCombat : MonsterCombat
     }
 
     // Kiểm tra có thể gầm không
-    public bool CanRoar()
-    {
-        if (target == null) return false;
-        return Vector3.Distance(transform.position, target.position) <= roarRange;
-    }
+    //public bool CanRoar()
+    //{
+    //    if (target == null) return false;
+    //    return Vector3.Distance(transform.position, target.position) <= roarRange;
+    //}
 
     // Attack chỉ để FSM gọi, thực tế deal damage qua Animation Event
     protected override void Attack()
@@ -46,6 +46,15 @@ public class BearCombat : MonsterCombat
             if (target.TryGetComponent<IDamageable>(out var damageable))
             {
                 damageable.TakeDamage(attackDamage);
+
+                if (distance <= biteRange)
+                {
+                    SoundManager.Instance.PlaySFX(SoundManager.Instance.animalBearAttackSound);
+                }
+                else if (distance <= clawRange)
+                {
+                    SoundManager.Instance.PlaySFX(SoundManager.Instance.animalBearClawSound);
+                }
             }
         }
     }

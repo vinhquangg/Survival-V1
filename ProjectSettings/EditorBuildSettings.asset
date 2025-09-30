@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 525e2cdbd5de03f4eb7feef08c193baf
   - enabled: 1
+    path: Assets/Scenes/CrashPlaneCutscene.unity
+    guid: 5c5307759e5452f478fc258b293f6f46
+  - enabled: 1
     path: Assets/Scenes/GameScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

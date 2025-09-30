@@ -24,6 +24,13 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         var player = interactor.GetComponent<PlayerController>();
         if (player == null) return;
 
+        if (player.playerStateMachine.currentState is ChopState)
+        {
+            // Có thể show feedback nho nhỏ
+            Debug.Log("Đang chặt, không thể thực hiện thêm.");
+            return;
+        }
+
         var equipManager = FindObjectOfType<EquipManager>();
         if (equipManager == null || !equipManager.HasItemEquipped(EquipType.Tool))
         {
@@ -36,8 +43,8 @@ public class TreeChopInteraction : MonoBehaviour, IInteractable, IInteractableIn
         var toolSlot = equipManager.GetEquippedSlot(EquipType.Tool);
         if (toolSlot != null && !toolSlot.IsEmpty())
         {
-            toolSlot.ReduceDurability(0.1f); // trừ 5% durability
-            Debug.Log("Reduced tool durability by 5%");
+            toolSlot.ReduceDurability(0.2f); // trừ 5% durability
+            InventoryManager.Instance.RefreshAllUI();
         }
         player.playerStateMachine.ChangeState(new ChopState(player.playerStateMachine, player, this));
         InventoryManager.Instance.RefreshAllUI();

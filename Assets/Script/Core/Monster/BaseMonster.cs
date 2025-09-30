@@ -242,6 +242,7 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
             // fallback nếu không có stateMachine
             ReturnPool();
         }
+
         Debug.Log($"{gameObject.name} đã chết");
         //healthUIPrefab.SetActive(false);
     }

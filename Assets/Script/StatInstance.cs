@@ -6,6 +6,7 @@ public class StatInstance
     public StatsData data;
     public float currentValue;
     public Action<float> OnStatChanged;
+    public Action<float> OnValueReduced;
     private float decayTimer = 0f;
     private float fullRegenTimer = 0f;
     private bool canRegenHealth = false;
@@ -19,6 +20,8 @@ public class StatInstance
     {
         float old = currentValue;
         currentValue = Mathf.Clamp(currentValue - amount, 0, data.maxValue);
+        if (amount > 0)
+            OnValueReduced?.Invoke(amount);
         OnStatChanged?.Invoke(currentValue);
 
         //Debug.Log($"[Reduce] {data.statName}: {old:F6} -> {currentValue:F6} (-{amount})");

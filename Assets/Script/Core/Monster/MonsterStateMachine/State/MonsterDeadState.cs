@@ -9,7 +9,23 @@ public class MonsterDeadState : MonsterBaseState
 
     public override void EnterState()
     {
-        Debug.Log("Monster is Dead.");
+        //if (monster is DragonMonster dragon)
+        //{
+        //    if (dragon.isBoss)
+        //        SoundManager.Instance?.PlaySFX(SoundManager.Instance.dragonDeadSound);
+        //    else
+        //        SoundManager.Instance?.PlaySFX(SoundManager.Instance.dragonHitSound);
+        //}
+        //else if (monster is WildBear bear)
+        //{
+        //    if (SoundManager.Instance != null)
+        //        SoundManager.Instance.PlaySFX(SoundManager.Instance.animalBearDeadSound);
+        //}
+        //else
+        //{
+        //    if (SoundManager.Instance != null)
+        //        SoundManager.Instance.PlaySFX(SoundManager.Instance.swampDeadSound);
+        //}
         stateMachine.animator.SetBool("isDead", true);
 
         if (monster._navMeshAgent != null && monster._navMeshAgent.isOnNavMesh)

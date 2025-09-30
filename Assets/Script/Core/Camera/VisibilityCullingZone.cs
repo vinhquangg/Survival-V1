@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class VisibilityCullingZone : MonoBehaviour
 {
-    [HideInInspector] public float viewSize = 10f;
+    [HideInInspector] public float viewSize = 15f;
     [HideInInspector] public int visibleRadius = 2;
     //public string chunkTag = "Chunk";
     [HideInInspector] public Transform player;

@@ -1478,17 +1478,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa2c55a56c3f68a4fb1723bc6b21fcf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dropItemSound: {fileID: 8300000, guid: e57839333f17e5640a995cee58e99a9e, type: 3}
-  pickupItemSound: {fileID: 8300000, guid: bdcae32ffe0ddd74193bf5f0b51f8aa5, type: 3}
-  noitifySound: {fileID: 8300000, guid: 8c72961cb80763f43b59803ff69ceb7d, type: 3}
   backgroundSound: {fileID: 8300000, guid: 853f10774fd883d47ae0e4e41c7bfcb1, type: 3}
   menuSound: {fileID: 8300000, guid: 8dc1fb7dd09a0004490fe53383207e39, type: 3}
+  dropItemSound: {fileID: 8300000, guid: e57839333f17e5640a995cee58e99a9e, type: 3}
+  noitifySound: {fileID: 8300000, guid: 8c72961cb80763f43b59803ff69ceb7d, type: 3}
   equipSound: {fileID: 8300000, guid: 65e583a55eb045d4ab2cc07eb22b8ac3, type: 3}
   unequipSound: {fileID: 8300000, guid: 9ee5f597be5213a428ecd8be339de12b, type: 3}
   craftSound: {fileID: 8300000, guid: 707b292bb7b29b741a1bc64b0c1c7348, type: 3}
+  pickupItemSound: {fileID: 8300000, guid: bdcae32ffe0ddd74193bf5f0b51f8aa5, type: 3}
+  inventoryOpenSound: {fileID: 8300000, guid: ac14ea04b2c53034dad89b753b4a227e, type: 3}
+  choppingSound: {fileID: 8300000, guid: 220639786eaed0b419a359577383d0ea, type: 3}
+  drinkingSound: {fileID: 0}
+  playerHitSound: {fileID: 8300000, guid: 18cb6a14d7e8f5b4da8cde2bed477528, type: 3}
+  playerDeadSound: {fileID: 8300000, guid: ebba62c042c4b5846bf36309812bb7e1, type: 3}
   animalDeadSound: {fileID: 8300000, guid: f6b2470c75365794e85dee0ad590ac37, type: 3}
   animalHitSound: {fileID: 8300000, guid: dd510e82980a5b54c8b368d9cfb29c28, type: 3}
-  inventoryOpenSound: {fileID: 8300000, guid: ac14ea04b2c53034dad89b753b4a227e, type: 3}
+  animalBearHitSound: {fileID: 8300000, guid: 85fc1d2819e9c504f904a690e08613ce, type: 3}
+  animalBearAttackSound: {fileID: 8300000, guid: 85fc1d2819e9c504f904a690e08613ce,
+    type: 3}
+  animalBearClawSound: {fileID: 8300000, guid: 3735183b9f64e1c4fab2d1a2c4128b42, type: 3}
+  animalBearDeadSound: {fileID: 8300000, guid: 1b65ba0f0a343794a98ce0d4ab369d51, type: 3}
+  swampHitSound: {fileID: 8300000, guid: 8a92d8a15fe5b734fb0be48fb1e373b0, type: 3}
+  swampDeadSound: {fileID: 8300000, guid: 8a92d8a15fe5b734fb0be48fb1e373b0, type: 3}
+  dragonHitSound: {fileID: 8300000, guid: fc05040936c9af6479e9d9fda9bf2f04, type: 3}
+  dragonDeadSound: {fileID: 8300000, guid: 167f547956330f84b952e4affc12bf81, type: 3}
+  dragonCastspellSound: {fileID: 8300000, guid: bea40602bbb7a0f4ea453c4011ce4e5f,
+    type: 3}
   footstepSource: {fileID: 1357409033}
   sfxSource: {fileID: 1357409033}
   backGround: {fileID: 790548978}

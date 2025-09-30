@@ -52,11 +52,13 @@ public class RangeMonsterCombat : MonsterCombat
         {
             Debug.Log("Boss fireball spread!");
             CastFireballSpread();
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
         }
         else
         {
             Debug.Log("Normal enemy single shot");
             ShootProjectile();
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
         }
     }
 
@@ -119,9 +121,9 @@ public class RangeMonsterCombat : MonsterCombat
         // nếu muốn truyền damage và radius từ boss sang shockwave
         if (shockwave.TryGetComponent<ShockwaveVFX>(out var shock))
         {
-            shock.damage = attackDamage * 2;   // gấp đôi damage thường
+            shock.damage = attackDamage;   // gấp đôi damage thường
         }
-
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonCastspellSound);
         Debug.Log("Boss cast Shockwave!");
     }
 

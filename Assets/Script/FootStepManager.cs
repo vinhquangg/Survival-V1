@@ -91,7 +91,7 @@ public class FootStepManager : MonoBehaviour
         switch (gd.groundType)
         {
             case GroundType.Sand: basePitch = 1.2f; break;
-            case GroundType.Grass: basePitch = 1f; break;
+            case GroundType.Grass: basePitch = 1.1f; break;
         }
 
         float finalPitch = isRunning ? basePitch * 1.3f : basePitch;

@@ -98,10 +98,22 @@ public class DragonMonster : BaseMonster
             Debug.LogWarning("SwampMonster: Không tìm được điểm tuần tra nào!");
         }
     }
+
+    public override void TakeDamage(float damage)
+    {
+        base.TakeDamage(damage);
+
+        if (currentHeal > 0)
+        {
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
+        }
+    }
+
     protected override void Die()
     {
+        // Phát âm thanh chết
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
 
-       base.Die();
-        
+        base.Die();
     }
 }

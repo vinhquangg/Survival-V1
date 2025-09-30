@@ -36,7 +36,17 @@ public class SlotClass
     public bool IsTool() => item != null && item.itemType == ItemType.Tool;
     public bool IsEmpty() 
     {
-        return this.item == null || this.quantity <=0;
+        return this.item == null || this.quantity <=0 /*|| this.durability <=0*/;
+    }
+
+    public bool HasSameItem(ItemClass other)
+    {
+        return item != null && item.itemName == other.itemName;
+    }
+
+    public bool IsBroken()
+    {
+        return IsTool() && durability <= 0f;
     }
     public void AddItem(ItemClass newItem, int quantity)
     {
@@ -46,11 +56,20 @@ public class SlotClass
 
     public void ReduceDurability(float percent)
     {
-        if (durability < 0) return;
+        if (IsBroken()) return;
+
         durability = Mathf.Clamp01(durability - percent);
 
-        if (durability <= 0f)
+        if (IsBroken())
         {
+            // Nếu đang là tool bị gãy → tắt tool trên tay
+            if (item != null && item.GetEquipType() == EquipType.Tool)
+            {
+                var equipManager = GameObject.FindObjectOfType<EquipManager>();
+                if (equipManager != null)
+                    equipManager.UnequipItem(EquipType.Tool);
+            }
+
             item = null;
             quantity = 0;
         }

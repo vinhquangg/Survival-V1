@@ -40,6 +40,8 @@ public class ChopState : PlayerState
     public void OnChopImpact()
     {
         if (!isChopping) return;
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.choppingSound);
     }
 
     // Gọi từ Animation Event -> ChopEnd()

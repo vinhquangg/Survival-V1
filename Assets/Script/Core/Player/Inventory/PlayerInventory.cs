@@ -42,7 +42,7 @@ public class PlayerInventory : MonoBehaviour
         // Check item in inventory first
         foreach (var slot in items)
         {
-            if (slot != null && slot.GetItem().itemName == item.itemName)
+            if (slot != null && slot.HasSameItem(item))
             {
                 total += slot.GetQuantity();
                 if (total >= amount) return true;
@@ -71,7 +71,7 @@ public class PlayerInventory : MonoBehaviour
         for (int i = 0; i < items.Length; i++)
         {
             var slot = items[i];
-            if (slot != null && slot.GetItem().itemName == item.itemName)
+            if (slot != null && slot.HasSameItem(item))
             {
                 int qty = slot.GetQuantity();
                 int toRemove = Mathf.Min(qty, amount - removed);
@@ -139,19 +139,26 @@ public class PlayerInventory : MonoBehaviour
 
     private bool TryStackItem(SlotClass[] container, ItemClass item, ref int quantity)
     {
+        if (container == null) return false;  // tránh container null
+
         foreach (SlotClass slot in container)
         {
-            if (slot != null && slot.GetItem().itemName == item.itemName && slot.GetQuantity() < item.maxStack)
+            // 👉 thêm check slot.GetItem() != null
+            if (slot != null && slot.GetItem() != null &&
+                slot.GetItem().itemName == item.itemName &&
+                slot.GetQuantity() < item.maxStack)
             {
                 int canAdd = Mathf.Min(quantity, item.maxStack - slot.GetQuantity());
                 slot.AddQuantity(canAdd);
                 quantity -= canAdd;
 
-                if (quantity <= 0) return true;
+                if (quantity <= 0)
+                    return true;
             }
         }
         return false;
     }
+
 
     private bool TryAddToEmptySlot(SlotClass[] container, ItemClass item, ref int quantity)
     {

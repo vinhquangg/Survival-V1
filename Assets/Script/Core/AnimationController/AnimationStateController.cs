@@ -33,7 +33,7 @@ public class AnimationStateController : MonoBehaviour
         animator = GetComponent<Animator>();
         if (animator == null)
         {
-            Debug.LogError("Animator not found!");
+            animator = GetComponent<Animator>();
             return;
         }
 

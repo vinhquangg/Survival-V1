@@ -53,16 +53,23 @@ public class WildBear : BaseMonster
 
     }
 
+    public override void TakeDamage(float damage)
+    {
+        base.TakeDamage(damage); 
+
+        if (currentHeal > 0)
+        {
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.animalBearHitSound);
+        }
+    }
+
     protected override void Die()
     {
+        // Phát âm thanh chết
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.animalBearDeadSound);
 
-       base.Die();
-        
+        base.Die();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

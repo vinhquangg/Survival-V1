@@ -16,9 +16,9 @@ MonoBehaviour:
   resultAmount: 1
   craftingType: 1
   requirements:
-  - item: {fileID: 11400000, guid: 6f2f9aac6c1fafb4da4b9d5d6f6fa82f, type: 2}
-    amount: 1
+  - item: {fileID: 11400000, guid: 581088832f2307c47b9bd1a6910d95c0, type: 2}
+    amount: 50
   - item: {fileID: 11400000, guid: adf085d7bb990f0468ca561af00c8105, type: 2}
     amount: 1
-  - item: {fileID: 11400000, guid: 03e0dba9689bb434d8adc664d950196f, type: 2}
-    amount: 30
+  - item: {fileID: 11400000, guid: 6f2f9aac6c1fafb4da4b9d5d6f6fa82f, type: 2}
+    amount: 1

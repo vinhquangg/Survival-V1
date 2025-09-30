@@ -8,7 +8,7 @@ public class MainMenu : MonoBehaviour,IMenu
 {
     public void NewGame()
     {
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("CrashPlaneCutscene");
     }
 
     public void OpenMenu()

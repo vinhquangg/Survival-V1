@@ -10,6 +10,8 @@ public class DeadState : PlayerState
 
     public override void Enter()
     {
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.playerDeadSound);
         timer = 0f; // reset timer mỗi lần vào DeadState
         player.animationController.TriggerDead();
 

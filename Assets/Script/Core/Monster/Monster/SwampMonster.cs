@@ -59,17 +59,25 @@ public class SwampMonster : BaseMonster
         }
     }
 
-    protected override void Die()
+    public override void TakeDamage(float damage)
     {
-        if(_stateMachine!= null)
+        base.TakeDamage(damage); // vẫn giảm máu, gọi OnHealthChanged, kiểm tra chết
+
+        // Chỉ phát âm thanh nếu chưa chết
+        if (currentHeal > 0)
         {
-            _stateMachine.SwitchState(new MonsterDeadState(_stateMachine));
-        }
-        else
-        {
-            base.Die();
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.swampHitSound);
         }
     }
+
+    protected override void Die()
+    {
+        // Phát âm thanh chết
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.swampDeadSound);
+
+        base.Die();
+    }
+
 
     //private void OnTriggerEnter(Collider other)
     //{

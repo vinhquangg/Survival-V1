@@ -54,7 +54,6 @@ public class MonsterAttackState : MonsterBaseState
                 // Boss sẽ cast spell (shockwave)
                 isCast = true;
                 castTimer = castCooldown;
-
                 stateMachine.animator.SetTrigger("isCast"); // trigger anim cast spell
                 return; // ưu tiên cast spell, không attack thông thường
             }

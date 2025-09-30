@@ -34,7 +34,7 @@ public class FireballProjectile : MonoBehaviour
     {
         if (other.CompareTag("Player") /*|| other.CompareTag("Environment")*/)
         {
-            var damageable = other.GetComponent<IDamageable>();
+            var damageable = other.GetComponentInParent<IDamageable>();
             if (damageable != null)
                 damageable.TakeDamage(20);
 

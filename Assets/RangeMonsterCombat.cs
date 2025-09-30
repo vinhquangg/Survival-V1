@@ -52,13 +52,13 @@ public class RangeMonsterCombat : MonsterCombat
         {
             Debug.Log("Boss fireball spread!");
             CastFireballSpread();
-            SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
+
         }
         else
         {
             Debug.Log("Normal enemy single shot");
             ShootProjectile();
-            SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
+
         }
     }
 
@@ -71,7 +71,7 @@ public class RangeMonsterCombat : MonsterCombat
         Vector3 spawnPos = firePoint.position + Vector3.up * 0.5f;
 
         GameObject proj = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(dir));
-
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
         if (proj.TryGetComponent<FireballProjectile>(out var fireball))
         {
             fireball.Launch(dir, projectileSpeed);
@@ -82,7 +82,7 @@ public class RangeMonsterCombat : MonsterCombat
     {
         Vector3 spawnPos = firePoint.position + Vector3.up * 0.5f;
         GameObject proj = Instantiate(projectilePrefab, spawnPos, Quaternion.LookRotation(dir));
-
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
         if (proj.TryGetComponent<FireballProjectile>(out var fireball))
         {
             fireball.Launch(dir, projectileSpeed);
@@ -117,13 +117,13 @@ public class RangeMonsterCombat : MonsterCombat
         }
 
         GameObject shockwave = Instantiate(shockwavePrefab, transform.position, Quaternion.identity);
-
+        SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonCastspellSound);
         // nếu muốn truyền damage và radius từ boss sang shockwave
         if (shockwave.TryGetComponent<ShockwaveVFX>(out var shock))
         {
             shock.damage = attackDamage;   // gấp đôi damage thường
         }
-        SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonCastspellSound);
+
         Debug.Log("Boss cast Shockwave!");
     }
 

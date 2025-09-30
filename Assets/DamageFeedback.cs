@@ -28,6 +28,8 @@ public class DamageFeedback : MonoBehaviour
             StopCoroutine(currentRoutine);
 
         currentRoutine = StartCoroutine(FlashDamage());
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.playerHitSound);
     }
 
     private IEnumerator FlashDamage()

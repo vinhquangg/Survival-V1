@@ -111,8 +111,16 @@ public class DragonMonster : BaseMonster
 
     protected override void Die()
     {
-        // Phát âm thanh chết
-        SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
+        if(isBoss)
+        {
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonDeadSound);
+        }
+        else
+        {
+            // Phát âm thanh chết
+            SoundManager.Instance.PlaySFX(SoundManager.Instance.dragonHitSound);
+        }
+       
 
         base.Die();
     }

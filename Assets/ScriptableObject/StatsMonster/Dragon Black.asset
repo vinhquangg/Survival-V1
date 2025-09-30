@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterType: 1
   monsterName: Polygonal Dragon Black
-  maxHealth: 100
+  maxHealth: 10
   moveSpeed: 3
   patrolSpeed: 2
   detectedRange: 10

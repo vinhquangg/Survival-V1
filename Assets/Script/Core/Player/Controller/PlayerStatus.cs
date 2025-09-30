@@ -85,8 +85,8 @@ public class PlayerStatus : MonoBehaviour, IDamageable
                 if (damageFeedback != null)
                     damageFeedback.ShowDamage(); // nháy 1s
 
-                if (SoundManager.Instance != null)
-                    SoundManager.Instance.PlaySFX(SoundManager.Instance.playerHitSound);
+                //if (SoundManager.Instance != null)
+                //    SoundManager.Instance.PlaySFX(SoundManager.Instance.playerHitSound);
             }
         }
     }
@@ -97,8 +97,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         health.Reduce(amount);
         if (damageFeedback != null)
             damageFeedback.ShowDamage();
-        if (SoundManager.Instance != null)
-            SoundManager.Instance.PlaySFX(SoundManager.Instance.playerHitSound);
+
         if (health.IsEmpty())
             Die();
     }

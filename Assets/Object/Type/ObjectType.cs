@@ -7,4 +7,5 @@ public enum ObjectType
     Stick,
     Log,
     Consumable,
+    Ammo,
 }

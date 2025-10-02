@@ -12,3 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d42f889375dead438b4fa29d1a97915, type: 3}
   m_Name: Arrow
   m_EditorClassIdentifier: 
+  itemType: 11
+  itemName: Arrow
+  itemIcon: {fileID: 21300000, guid: 620a8ffcbffb3fe4285f6ca2ef1b3d27, type: 3}
+  itemDesc: Wooden Arrow
+  itemFunc: Can deal small damage to enemy
+  isStack: 1
+  maxStack: 32
+  dropPrefab: {fileID: 9082497058630256351, guid: 97b6ca12641e48d44af6434c9f680819,
+    type: 3}
+  blueprint: {fileID: 11400000, guid: 7ff1498007496354daec5ceac340c3b0, type: 2}
+  damageMultiplier: 10
+  projectilePrefab: {fileID: 6512302210861762459, guid: 94d0b37e139f43340861e3bbbdab01b7,
+    type: 3}
+  speed: 40

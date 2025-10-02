@@ -18,6 +18,7 @@ public class SurvivalClass : ItemClass
     public override MiscClass GetMisc() { return null; }
     public override Consumable GetConsumable() { return null; }
     public override WeaponClass GetWeapon() { return null; }
+    public override AmmoClass GetAmmo() => null;
     public override float GetDurability() => -1f;
 
 }

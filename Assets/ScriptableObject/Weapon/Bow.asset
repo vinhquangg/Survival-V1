@@ -15,8 +15,8 @@ MonoBehaviour:
   itemType: 1
   itemName: Weapon
   itemIcon: {fileID: 21300000, guid: 58416c0bf046556499e3a7f996199abb, type: 3}
-  itemDesc: 
-  itemFunc: 
+  itemDesc: Wooden Bow
+  itemFunc: Deal damage to enemy
   isStack: 0
   maxStack: 1
   dropPrefab: {fileID: 100054, guid: 0be2ba322dd85494db39a44ee439af41, type: 3}

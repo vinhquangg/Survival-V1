@@ -32,6 +32,7 @@ public class ToolClass : ItemClass
     public override SurvivalClass GetSurvival() { return null; }
     public override WeaponClass GetWeapon() { return null; }
 
+    public override AmmoClass GetAmmo() { return null; }
 
     public override float GetDurability()
     {

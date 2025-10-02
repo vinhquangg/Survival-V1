@@ -7,6 +7,7 @@ public class BowAttackState : BaseAttackState
     private bool isShoot = false;
     private float aimStartTime;
     private float minAimTime = 0.15f;
+
     public BowAttackState(PlayerStateMachine playerState, PlayerController player)
         : base(playerState, player) { }
 
@@ -14,53 +15,58 @@ public class BowAttackState : BaseAttackState
     {
         base.Enter();
 
+        // Nếu đang cooldown → không bắn
         if (!player.combat.CanShoot())
         {
             playerState.ChangeState(new IdleState(playerState, player));
             return;
         }
 
+        // ❗ Kiểm tra có arrow trong inventory không
+        if (player.combat.currentAmmo == null ||
+            !player.combat.HasArrow(player.combat.currentAmmo))
+        {
+            Debug.Log("Không còn mũi tên để bắn!");
+            playerState.ChangeState(new IdleState(playerState, player));
+            return;
+        }
+
         player.inputHandler.playerAction.Move.Disable();
+
         useAttackTimer = false;
         aimStartTime = Time.time;
-        //isAiming = true;
-        //player.animationController.StartAim();
-        //SpawnArrow();
-
     }
-
 
     public override void Update()
     {
         base.Update();
 
-        // Nếu đang giữ chuột
+        // 🟢 Nếu đang giữ chuột
         if (player.inputHandler.IsAttackHeld())
         {
             float holdTime = Time.time - aimStartTime;
 
-            // Đủ thời gian mới bắt đầu Aim
+            // Chỉ bắt đầu Aim khi đủ thời gian
             if (!isAiming && holdTime >= minAimTime)
             {
                 isAiming = true;
                 player.animationController.StartAim();
-                SpawnArrow();
+                SpawnArrow(); // chỉ spawn khi đủ thời gian và còn đạn
             }
-            //playerState.ChangeState(new IdleState(playerState, player));
-            return; // vẫn đang giữ thì chưa bắn
+
+            return; // vẫn giữ chuột → chưa bắn
         }
 
-
-        // Nếu buông chuột
+        // 🔴 Nếu buông chuột
         if (isAiming && !isShoot && player.inputHandler.IsAttackReleased())
         {
             float holdTime = Time.time - aimStartTime;
 
             if (holdTime < minAimTime)
             {
-                // Bỏ qua, không bắn cũng không recoil
+                // Nếu chưa đủ thời gian → hủy Aim
                 isAiming = false;
-                //player.animationController.ResetAttack();
+                player.animationController.StopAimImmediate();
                 playerState.ChangeState(new IdleState(playerState, player));
                 return;
             }
@@ -69,64 +75,57 @@ public class BowAttackState : BaseAttackState
             isShoot = true;
             ShootArrow();
         }
-
     }
 
     private void SpawnArrow()
     {
-        // Spawn arrow hiển thị khi kéo cung
-        if (player.combat.arrowPrefab != null && player.combat.arrowSpawnPoint != null)
+        if (player.combat.currentAmmo == null) return;
+
+        // ❗ Chặn nếu không còn arrow trong inventory
+        if (!player.combat.HasArrow(player.combat.currentAmmo))
         {
-            player.combat.currentArrow = GameObject.Instantiate(
-                player.combat.arrowPrefab,
-                player.combat.arrowSpawnPoint.position,
-                player.combat.arrowSpawnPoint.rotation
-            );
-            player.combat.currentArrow.transform.SetParent(player.combat.arrowSpawnPoint);
-
-            Rigidbody rb = player.combat.currentArrow.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.isKinematic = true;
-            }
-
-            Collider col = player.combat.currentArrow.GetComponent<Collider>();
-            if (col != null && player.controller != null)
-            {
-                Physics.IgnoreCollision(col, player.controller);
-            }
+            Debug.Log("Hết arrow → không spawn!");
+            return;
         }
+
+        var prefab = player.combat.currentAmmo.projectilePrefab;
+        if (prefab == null || player.combat.arrowSpawnPoint == null) return;
+
+        player.combat.currentArrow = GameObject.Instantiate(
+            prefab,
+            player.combat.arrowSpawnPoint.position,
+            player.combat.arrowSpawnPoint.rotation
+        );
+
+        // Gắn vào bow để hiển thị
+        player.combat.currentArrow.transform.SetParent(player.combat.arrowSpawnPoint);
+
+        Rigidbody rb = player.combat.currentArrow.GetComponent<Rigidbody>();
+        if (rb != null) rb.isKinematic = true;
+
+        Collider col = player.combat.currentArrow.GetComponent<Collider>();
+        if (col != null && player.controller != null)
+            Physics.IgnoreCollision(col, player.controller);
     }
-
-    // Coroutine ép quay lại Idle sau 1 delay ngắn
-    private IEnumerator ForceIdleAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        if (isAiming && !isShoot) // vẫn còn trong trạng thái Aim mà chưa bắn
-        {
-            isAiming = false;
-            player.animationController.StopAimImmediate();
-            playerState.ChangeState(new IdleState(playerState, player));
-        }
-    }
-
-
 
     private void ShootArrow()
     {
         if (!isAiming) return;
 
-        player.combat.MarkShootTime(); // cập nhật cooldown
+        // Mark cooldown
+        player.combat.MarkShootTime();
 
         isAiming = false;
+
+        // Gọi bắn từ PlayerCombat
         player.combat.ShootArrow();
+
+        // Animation
         player.animationController.ReleaseBow();
-        player.animationController.StopAimImmediate(); // reset anim
+        player.animationController.StopAimImmediate();
+
         playerState.ChangeState(new IdleState(playerState, player));
     }
-
-
 
     protected override void OnAttackEnter(ItemClass equippedWeapon)
     {
@@ -136,11 +135,19 @@ public class BowAttackState : BaseAttackState
     public override void Exit()
     {
         base.Exit();
+
         player.inputHandler.playerAction.Move.Enable();
         player.animationController.StopAimImmediate();
         player.animationController.ResetAttack();
+
+        // Nếu đang Aim nhưng thoát state → cleanup arrow visual
+        if (player.combat.currentArrow != null && !isShoot)
+        {
+            GameObject.Destroy(player.combat.currentArrow);
+            player.combat.currentArrow = null;
+        }
+
         isAiming = false;
         isShoot = false;
-
     }
 }

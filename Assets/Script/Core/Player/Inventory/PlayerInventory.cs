@@ -5,7 +5,7 @@ public class PlayerInventory : MonoBehaviour
 {
     public SlotClass[] items;
     public SlotClass[] hotbarItems;
-
+    public event System.Action OnInventoryChanged;
     public void Init(int inventorySize, int hotbarSize)
     {
         items = new SlotClass[inventorySize];
@@ -52,13 +52,12 @@ public class PlayerInventory : MonoBehaviour
         // check item in hotbar
         foreach (var slot in hotbarItems)
         {
-            if (slot != null && slot.GetItem() == item)
+            if (slot != null && slot.HasSameItem(item))
             {
                 total += slot.GetQuantity();
                 if (total >= amount) return true;
             }
         }
-
         return false;
     }
 
@@ -67,25 +66,7 @@ public class PlayerInventory : MonoBehaviour
     {
         int removed = 0;
 
-        // remove from inventory first
-        for (int i = 0; i < items.Length; i++)
-        {
-            var slot = items[i];
-            if (slot != null && slot.HasSameItem(item))
-            {
-                int qty = slot.GetQuantity();
-                int toRemove = Mathf.Min(qty, amount - removed);
-                slot.SubQuantity(toRemove);
-                removed += toRemove;
-
-                if (slot.GetQuantity() <= 0)
-                    items[i] = null;
-
-                if (removed >= amount) return true;
-            }
-        }
-
-        // remove from hotbar if not enough removed from main inventory
+        // remove from hotbar first
         for (int i = 0; i < hotbarItems.Length; i++)
         {
             var slot = hotbarItems[i];
@@ -99,10 +80,37 @@ public class PlayerInventory : MonoBehaviour
                 if (slot.GetQuantity() <= 0)
                     hotbarItems[i] = null;
 
-                if (removed >= amount) return true;
+                if (removed >= amount)
+                {
+                    OnInventoryChanged?.Invoke();
+                    return true;
+                }
+            }
+        }
+        // remove from inventory if not enough removed from hotbar 
+        for (int i = 0; i < items.Length; i++)
+        {
+            var slot = items[i];
+            if (slot != null && slot.HasSameItem(item))
+            {
+                int qty = slot.GetQuantity();
+                int toRemove = Mathf.Min(qty, amount - removed);
+                slot.SubQuantity(toRemove);
+                removed += toRemove;
+
+                if (slot.GetQuantity() <= 0)
+                    items[i] = null;
+
+                if (removed >= amount)
+                {
+                    OnInventoryChanged?.Invoke();
+                    return true;
+                }
+
             }
         }
 
+        OnInventoryChanged?.Invoke();
         return removed >= amount;
     }
 

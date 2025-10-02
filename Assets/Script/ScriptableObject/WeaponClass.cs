@@ -27,6 +27,7 @@ public class WeaponClass : ItemClass
     public override Consumable GetConsumable() { return null; }
     public override SurvivalClass GetSurvival() { return null; }
     public override WeaponClass GetWeapon() { return this; }
+    public override AmmoClass GetAmmo() { return null; }
 
     public override float GetDurability()
     {

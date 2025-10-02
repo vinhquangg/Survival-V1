@@ -17,6 +17,7 @@ public class Consumable : ItemClass, IUsableItem
     public override WeaponClass GetWeapon() { return null; }
     public override SurvivalClass GetSurvival() { return null; }
     public override Consumable GetConsumable() { return this; }
+    public override AmmoClass GetAmmo() => null;
     public override float GetDurability() => -1f;
     public string GetName() => itemName;
     public void UseItem(PlayerStatus status, PlayerInventory inventory)

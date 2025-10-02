@@ -1,18 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class AmmoClass : MonoBehaviour
+[CreateAssetMenu(fileName = "New Arrow", menuName = "Item/Arrow")]
+public class AmmoClass : ItemClass
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [Header("Ammo Settings")]
+    public int damageMultiplier;
+    public GameObject projectilePrefab;    
+    public float speed;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public override ItemClass GetItem() { return this; }
+    public override ToolClass GetTool() { return null; }
+    public override MiscClass GetMisc() { return null; }
+    public override Consumable GetConsumable() { return null; }
+    public override SurvivalClass GetSurvival() { return null; }
+    public override WeaponClass GetWeapon() { return null ; }
+    public override AmmoClass GetAmmo() { return this; }
+
+    public override float GetDurability() => -1f; 
 }

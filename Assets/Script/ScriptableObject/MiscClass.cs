@@ -10,5 +10,6 @@ public class MiscClass : ItemClass
     public override Consumable GetConsumable() { return null; }
     public override WeaponClass GetWeapon() { return null; }
     public override SurvivalClass GetSurvival() { return null; }
+    public override AmmoClass GetAmmo() => null;
     public override float GetDurability() => -1f;
 }

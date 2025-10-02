@@ -3,7 +3,7 @@
 public class Arrow : MonoBehaviour
 {
     private Rigidbody rb;
-    private int arrowDamage = 25;
+    public int arrowDamage;
 
     private bool isStuck = false;
     private bool hasDealtDamage = false;

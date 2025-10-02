@@ -49,7 +49,10 @@ public class InventoryManager : MonoBehaviour, IPlayerDependent
     {
        
         playerInventory.Init(inventoryUI.GetSlotCount(), hotbarUI.GetSlotCount());
-        RefreshAllUI();
+        playerInventory.OnInventoryChanged -= RefreshAllUI; // tránh đăng ký trùng
+        playerInventory.OnInventoryChanged += RefreshAllUI;
+
+        RefreshAllUI(); // Khởi tạo UI ban đầu
         //PlayerController = FindObjectOfType<PlayerController>();
         //dropper.playerTransform = PlayerController.transform;
     }
@@ -85,8 +88,12 @@ public class InventoryManager : MonoBehaviour, IPlayerDependent
 
             // nếu PlayerInventory cũng nằm trên Player → gán lại
             var inv = PlayerController.GetComponentInChildren<PlayerInventory>();
-            if (inv != null)
-                playerInventory = inv;
+            // Gán lại playerInventory
+            playerInventory = inv;
+
+            // ✅ Đăng ký lại listener
+            playerInventory.OnInventoryChanged -= RefreshAllUI;
+            playerInventory.OnInventoryChanged += RefreshAllUI;
         }
     }
 
@@ -97,7 +104,7 @@ public class InventoryManager : MonoBehaviour, IPlayerDependent
         bool added = playerInventory.AddItem(item, quantity);
         if (added)
         {
-            RefreshAllUI();
+
             ShowPickupNotification($"+{quantity} {item.itemName}",item);
 
             PlayerFeedbackUI feedbackUI = FindObjectOfType<PlayerFeedbackUI>();
@@ -108,6 +115,7 @@ public class InventoryManager : MonoBehaviour, IPlayerDependent
                 feedbackUI.ShowFeedbackUntilKeyPress(FeedbackType.OpenInventory, KeyCode.I);
             }
         }
+        RefreshAllUI();
         return added;
     }
 
@@ -274,14 +282,14 @@ public class InventoryManager : MonoBehaviour, IPlayerDependent
         if (item.itemType == ItemType.Weapon || item.itemType == ItemType.Tool)
         {
         // Không drop, có thể thông báo UI ở đây nếu muốn
-            RefreshAllUI();
+            //RefreshAllUI();
             return;
         }
 
         dropper.Drop(slot.GetItem(), slot.GetQuantity(), slot.GetDurability());
 
         container[index] = null;
-        RefreshAllUI();
+        //RefreshAllUI();
     }
 
     //public void UpdateWeaponFromHotbar()

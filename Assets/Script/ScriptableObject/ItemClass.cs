@@ -23,6 +23,8 @@ public abstract class ItemClass:ScriptableObject
     public abstract WeaponClass GetWeapon();
     public abstract SurvivalClass GetSurvival();
 
+    public abstract AmmoClass GetAmmo();
+
     public abstract float GetDurability();
 
     public virtual EquipType GetEquipType()

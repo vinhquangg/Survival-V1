@@ -183,10 +183,10 @@ public class CraftingSlot
 public class CraftingManager : MonoBehaviour, IPlayerDependent
 {
     public GameObject craftingScreen;
-    public GameObject weaponsScreen, survivalScreen, toolsScreen;
+    public GameObject weaponsScreen, survivalScreen, toolsScreen, ammoScreen;
     [SerializeField] private List<CraftingSlot> craftingSlots = new List<CraftingSlot>();
 
-    public Button weaponsBTN, survivalBTN, toolsBTN;
+    public Button weaponsBTN, survivalBTN, toolsBTN, ammoBTN;
 
     PlayerController PlayerController;
     bool isOpen;
@@ -214,9 +214,11 @@ public class CraftingManager : MonoBehaviour, IPlayerDependent
         weaponsBTN = craftingScreen.transform.Find("WeaponButton").GetComponent<Button>();
         survivalBTN = craftingScreen.transform.Find("SurvivalButton").GetComponent<Button>();
         toolsBTN = craftingScreen.transform.Find("ToolsButton").GetComponent<Button>();
+        ammoBTN = craftingScreen.transform.Find("AmmoButton").GetComponent<Button>();
         weaponsBTN.onClick.AddListener(delegate { OpenWeaponsCategory(); });
         survivalBTN.onClick.AddListener(delegate { OpenSurvivalCategory(); });
         toolsBTN.onClick.AddListener(delegate { OpenToolsCategory(); });
+        ammoBTN.onClick.AddListener(delegate { OpenAmmoCategory(); });
 
         InventoryManager.Instance.OnInventoryChanged += CheckCanCraft;
 
@@ -225,6 +227,7 @@ public class CraftingManager : MonoBehaviour, IPlayerDependent
             slot.craftButton.onClick.AddListener(() => CraftItem(slot.blueprint));
         }
     }
+
 
     // bỏ dòng này:
     // PlayerController = FindObjectOfType<PlayerController>();
@@ -278,6 +281,7 @@ public class CraftingManager : MonoBehaviour, IPlayerDependent
         weaponsScreen.SetActive(true);
         survivalScreen.SetActive(false);
         toolsScreen.SetActive(false);
+        ammoScreen.SetActive(false);
     }
 
     void OpenSurvivalCategory()
@@ -286,6 +290,7 @@ public class CraftingManager : MonoBehaviour, IPlayerDependent
         survivalScreen.SetActive(true);
         weaponsScreen.SetActive(false);
         toolsScreen.SetActive(false);
+        ammoScreen.SetActive(false);
     }
 
     void OpenToolsCategory()
@@ -294,6 +299,16 @@ public class CraftingManager : MonoBehaviour, IPlayerDependent
         weaponsScreen.SetActive(false);
         survivalScreen.SetActive(false);
         toolsScreen.SetActive(true);
+        ammoScreen.SetActive(false);
+    } 
+    
+    void OpenAmmoCategory()
+    {
+        craftingScreen.SetActive(false);
+        weaponsScreen.SetActive(false);
+        survivalScreen.SetActive(false);
+        toolsScreen.SetActive(false);
+        ammoScreen.SetActive(true);
     }
 
     void Update()
@@ -325,6 +340,7 @@ public class CraftingManager : MonoBehaviour, IPlayerDependent
         weaponsScreen.SetActive(false);
         survivalScreen.SetActive(false);
         toolsScreen.SetActive(false);
+        ammoScreen.SetActive(false);
 
         PlayerController?.UpdatePlayerInputState(); // <-- thay đổi ở đây
 

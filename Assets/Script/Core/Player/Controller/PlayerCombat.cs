@@ -12,13 +12,13 @@ public class PlayerCombat : MonoBehaviour
 
     [Header("Ranged Attack")]
     public Transform arrowSpawnPoint;
-    [HideInInspector] public AmmoClass currentAmmo;        // loại arrow hiện tại
-    [HideInInspector] public GameObject currentArrow;     // arrow hiển thị khi kéo
+    [HideInInspector] public AmmoClass currentAmmo;       
+    [HideInInspector] public GameObject currentArrow;     
     private float lastShootTime = 0f;
     [SerializeField] private float shootCooldown = 1f;
 
     [Header("Weapon Type")]
-    [HideInInspector] public WeaponClass.WeaponType currentWeaponType = WeaponClass.WeaponType.Machete; // default
+    [HideInInspector] public WeaponClass.WeaponType currentWeaponType = WeaponClass.WeaponType.Machete; 
 
     private AnimationStateController animationController;
     private InputHandler inputHandler;
@@ -35,19 +35,15 @@ public class PlayerCombat : MonoBehaviour
 
     private void Start()
     {
-        // Lấy loại arrow hiện có khi bắt đầu
+
         UpdateCurrentArrowType();
 
-        // Đăng ký cập nhật lại khi inventory thay đổi
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.OnInventoryChanged += UpdateCurrentArrowType;
         }
     }
 
-    /// <summary>
-    /// Quét inventory & hotbar để cập nhật loại arrow hiện có
-    /// </summary>
     private void UpdateCurrentArrowType()
     {
         currentAmmo = FindFirstArrowInInventoryOrHotbar();
@@ -55,7 +51,7 @@ public class PlayerCombat : MonoBehaviour
 
     public void HandleAtack()
     {
-        // melee logic
+
         Collider[] hitColliders = Physics.OverlapSphere(weaponHitPoint.position, weaponHitRadius, targetMask);
         HashSet<IDamageable> uniqueDamageables = new();
 
@@ -82,9 +78,6 @@ public class PlayerCombat : MonoBehaviour
         lastShootTime = Time.time;
     }
 
-    /// <summary>
-    /// Thực hiện bắn arrow
-    /// </summary>
     public void ShootArrow()
     {
         if (currentAmmo == null)
@@ -123,10 +116,8 @@ public class PlayerCombat : MonoBehaviour
             arrowComp.arrowDamage = currentAmmo.damageMultiplier;
         }
 
-        // Xóa mũi tên đang giữ
         currentArrow = null;
 
-        // Trừ đạn
         if (!ConsumeArrow(currentAmmo))
         {
             Debug.LogWarning("⚠ Lỗi trừ arrow sau khi bắn!");
@@ -145,9 +136,6 @@ public class PlayerCombat : MonoBehaviour
         return playerInventory.RemoveItem(arrowType, 1);
     }
 
-    /// <summary>
-    /// Tìm loại arrow đầu tiên trong hotbar hoặc inventory
-    /// </summary>
     private AmmoClass FindFirstArrowInInventoryOrHotbar()
     {
         if (InventoryManager.Instance == null || InventoryManager.Instance.playerInventory == null)
@@ -155,7 +143,6 @@ public class PlayerCombat : MonoBehaviour
 
         PlayerInventory inv = InventoryManager.Instance.playerInventory;
 
-        // Ưu tiên hotbar
         foreach (var slot in inv.hotbarItems)
         {
             if (slot != null && slot.GetItem() is AmmoClass ammo && slot.GetQuantity() > 0)
@@ -163,8 +150,6 @@ public class PlayerCombat : MonoBehaviour
                 return ammo;
             }
         }
-
-        // Nếu hotbar không có → tìm trong inventory
         foreach (var slot in inv.items)
         {
             if (slot != null && slot.GetItem() is AmmoClass ammo && slot.GetQuantity() > 0)
@@ -173,7 +158,7 @@ public class PlayerCombat : MonoBehaviour
             }
         }
 
-        return null; // không tìm thấy
+        return null; 
     }
 
     private void OnDrawGizmosSelected()

@@ -99,7 +99,7 @@ public class AnimationStateController : MonoBehaviour
     public void StopAimImmediate()
     {
         isAiming = false;
-        animator.SetBool(isAimingHash, false);
+        animator.ResetTrigger(isAimingHash);
         if (bowAnimator != null)
             bowAnimator.SetBool(isAimingHash, false);
     }

@@ -17,7 +17,7 @@ public class CursorFollow : MonoBehaviour
         if (cameraTransform == null && Camera.main != null)
         {
             cameraTransform = Camera.main.transform;
-            Debug.Log("CameraTransform đã gán = " + cameraTransform.name);
+            //Debug.Log("CameraTransform đã gán = " + cameraTransform.name);
         }
     }
     void Update()

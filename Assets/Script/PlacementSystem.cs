@@ -114,9 +114,6 @@ public class PlacementSystem : MonoBehaviour, IPlayerDependent
             CancelPlacement();
     }
 
-    /// <summary>
-    /// Lấy điểm thấp nhất của collider prefab trong local space
-    /// </summary>
     private Vector3 GetLowestPointLocal(GameObject obj)
     {
         Collider[] cols = obj.GetComponentsInChildren<Collider>();

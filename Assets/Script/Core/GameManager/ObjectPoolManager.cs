@@ -17,7 +17,7 @@ public class ObjectPoolManager : MonoBehaviour
     public List<Pool> pools;
 
     private Dictionary<string, Queue<GameObject>> poolDictionary = new();
-    private Dictionary<string, List<GameObject>> prefabReference = new();
+    //private Dictionary<string, List<GameObject>> prefabReference = new();
 
     private void Awake()
     {
@@ -39,7 +39,7 @@ public class ObjectPoolManager : MonoBehaviour
         foreach (var pool in pools)
         {
             Queue<GameObject> objectQueue = new();
-            prefabReference[pool.poolID] = new List<GameObject>();
+            //prefabReference[pool.poolID] = new List<GameObject>();
 
             for (int i = 0; i < pool.size; i++)
             {
@@ -61,7 +61,7 @@ public class ObjectPoolManager : MonoBehaviour
                 }
 
                 objectQueue.Enqueue(obj);
-                prefabReference[pool.poolID].Add(prefab);
+                //prefabReference[pool.poolID].Add(prefab);
             }
 
             poolDictionary[pool.poolID] = objectQueue;

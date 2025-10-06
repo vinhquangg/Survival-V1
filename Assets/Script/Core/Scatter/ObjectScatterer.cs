@@ -14,8 +14,6 @@ public class ObjectScatterer : MonoBehaviour
     public float minGrassCoverage = 0.5f;
     public int grassTextureIndex = 1;
 
-    //public ChunkManager chunkManager; // dùng ChunkManager
-
     private void Start()
     {
         if (ChunkManager.Instance == null)
@@ -23,7 +21,7 @@ public class ObjectScatterer : MonoBehaviour
             Debug.LogError("❌ ChunkManager không tồn tại trong scene!");
             return;
         }
-        if(biomeManager == null)
+        if (biomeManager == null)
         {
             biomeManager = FindAnyObjectByType<BiomeManager>();
         }
@@ -99,11 +97,22 @@ public class ObjectScatterer : MonoBehaviour
                 if (spawner.objectsToSpawn == null)
                     spawner.objectsToSpawn = new List<ChunkObjectSpawner.SpawnInfo>();
 
+                Vector3 finalPos = hit.point;
+                Collider prefabCollider = prefab.GetComponent<Collider>();
+                if (prefabCollider != null)
+                {
+                    finalPos.y += prefabCollider.bounds.extents.y; // đặt chân chạm mặt đất
+                }
+
+                Quaternion groundRotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                Quaternion randomYRotation = Quaternion.Euler(0f, (float)(prng.NextDouble() * 360.0), 0f);
+                Quaternion finalRotation = groundRotation * randomYRotation;
+
                 spawner.objectsToSpawn.Add(new ChunkObjectSpawner.SpawnInfo
                 {
                     poolID = poolable.poolID,
-                    localPosition = chunk.transform.InverseTransformPoint(hit.point),
-                    localRotation = new Vector3(0f, (float)(prng.NextDouble() * 360f), 0f)
+                    localPosition = chunk.transform.InverseTransformPoint(finalPos),
+                    localRotation = finalRotation.eulerAngles
                 });
 
                 spawned++;
@@ -112,7 +121,7 @@ public class ObjectScatterer : MonoBehaviour
             }
         }
 
-        Debug.Log($"✅ Tổng object đã chuẩn bị spawn bằng Pool: {totalSpawned}");
+        Debug.Log($"Tổng object đã chuẩn bị spawn bằng Pool: {totalSpawned}");
     }
 
     private Vector3 GetRandomPointInBounds(Bounds bounds, System.Random prng)

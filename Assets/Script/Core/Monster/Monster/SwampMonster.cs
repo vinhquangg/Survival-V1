@@ -29,7 +29,7 @@ public class SwampMonster : BaseMonster
         }
 
         _navMeshAgent.SetDestination(patrolPoints[currentPatrolIndex]);
-        Debug.Log("SwampMonster patrol to point: " + patrolPoints[currentPatrolIndex]);
+        //Debug.Log("SwampMonster patrol to point: " + patrolPoints[currentPatrolIndex]);
 
         currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Count;
     }

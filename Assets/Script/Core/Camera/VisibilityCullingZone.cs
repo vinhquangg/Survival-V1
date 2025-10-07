@@ -3,13 +3,14 @@ using UnityEngine;
 
 public class VisibilityCullingZone : MonoBehaviour
 {
-    [HideInInspector] public float viewSize = 15f;
-    [HideInInspector] public int visibleRadius = 2;
-    //public string chunkTag = "Chunk";
-    [HideInInspector] public Transform player;
-    [HideInInspector] public float checkInterval = 1f;
 
-    private List<ChunkObjectSpawner> allChunks = new List<ChunkObjectSpawner>();
+    public float viewSize = 20f;            
+    public int visibleRadius = 3;          
+    public float bufferRadius = 0.5f;           
+    public Transform player;                
+    public float checkInterval = 0.25f;     
+
+    private readonly List<ChunkObjectSpawner> allChunks = new();
     private Vector2Int lastPlayerChunkCoord = Vector2Int.zero;
     private Vector3 terrainOrigin = Vector3.zero;
 
@@ -22,7 +23,6 @@ public class VisibilityCullingZone : MonoBehaviour
 
         if (player == null)
         {
-            Debug.LogError("❌ Không tìm thấy player!");
             enabled = false;
             return;
         }
@@ -69,7 +69,9 @@ public class VisibilityCullingZone : MonoBehaviour
     {
         Vector3 relativePlayerPos = player.position - terrainOrigin;
         Vector2 playerPos2D = new Vector2(relativePlayerPos.x, relativePlayerPos.z);
-        float maxDistance = visibleRadius * viewSize;
+
+        // 👉 thêm buffer vào bán kính hiển thị
+        float maxDistance = (visibleRadius + bufferRadius) * viewSize;
 
         foreach (ChunkObjectSpawner chunk in allChunks)
         {
@@ -78,29 +80,21 @@ public class VisibilityCullingZone : MonoBehaviour
             Vector3 relativeChunkPos = chunk.transform.position - terrainOrigin;
             Vector2 chunkPos2D = new Vector2(relativeChunkPos.x, relativeChunkPos.z);
             float dist = Vector2.Distance(playerPos2D, chunkPos2D);
-            bool isVisible = dist <= maxDistance;
 
-            ChunkObjectSpawner spawner = chunk.GetComponent<ChunkObjectSpawner>();
-            if (spawner == null) continue;
+            bool isVisible = dist <= maxDistance;
 
             if (isVisible)
             {
-                if (!spawner.HasSpawned || force)
-                {
-                    spawner.SpawnObjects(); // ✅ Gọi khi cần hiển thị
-                }
+                if (!chunk.HasSpawned || force)
+                    chunk.SpawnObjects();
             }
             else
             {
-                if (spawner.HasSpawned || force)
-                {
-                    spawner.DespawnObjects(); // ✅ Gọi để ẩn object trong chunk
-                }
+                if (chunk.HasSpawned || force)
+                    chunk.DespawnObjects();
             }
-
         }
     }
-
 
     Vector2Int GetChunkCoordFromPosition(Vector3 pos)
     {
@@ -111,11 +105,10 @@ public class VisibilityCullingZone : MonoBehaviour
         );
     }
 
-
     private void OnDrawGizmosSelected()
     {
         if (player == null) return;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(player.position, visibleRadius * viewSize);
+        Gizmos.DrawWireSphere(player.position, (visibleRadius + bufferRadius) * viewSize);
     }
 }

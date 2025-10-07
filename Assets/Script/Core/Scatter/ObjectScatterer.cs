@@ -79,7 +79,6 @@ public class ObjectScatterer : MonoBehaviour
                     continue;
                 }
 
-                // Lấy poolID từ prefab
                 PoolableObject poolable = prefab.GetComponent<PoolableObject>();
                 if (poolable == null || string.IsNullOrEmpty(poolable.poolID))
                 {
@@ -88,7 +87,6 @@ public class ObjectScatterer : MonoBehaviour
                     continue;
                 }
 
-                // Dùng ChunkManager
                 GameObject chunk = ChunkManager.Instance.GetOrCreateChunk(hit.point);
 
                 if (!chunk.TryGetComponent(out ChunkObjectSpawner spawner))
@@ -98,15 +96,24 @@ public class ObjectScatterer : MonoBehaviour
                     spawner.objectsToSpawn = new List<ChunkObjectSpawner.SpawnInfo>();
 
                 Vector3 finalPos = hit.point;
-                Collider prefabCollider = prefab.GetComponent<Collider>();
-                if (prefabCollider != null)
+                Quaternion finalRotation;
+
+                if (poolable.poolID == "Foliage")
                 {
-                    finalPos.y += prefabCollider.bounds.extents.y; // đặt chân chạm mặt đất
+                    Collider prefabCollider = prefab.GetComponent<Collider>();
+                    if (prefabCollider != null)
+                    {
+                        finalPos.y += prefabCollider.bounds.extents.y;
+                    }
+                    Quaternion groundRotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
+                    Quaternion randomYRotation = Quaternion.Euler(0f, (float)(prng.NextDouble() * 360.0), 0f);
+                    finalRotation = groundRotation * randomYRotation;
                 }
 
-                Quaternion groundRotation = Quaternion.FromToRotation(Vector3.up, hit.normal);
-                Quaternion randomYRotation = Quaternion.Euler(0f, (float)(prng.NextDouble() * 360.0), 0f);
-                Quaternion finalRotation = groundRotation * randomYRotation;
+                else
+                {
+                    finalRotation = Quaternion.Euler(0f, (float)(prng.NextDouble() * 360.0), 0f);
+                }
 
                 spawner.objectsToSpawn.Add(new ChunkObjectSpawner.SpawnInfo
                 {
@@ -120,8 +127,6 @@ public class ObjectScatterer : MonoBehaviour
                 attempts++;
             }
         }
-
-        Debug.Log($"Tổng object đã chuẩn bị spawn bằng Pool: {totalSpawned}");
     }
 
     private Vector3 GetRandomPointInBounds(Bounds bounds, System.Random prng)

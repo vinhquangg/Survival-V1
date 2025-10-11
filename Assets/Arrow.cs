@@ -33,7 +33,7 @@ public class Arrow : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Arrow collided with: " + collision.transform.name);
+        //Debug.Log("Arrow collided with: " + collision.transform.name);
 
         if (!isStuck && (owner == null || collision.gameObject != owner))
         {
@@ -42,7 +42,7 @@ public class Arrow : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
             rb.isKinematic = true;
 
-            Debug.Log("Arrow stuck! :" + collision.transform.name);
+            //Debug.Log("Arrow stuck! :" + collision.transform.name);
         }
 
         if (!hasDealtDamage && collision.transform.GetComponentInParent<IDamageable>() is IDamageable damageable)

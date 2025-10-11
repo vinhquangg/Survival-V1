@@ -73,10 +73,22 @@ public class Teleporter : MonoBehaviour
             RefreshMonsterList();
         }
 
+        // Nếu vẫn không có quái → thử tele đến item drop gần nhất
         if (validTargets.Count == 0)
         {
-            return;
+            if (ZoneDropHandler.hasRecentDrop)
+            {
+                player.position = ZoneDropHandler.lastDropPosition + Vector3.up * 1.2f; // tránh kẹt đất
+                ZoneDropHandler.hasRecentDrop = false;
+                //Debug.Log($"Teleported to last dropped item: {ZoneDropHandler.lastDropPoolID}");
+                return;
+            }
+            else
+            {
+                return;
+            }
         }
+
 
         if (currentIndex >= validTargets.Count)
             currentIndex = 0;

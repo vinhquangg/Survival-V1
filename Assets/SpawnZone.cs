@@ -82,7 +82,7 @@ public class SpawnZone : MonoBehaviour
             PoolableObject poolable = enemyPrefab.GetComponent<PoolableObject>();
             if (poolable == null || string.IsNullOrEmpty(poolable.poolID))
             {
-                Debug.LogError($"Prefab {enemyPrefab.name} chưa có PoolableObject hoặc poolID rỗng!");
+                //Debug.LogError($"Prefab {enemyPrefab.name} chưa có PoolableObject hoặc poolID rỗng!");
                 continue;
             }
 
@@ -137,7 +137,7 @@ public class SpawnZone : MonoBehaviour
         PoolableObject poolable = dragonPrefab.GetComponent<PoolableObject>();
         if (poolable == null || string.IsNullOrEmpty(poolable.poolID))
         {
-            Debug.LogError($"Prefab {dragonPrefab.name} chưa có PoolableObject hoặc poolID rỗng!");
+            //Debug.LogError($"Prefab {dragonPrefab.name} chưa có PoolableObject hoặc poolID rỗng!");
             yield break;
         }
 
@@ -174,7 +174,7 @@ public class SpawnZone : MonoBehaviour
             bossBase.OnDeath += bossDeathHandler;
         }
 
-        Debug.Log("Boss Dragon spawned (reused prefab)!");
+        //Debug.Log("Boss Dragon spawned (reused prefab)!");
     }
 
     private Vector3 GetRandomSpawnPosition()

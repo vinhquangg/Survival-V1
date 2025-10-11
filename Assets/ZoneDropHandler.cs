@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 
+
 [System.Serializable]
 public class ZoneLoot
 {
     public string poolID;
     public int amount = 1;
 }
+
 
 public class ZoneDropHandler : MonoBehaviour, IZoneDropHandler
 {
@@ -18,9 +20,13 @@ public class ZoneDropHandler : MonoBehaviour, IZoneDropHandler
     [Header("Drop Offset")]
     public float groundOffset = 0.1f; // chỉnh trong Inspector nếu cần
 
+    public static Vector3 lastDropPosition;
+    public static string lastDropPoolID;
+    public static bool hasRecentDrop;
+
     public void OnZoneCleared(SpawnZone zone, Vector3 lastDeathPos)
     {
-        Debug.Log($"Zone {zone.name} cleared → drop loot!");
+        //Debug.Log($"Zone {zone.name} cleared → drop loot!");
 
         foreach (var loot in lootOnClear)
         {
@@ -40,6 +46,10 @@ public class ZoneDropHandler : MonoBehaviour, IZoneDropHandler
                     spawnPos,
                     Quaternion.identity
                 );
+
+                lastDropPosition = spawnPos;
+                lastDropPoolID = loot.poolID;
+                hasRecentDrop = true;
             }
         }
     }

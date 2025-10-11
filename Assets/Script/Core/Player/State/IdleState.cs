@@ -56,7 +56,7 @@ public class IdleState : PlayerState
     public override void Exit()
     {
         // Code to execute when exiting the idle state
-        Debug.Log("Exiting Idle State");
+        //Debug.Log("Exiting Idle State");
     }
 }
 

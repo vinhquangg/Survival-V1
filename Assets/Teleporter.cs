@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.Collections;
 
 public class Teleporter : MonoBehaviour
 {
@@ -64,7 +65,7 @@ public class Teleporter : MonoBehaviour
 
     void TeleportToNextMonster()
     {
-        // Xóa các quái đã chết hoặc disable, nếu hết quái thì reload lại danh sách
+        
         validTargets.RemoveAll(m => m == null || !m.gameObject.activeInHierarchy || m.currentHeal <= 0);
 
 
@@ -73,14 +74,12 @@ public class Teleporter : MonoBehaviour
             RefreshMonsterList();
         }
 
-        // Nếu vẫn không có quái → thử tele đến item drop gần nhất
+       
         if (validTargets.Count == 0)
         {
             if (ZoneDropHandler.hasRecentDrop)
             {
-                player.position = ZoneDropHandler.lastDropPosition + Vector3.up * 1.2f; // tránh kẹt đất
-                ZoneDropHandler.hasRecentDrop = false;
-                //Debug.Log($"Teleported to last dropped item: {ZoneDropHandler.lastDropPoolID}");
+                StartCoroutine(TeleportToDropNextFrame());
                 return;
             }
             else
@@ -109,4 +108,23 @@ public class Teleporter : MonoBehaviour
         player.position = targetPos;
 
     }
+
+    private IEnumerator TeleportToDropNextFrame()
+    {
+        yield return null;
+
+        if (ZoneDropHandler.hasRecentDrop && ZoneDropHandler.lastDropPosition != Vector3.zero)
+        {
+            Vector3 targetPos = ZoneDropHandler.lastDropPosition + Vector3.up * 1.2f;
+
+            // Kiểm tra xem player đã thực sự di chuyển chưa
+            if (Vector3.Distance(player.position, targetPos) > 0.5f)
+            {
+                player.position = targetPos;
+                ZoneDropHandler.hasRecentDrop = false; // chỉ reset khi tele thành công
+            }
+        }
+    }
+
+
 }

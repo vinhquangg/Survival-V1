@@ -15,7 +15,7 @@ public class BiomeManager : MonoBehaviour
         System.Array.Sort(allBiomes, (a, b) =>
             a.transform.position.sqrMagnitude.CompareTo(b.transform.position.sqrMagnitude));
 
-        Debug.Log($"🌿 Đã tìm thấy {allBiomes.Length} vùng biome.");
+        //Debug.Log($"🌿 Đã tìm thấy {allBiomes.Length} vùng biome.");
     }
 
 

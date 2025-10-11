@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 
 [System.Serializable]
@@ -39,6 +40,11 @@ public class ZoneDropHandler : MonoBehaviour, IZoneDropHandler
                 {
                     spawnPos = hit.point + Vector3.up * groundOffset;
                 }
+                else
+                {
+                    // fallback nếu raycast không trúng đất
+                    spawnPos = lastDeathPos + Vector3.up * 0.5f;
+                }
 
                 // Spawn item từ pool
                 GameObject obj = ObjectPoolManager.Instance.SpawnFromPool(
@@ -46,11 +52,17 @@ public class ZoneDropHandler : MonoBehaviour, IZoneDropHandler
                     spawnPos,
                     Quaternion.identity
                 );
-
-                lastDropPosition = spawnPos;
-                lastDropPoolID = loot.poolID;
-                hasRecentDrop = true;
+                StartCoroutine(DelayMarkDrop(spawnPos, loot.poolID));
             }
         }
     }
+
+    private IEnumerator DelayMarkDrop(Vector3 pos, string poolID)
+    {
+        yield return null; // đợi 1 frame
+        lastDropPosition = pos;
+        lastDropPoolID = poolID;
+        hasRecentDrop = true;
+    }
+
 }

@@ -46,17 +46,17 @@ public class RangeMonsterCombat : MonsterCombat
 
     protected override void Attack()
     {
-        Debug.Log($"Attack() called - IsBoss = {IsBoss}");
+        //Debug.Log($"Attack() called - IsBoss = {IsBoss}");
 
         if (IsBoss)
         {
-            Debug.Log("Boss fireball spread!");
+            //Debug.Log("Boss fireball spread!");
             CastFireballSpread();
 
         }
         else
         {
-            Debug.Log("Normal enemy single shot");
+            //Debug.Log("Normal enemy single shot");
             ShootProjectile();
 
         }
@@ -105,7 +105,7 @@ public class RangeMonsterCombat : MonsterCombat
             SpawnProjectile(spreadDir);
         }
 
-        Debug.Log("Boss cast Fireball Spread (cone)!");
+        //Debug.Log("Boss cast Fireball Spread (cone)!");
     }
 
 
@@ -124,7 +124,7 @@ public class RangeMonsterCombat : MonsterCombat
             shock.damage = attackDamage;   // gấp đôi damage thường
         }
 
-        Debug.Log("Boss cast Shockwave!");
+        //Debug.Log("Boss cast Shockwave!");
     }
 
     public bool CanBite()
@@ -134,7 +134,7 @@ public class RangeMonsterCombat : MonsterCombat
 
     public void Bite()
     {
-        Debug.Log($"[{name}] Bite() called, CanBite = {CanBite()}, Target = {target?.name}");
+        //Debug.Log($"[{name}] Bite() called, CanBite = {CanBite()}, Target = {target?.name}");
 
         if (!CanBite() || target == null) return;
 

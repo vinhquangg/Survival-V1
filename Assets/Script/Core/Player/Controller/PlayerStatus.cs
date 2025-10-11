@@ -93,7 +93,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount)
     {
-        // Damage khác (enemy đánh chẳng hạn)
+
         health.Reduce(amount);
         if (damageFeedback != null)
             damageFeedback.ShowDamage();
@@ -112,7 +112,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 
     private IEnumerator FindFeedbackNextFrame()
     {
-        yield return null; // chờ 1 frame để UI kịp spawn
+        yield return null; 
         damageFeedback = FindObjectOfType<DamageFeedback>();
 
         if (damageFeedback != null)

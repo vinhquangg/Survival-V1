@@ -13,13 +13,11 @@ public class MonsterChaseState : MonsterBaseState
         chaseSpeed = monster.stats.moveSpeed;
         stateMachine.animator.SetBool("isChase", true);
         monster.PlayAnimation(MonsterAnimState.Chase);
-        Debug.Log("Monster is now chasing the player.");
     }
 
     public override void ExitState()
     {
         stateMachine.animator.SetBool("isChase", false);
-        Debug.Log($" Enemy stop chase.");
     }
 
     public override void FixedUpdateState()

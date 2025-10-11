@@ -49,26 +49,8 @@ public class MonsterAttackState : MonsterBaseState
                 monster.combat.RotateTowardsTarget(monster.combat.rotationSpeed);
 
             castTimer -= Time.deltaTime;
-            if (ranged.IsBoss && !isCast && castTimer <= 0f)
-            {
-                // Boss sẽ cast spell (shockwave)
-                isCast = true;
-                castTimer = castCooldown;
-                stateMachine.animator.SetTrigger("isCast"); // trigger anim cast spell
-                return; // ưu tiên cast spell, không attack thông thường
-            }
 
-            // --- ƯU TIÊN ATTACK XA ---
-            cooldownTimer += Time.deltaTime;
-            if (!isAttacking && cooldownTimer >= attackCooldown)
-            {
-                isAttacking = true;
-                cooldownTimer = 0f;
-                stateMachine.animator.SetTrigger("isAttack"); // Ưu tiên bắn projectile
-                return;
-            }
-
-            // --- CHỈ BITE KHI PLAYER QUÁ GẦN ---
+            // --- ƯU TIÊN CẮN KHI GẦN ---
             if (ranged.CanBite() && !isBite && !isAttacking)
             {
                 isBite = true;
@@ -77,8 +59,28 @@ public class MonsterAttackState : MonsterBaseState
                 return;
             }
 
+            // --- ƯU TIÊN CAST SPELL (CHỈ BOSS) ---
+            if (ranged.IsBoss && !isCast && castTimer <= 0f)
+            {
+                isCast = true;
+                castTimer = castCooldown;
+                stateMachine.animator.SetTrigger("isCast");
+                return;
+            }
+
+            // --- ATTACK XA BẰNG PROJECTILE ---
+            cooldownTimer += Time.deltaTime;
+            if (!isAttacking && cooldownTimer >= attackCooldown)
+            {
+                isAttacking = true;
+                cooldownTimer = 0f;
+                stateMachine.animator.SetTrigger("isAttack");
+                return;
+            }
+
             return;
         }
+
 
         // --- MELEE MONSTER ---
         if (monster.combat is MeleeMonsterCombat)

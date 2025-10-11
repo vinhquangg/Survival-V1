@@ -80,6 +80,11 @@ public class PlayerFeedbackUI : MonoBehaviour
         if (feedbackRoutine != null)
             StopCoroutine(feedbackRoutine);
 
+        foreach (var entry in feedbackDict.Values)
+        {
+            entry.feedbackObject.SetActive(false);
+        }
+
         if (!feedbackDict.ContainsKey(type))
         {
             Debug.LogWarning($"⚠ Feedback type {type} chưa được setup trong Inspector.");

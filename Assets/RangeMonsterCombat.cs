@@ -134,6 +134,8 @@ public class RangeMonsterCombat : MonsterCombat
 
     public void Bite()
     {
+        Debug.Log($"[{name}] Bite() called, CanBite = {CanBite()}, Target = {target?.name}");
+
         if (!CanBite() || target == null) return;
 
         if (target.TryGetComponent<IDamageable>(out var damageable))

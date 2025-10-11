@@ -365,7 +365,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8186125056948580131
 RectTransform:
   m_ObjectHideFlags: 0
@@ -602,7 +602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: 0c3b7996f5e928c498ec214df00bb5f3, type: 2}
-  quantity: 2
+  quantity: 4
   durability: 0
 --- !u!114 &7911847299973932467
 MonoBehaviour:

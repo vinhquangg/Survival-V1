@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Arrow
   m_EditorClassIdentifier: 
   resultItem: {fileID: 11400000, guid: 62897a9ee053b214f887787ca659aad0, type: 2}
-  resultAmount: 2
+  resultAmount: 4
   craftingType: 0
   requirements:
   - item: {fileID: 11400000, guid: 6c1d1a44776ff274d930153981cfa32e, type: 2}
     amount: 4
   - item: {fileID: 11400000, guid: 0c3b7996f5e928c498ec214df00bb5f3, type: 2}
-    amount: 2
+    amount: 4

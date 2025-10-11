@@ -22,7 +22,7 @@ MonoBehaviour:
   dropPrefab: {fileID: 9082497058630256351, guid: 97b6ca12641e48d44af6434c9f680819,
     type: 3}
   blueprint: {fileID: 11400000, guid: 7ff1498007496354daec5ceac340c3b0, type: 2}
-  damageMultiplier: 10
+  damageMultiplier: 50
   projectilePrefab: {fileID: 6512302210861762459, guid: 94d0b37e139f43340861e3bbbdab01b7,
     type: 3}
   speed: 40

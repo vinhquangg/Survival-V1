@@ -568,7 +568,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   treeData: {fileID: 11400000, guid: 10e387461c1bb2f4baf94e8676131867, type: 2}
   isChopped: 0
-  logDropGO: {fileID: 4370736543054296596, guid: edb158f4ce929cb4e88a8904570b0257,
+  logDropGO: {fileID: 6668178401099976028, guid: edb158f4ce929cb4e88a8904570b0257,
     type: 3}
 --- !u!114 &-4862343008157999356
 MonoBehaviour:

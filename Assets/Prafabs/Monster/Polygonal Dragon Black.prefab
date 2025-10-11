@@ -1312,7 +1312,7 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -3090,7 +3090,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 9195f3d08ce46bb438971e028648291c, type: 3}
   m_Controller: {fileID: 9100000, guid: 638962e7bf927ea469e299fc3c914b8a, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
@@ -3146,7 +3146,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 0
 --- !u!114 &2715883766195114326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3178,7 +3178,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 270336
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0

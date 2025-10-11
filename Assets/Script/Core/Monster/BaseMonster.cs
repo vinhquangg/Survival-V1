@@ -29,7 +29,7 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
     public DropTableData dropTable;
 
     [Header("Animation Settings")]
-    public MonsterAnimationData animData;  // SO chứa mapping anim theo enum
+    public MonsterAnimationData animData;  
     protected virtual void Awake()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -44,10 +44,7 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
     }
     protected virtual void Start()
     {
-        //_navMeshAgent = GetComponent<NavMeshAgent>();
-        //_stateMachine = GetComponent<MonsterStateMachine>();
-        //animMonster = GetComponent<Animator>();
-        //_rigidbody = GetComponent<Rigidbody>();
+
         player = PlayerManager.Instance.GetPlayerTransform();
 
         combat = GetComponent<MonsterCombat>();
@@ -67,27 +64,11 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
         currentHeal = stats.maxHealth;
 
         OnHealthChanged?.Invoke(currentHeal, stats.maxHealth);
-        //if (_navMeshAgent != null)
-        //{
-        //    _navMeshAgent.updateRotation = false;
-        //}
 
-        _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+        _navMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
         _navMeshAgent.avoidancePriority = Random.Range(20, 80);
     }
 
-    //protected Transform GetPlayer()
-    //{
-    //    if (player == null)
-    //    {
-    //        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-    //        if (playerObj != null)
-    //        {
-    //            player = playerObj.transform;
-    //        }
-    //    }
-    //    return player;
-    //}
 
     public virtual bool CanSeePlayer()
     {
@@ -118,40 +99,6 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
         stats.graceTimer += Time.deltaTime;
         return stats.graceTimer <= stats.graceTimeMax;
     }
-
-    //public virtual bool CanSeePlayer()
-    //{
-    //    if (player == null) return false;
-
-    //    Vector3 directionToPlayer = player.position - transform.position;
-    //    float distanceToPlayer = directionToPlayer.magnitude;
-
-    //    if (distanceToPlayer < detectedRange)
-    //    {
-    //        return true;
-    //        //Ray ray = new Ray(transform.position + Vector3.up, directionToPlayer);
-    //        //RaycastHit hit;
-
-    //        //if (Physics.Raycast(ray, out hit, detectedRange))
-    //        //{
-    //        //    if (hit.transform == player)
-    //        //    {
-    //        //        return true;
-    //        //    }
-    //        //}
-    //    }
-
-    //    return false;
-    //}
-
-    //public virtual void SetDestination()
-    //{
-    //    if (player != null)
-    //    {
-    //        Vector3 targetVector = player.transform.position;
-    //        _navMeshAgent.SetDestination(targetVector);
-    //    }
-    //}
 
     public virtual void SetRandomPatrolDestination(float patrolRadius)
     {
@@ -191,8 +138,6 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
         currentHeal -= damage;
         currentHeal = Mathf.Clamp(currentHeal, 0, stats.maxHealth);
 
-        Debug.Log($"{gameObject.name} bị trúng, còn {currentHeal} máu");
-
         OnHealthChanged?.Invoke(currentHeal, stats.maxHealth);
 
         if (currentHeal <= 0)
@@ -214,7 +159,6 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
                     Vector3 pos = transform.position + drop.offset + Random.insideUnitSphere * 0.2f;
                     GameObject obj = ObjectPoolManager.Instance.SpawnFromPool(drop.poolID, pos, Quaternion.identity);
 
-                    // Thiết lập ItemEntity luôn
                     ItemEntity itemEntity = obj.GetComponent<ItemEntity>();
                     if (itemEntity != null && drop.quantity > 0)
                     {
@@ -228,8 +172,7 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
 
     protected virtual void Die()
     {
-        //DropItems();
-        // Chuyển sang DeadState để chạy animation và pool
+
         Debug.Log($"{name} DIE() called, invoking OnDeath");
         OnDeath?.Invoke(this);
 
@@ -277,6 +220,8 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
         if (healthUI != null)
             healthUI.gameObject.SetActive(true);
 
+        StartCoroutine(EnableVisualsNextFrame()); 
+
         gameObject.SetActive(true);
         _stateMachine?.ResetToIlde();
     }
@@ -301,43 +246,51 @@ public abstract class BaseMonster : MonoBehaviour, IDamageable, IPoolable
         }
 
 
-        // 2️⃣ Tắt Collider
+
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
-        foreach (var childCol in GetComponentsInChildren<Collider>())
-            childCol.enabled = false;
 
-        // 3️⃣ Tắt Rigidbody / reset velocity
         if (_rigidbody != null)
         {
             _rigidbody.isKinematic = true;
         }
 
-        // 4️⃣ Tắt Animator để giảm update
+
         if (animMonster != null)
         {
-            animMonster.Rebind();       // reset tất cả parameter
+            animMonster.Rebind();       
             animMonster.Update(0f);
             animMonster.enabled = false;
         }
 
-        // 5️⃣ Pool Health UI
         if (healthUI != null)
             healthUI.gameObject.SetActive(false);
 
-        // 6️⃣ Tắt tất cả Renderer
         foreach (var renderer in GetComponentsInChildren<Renderer>())
             renderer.enabled = false;
 
-        // 7️⃣ Reset các biến state
         OnDeath = null;
         currentHeal = stats.maxHealth;
 
-        // 8️⃣ Return object về pool
         ObjectPoolManager.Instance.ReturnToPool(gameObject);
 
 
     }
 
+    private IEnumerator EnableVisualsNextFrame()
+    {
+        yield return null; 
 
+        foreach (var renderer in GetComponentsInChildren<Renderer>(true))
+            renderer.enabled = true;
+
+        if (animMonster != null)
+            animMonster.enabled = true;
+
+        foreach (var col in GetComponentsInChildren<Collider>(true))
+            col.enabled = true;
+
+        if (_rigidbody != null)
+            _rigidbody.isKinematic = true;
+    }
 }

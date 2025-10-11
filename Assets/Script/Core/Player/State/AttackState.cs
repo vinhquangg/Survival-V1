@@ -9,7 +9,6 @@ public class AttackState : BaseAttackState
 
     protected override void OnAttackEnter(ItemClass equippedWeapon)
     {
-        Debug.Log("[MeleeAttackState] Attack with melee weapon.");
         player.animationController.TriggerAttack(WeaponClass.WeaponType.Machete);
         // TODO: Gọi hệ thống combat, apply damage, v.v.
     }

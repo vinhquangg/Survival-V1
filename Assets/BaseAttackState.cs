@@ -14,12 +14,10 @@ public abstract class BaseAttackState : PlayerState
 
         if (player.equipManager == null)
         {
-            Debug.LogError("[BaseAttackState] player.equipManager is NULL!");
             return;
         }
 
         var equipped = player.equipManager.GetEquippedItem(EquipType.Weapon);
-        Debug.Log($"[BaseAttackState] Equipped Weapon: {(equipped != null ? equipped.itemName : "None")}");
 
         if (equipped != null)
         {
@@ -29,7 +27,6 @@ public abstract class BaseAttackState : PlayerState
         else
         {
             player.animationController.SetUpperBodyLayerWeight(0f);
-            Debug.LogWarning("[BaseAttackState] Không thể attack vì chưa cầm vũ khí.");
         }
     }
 
@@ -69,8 +66,5 @@ public abstract class BaseAttackState : PlayerState
         //player.animationController.DisableUpperBodyLayerDelayed(0.05f);
     }
 
-    /// <summary>
-    /// Override trong state con để gọi anim/logic riêng của từng loại vũ khí
-    /// </summary>
     protected abstract void OnAttackEnter(ItemClass equippedWeapon);
 }

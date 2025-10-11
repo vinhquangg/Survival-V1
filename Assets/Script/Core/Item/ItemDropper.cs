@@ -9,18 +9,15 @@ public class ItemDropper : MonoBehaviour
     {
         if (item.dropPrefab == null) return;
 
-        //// --- Kiểm tra loại item
-        //if (item.itemType == ItemType.Weapon || item.itemType == ItemType.Tool)
-        //    return; // Nếu là Weapon hoặc Tool thì không drop
-
         Vector3 origin = playerTransform.position + playerTransform.forward * 1.5f + Vector3.up * 5f;
 
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 10f, groundLayer))
         {
             // Spawn object trước, để có thể kiểm tra đúng transform và bounds
-            GameObject obj = Instantiate(item.dropPrefab, Vector3.zero, Quaternion.Euler(0, Random.Range(0, 360), 0));
+            Quaternion randomYRot = Quaternion.Euler(0, Random.Range(0, 360), 0);
+            GameObject obj = Instantiate(item.dropPrefab, hit.point, randomYRot);
 
-            // Lấy tất cả renderers
+            // Lấy tất cả renderers để tính bounds
             Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
             Vector3 pivotToBottom = Vector3.zero;
 
@@ -35,9 +32,21 @@ public class ItemDropper : MonoBehaviour
                 float offsetY = pivotY - bottomY;
                 pivotToBottom = new Vector3(0, offsetY, 0);
             }
+            else
+            {
+                Collider col = obj.GetComponentInChildren<Collider>();
+                if(col != null)
+                {
+                    float offsetY = obj.transform.position.y - col.bounds.min.y;
+                    pivotToBottom = new Vector3(0, offsetY, 0);
+                }
+            }
 
             // Đặt lại vị trí sao cho chân tiếp đất
-            obj.transform.position = hit.point + pivotToBottom;
+            Quaternion groundRot = Quaternion.FromToRotation(Vector3.up, hit.normal);
+            Quaternion finalRot = groundRot * randomYRot;
+
+            obj.transform.SetPositionAndRotation(hit.point + pivotToBottom, finalRot);
 
             var entity = obj.GetComponent<ItemEntity>();
             if (entity != null)
